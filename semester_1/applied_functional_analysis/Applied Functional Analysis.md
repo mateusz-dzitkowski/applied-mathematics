@@ -1,6 +1,6 @@
-# Metric spaces and Banach's FPT (Fixed Point Theorem)
+# 1. Metric spaces and Banach's FPT (Fixed Point Theorem)
 
-### Def: metric and metric space
+### Def 1.1 (Metric and Metric Space)
 Let $X$ be a nonempty set, and $d: X^2 \rightarrow \mathbb{R}$ be a function satisfying:
 - $(d(x, y) = 0$ iff $x=y$
 - $d(x, y) = d(y, x)$
@@ -12,27 +12,27 @@ Then the function $d$ is called the metric, the pair $(X, d)$ is called the metr
 - $(C[a,b], d)$, with $d(f, g) = \left(\int_a^b|f(x)-g(x)|^2dx\right)^{\frac{1}{2}}$
 - $(C[a,b], d)$, with $d(f, g) = \sup\limits_{a\le x \le b}|f(x) - g(x)|$
 - $(L^p[a, b], d)$, with $d(f, g) = \left(\int_a^b|f(x) - g(x)|^pdx\right)^\frac{1}{p}$
-### Def: fixed point
+### Def 1.2 (Fixed Point)
 A fixed point of the mapping $T:X \rightarrow X$ is the point $x^*\in X$ such that $T(x^*) = x^*$.
-### Def: contraction
-Let $(X, d)$ be a [[Applied Functional Analysis#Def metric and metric space|metric space]]. A mapping $T: X\rightarrow X$ is called a contraction on $X$ of there exists a constant $0\lt k\lt1$ such that $$d(T(x), T(y)) \le kd(x, y)$$ for all $x, y \in X$.
-### Theorem: Banach's FPT
-Let $(X, d)$  be a complete [[Applied Functional Analysis#Def metric and metric space|metric space]] and let $T:X\rightarrow X$ be a [[Applied Functional Analysis#Def contraction|contraction]] on $X$. Then $T$ has a unique [[Applied Functional Analysis#Def fixed point|fixed point]] $x^*\in X$.
-### Corollary: Banach's FPT
-The iterative sequence $x_{n+1} = T(x_n)$ for $n=1, 2, ...$ with arbitrary starting point $x_0 \in X$ converges, under assumptions of [[Applied Functional Analysis#Theorem Banach's FPT|Banach's FPT]], to the unique [[Applied Functional Analysis#Def fixed point|fixed point]] of $T$. Moreover, the following estimates hold: 
+### Def 1.3 (Contraction)
+Let $(X, d)$ be a [[Applied Functional Analysis#Def 1.1 (Metric and Metric Space)|metric space]]. A mapping $T: X\rightarrow X$ is called a contraction on $X$ of there exists a constant $0\lt k\lt1$ such that $$d(T(x), T(y)) \le kd(x, y)$$ for all $x, y \in X$.
+### Theorem 1.1 (Banach's FPT)
+Let $(X, d)$  be a complete [[Applied Functional Analysis#Def 1.1 (Metric and Metric Space)|metric space]] and let $T:X\rightarrow X$ be a [[Applied Functional Analysis#Def 1.3 (Contraction)|contraction]] on $X$. Then $T$ has a unique [[Applied Functional Analysis#Def 1.2 (Fixed Point)|fixed point]] $x^*\in X$.
+#### Corollary
+The iterative sequence $x_{n+1} = T(x_n)$ for $n=1, 2, ...$ with arbitrary starting point $x_0 \in X$ converges, under assumptions of [[Applied Functional Analysis#Theorem 1.1 (Banach's FPT)|Banach's FPT]], to the unique [[Applied Functional Analysis#Def 1.2 (Fixed Point)|fixed point]] of $T$. Moreover, the following estimates hold: 
 - $d(x_m,x^*) \le \frac{k^m}{1-k}d(x_1, x_0)$ - the prior estimate,
 - $d(x_m, x^*) \le \frac{k}{1-k}d(x_{m-1}, x_m)$ - the posterior estimate.
-# Applications of [[Applied Functional Analysis#Theorem Banach's FPT|Banach's FPT]]
+# 2. Applications of [[Applied Functional Analysis#Theorem 1.1 (Banach's FPT)|Banach's FPT]]
 ## Applications to real-valued functions
 Let $g \in C^1[a, b]$, and suppose we want to find the solution to the equation $g(x)=0$ on $[a, b]$. We note that we can always rewrite this equation as $x = g(x) + x$, and then out problem is equivalent with finding a fixed point of the function $f(x) = x + g(x)$.
-### Theorem: differentiable contraction
-Let $(\mathbb R,d)$  be a metric space of real numbers with the [[Applied Functional Analysis#Def metric and metric space|metric]] $d(x, y) = |x - y|$ and let $[a, b]$ be a closed interval in $\mathbb R$. Moreover, let $f: [a, b] \rightarrow [a, b]$ be a continuous and differentiable function such that $\sup\limits_{x\in[a,b]}|f'(x)| \le k \lt 1$. Then there exists a unique [[Applied Functional Analysis#Def fixed point|fixed point]] $x^*\in[a,b]$ of $f$.
+### Theorem 2.1 (Differentiable Contraction)
+Let $(\mathbb R,d)$  be a metric space of real numbers with the [[Applied Functional Analysis#Def 1.1 (Metric and Metric Space)|metric]] $d(x, y) = |x - y|$ and let $[a, b]$ be a closed interval in $\mathbb R$. Moreover, let $f: [a, b] \rightarrow [a, b]$ be a continuous and differentiable function such that $\sup\limits_{x\in[a,b]}|f'(x)| \le k \lt 1$. Then there exists a unique [[Applied Functional Analysis#Def 1.2 (Fixed Point)|fixed point]] $x^*\in[a,b]$ of $f$.
 #### Example
-We want to find the solution to the equation $cos(x) - 2x = 0$ on $[0, \pi]$. Then we can write this equation as $x=\frac{1}{2}cos(x)$, and try to find the fixed point of the function $f(x)=\frac{1}{2}cos(x)$ on $[0,\pi]$. We have to show that $f$ is a [[Applied Functional Analysis#Def contraction|contraction]] on $[0, \pi]$. To do so, we apply the [[Applied Functional Analysis#Theorem differentiable contraction|last theorem]]. We have 
+We want to find the solution to the equation $cos(x) - 2x = 0$ on $[0, \pi]$. Then we can write this equation as $x=\frac{1}{2}cos(x)$, and try to find the fixed point of the function $f(x)=\frac{1}{2}cos(x)$ on $[0,\pi]$. We have to show that $f$ is a [[Applied Functional Analysis#Def 1.3 (Contraction)|contraction]] on $[0, \pi]$. To do so, we apply the [[Applied Functional Analysis#Theorem differentiable contraction|theorem 2.1]]. We have 
 $$
 \sup\limits_{x\in[0,\pi]}|f'(x)| = \sup\limits_{x\in[0,\pi]}\left|-\frac{1}{2}sin(x)\right|=\frac{1}{2}\lt1.
 $$
-We have shown that $f$ is a [[Applied Functional Analysis#Def contraction|contraction]] and, by the [[Applied Functional Analysis#Theorem Banach's FPT|Banach's FPT]], it has a [[Applied Functional Analysis#Def fixed point|fixed point]] $x^*$ that is the limit of the sequence $\{x_n\}$ generated by the scheme $x_{n+1} = f(x_n)$ with any starting point $x_0\in[0,\pi]$.
+We have shown that $f$ is a [[Applied Functional Analysis#Def 1.3 (Contraction)|contraction]] and, by the [[Applied Functional Analysis#Theorem 1.1 (Banach's FPT)|Banach's FPT]], it has a [[Applied Functional Analysis#Def 1.2 (Fixed Point)|fixed point]] $x^*$ that is the limit of the sequence $\{x_n\}$ generated by the scheme $x_{n+1} = f(x_n)$ with any starting point $x_0\in[0,\pi]$.
 Note that to show that $f$ is a contraction we could also directly apply the definition: 
 $$
 \begin{aligned}
@@ -48,14 +48,14 @@ $$
 where $f:[a,b]\rightarrow\mathbb R$ is an unknown function, $g: [a,b] \rightarrow \mathbb R$, and $k:[a,b]^2\rightarrow\mathbb R$ are given functions, and $\mu$ is a parameter.
 The above integral equation can be considered in various function spaces. Here we consider this equation only in $(C[a, b], d)$ with $d(f, g) = \sup\limits_{x\in[a,b]}|f(x)-g(x)|$. 
 We assume that $g\in C[a,b]$, and that the kernel $k$ is continuous on the square $[a,b]^2$, which implies that $k$ is bounded on $[a,b]^2$, meaning that there exists a constant $c$, such that $|k(x, y)| \le c$ for all $(x, y)\in[a,b]^2$.
-### Theorem: complete space
+### Theorem 2.2
 The metric space $(C[a, b], d)$ is complete
 
 Note that our integral equation can be rewritten as $T(f) = f$, where 
 $$
 T(f)(x) = g(x)+\mu\int_a^bk(x,y)f(y)dy.
 $$
-First we have to show that the mapping $T:C[a,b]\rightarrow C[a,b]$ is well-defined, but this is obvious, as $g$ and $k$ are both continuous on their domains. Let us now determine for which values of $\mu$ the map $T$ is a [[Applied Functional Analysis#Def contraction|contraction]]. We have
+First we have to show that the mapping $T:C[a,b]\rightarrow C[a,b]$ is well-defined, but this is obvious, as $g$ and $k$ are both continuous on their domains. Let us now determine for which values of $\mu$ the map $T$ is a [[Applied Functional Analysis#Def 1.3 (Contraction)|contraction]]. We have
 $$
 \begin{aligned}
 d(T(f_1), T(f_2)) &= \sup\limits_{x\in[a,b]}\left|T(f_1)(x)-T(f_2)(x)\right| = \sup\limits_{x\in[a,b]}|\mu|\left|\int_a^bk(x,y)(f_1(y)-f_2(y))dy\right| \le \\
@@ -63,4 +63,4 @@ d(T(f_1), T(f_2)) &= \sup\limits_{x\in[a,b]}\left|T(f_1)(x)-T(f_2)(x)\right| = \
 &=c|\mu|(b-a)d(f_1,f_2).
 \end{aligned}
 $$
-It is now required that $c|\mu|(b-a)\lt1$, or $|\mu|\lt\frac{1}{c(b-a)}$, for $T$ to be a contraction. Applying the [[Applied Functional Analysis#Theorem Banach's FPT|Banach's FPT]], we see that the map $T$ has a unique [[Applied Functional Analysis#Def fixed point|fixed point]] $f^*\in C[a,b]$.
+It is now required that $c|\mu|(b-a)\lt1$, or $|\mu|\lt\frac{1}{c(b-a)}$, for $T$ to be a contraction. Applying the [[Applied Functional Analysis#Theorem 1.1 (Banach's FPT)|Banach's FPT]], we see that the map $T$ has a unique [[Applied Functional Analysis#Def 1.2 (Fixed Point)|fixed point]] $f^*\in C[a,b]$.
