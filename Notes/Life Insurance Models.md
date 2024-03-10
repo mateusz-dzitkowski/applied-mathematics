@@ -3,7 +3,7 @@
 Define $X$, a random variable, to be the age of death of a newborn. $X$ is assumed to be a continuous, non-negative random variable. 
 We have:
 - $F_X(x) = P(X \le x)$,
-- $S(x) := 1 - F_X(x) = P(X \ge x)$ - survival function, probability that a newborn will survive to $x$,
+- $S(x) = 1 - F_X(x) = P(X \ge x)$ - survival function, probability that a newborn will survive to $x$,
 - $f_x(x) = F'_X(x)$
 Let us also define $(x)$ to be a life aged $x$, usually meant as a person aged $x$ years.
 ### Def 1.2 (Future lifetime)
@@ -26,7 +26,7 @@ The following equalities are true:
 - $F(x) = \int_0^\infty f(s)ds = 1 - s(x) = 1 - \exp(-\int_0^x\mu_sds)$,
 - $f(x) = F'(x) = -S'(x) = \mu_x\exp(-\int_0^x\mu_sds)$,
 - $S(x) = 1 - F(x) = 1 - \int_0^\infty f(s)ds = \exp(-\int_0^x\mu_sds)$,
-- $\mu_x = \frac{F'(x)}{1-F(x)} = \frac{f(x)}{\int_x^\infty f(s)ds} = -\frac{S'(x)}{S(x)}$
+- $\mu_x = \frac{F'(x)}{1-F(x)} = \frac{f(x)}{\int_x^\infty f(s)ds} = -\frac{S'(x)}{S(x)}$.
 ### Def 1.5 (UDD)
 The uniform distribution of deaths (UDD) assumption assumes the following:
 $$
