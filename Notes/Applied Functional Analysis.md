@@ -2,7 +2,7 @@
 
 ### Def 1.1 (Metric and Metric Space)
 Let $X$ be a nonempty set, and $d: X^2 \rightarrow \mathbb{R}$ be a function satisfying:
-- $(d(x, y) = 0$ iff $x=y$
+- $d(x, y) = 0$ iff $x=y$
 - $d(x, y) = d(y, x)$
 - $d(x, y) \le d(x, z) + d(z, y)$
 Then the function $d$ is called the metric, the pair $(X, d)$ is called the metric space, and the number $d(x, y)$ is called the distance between $x$ and $y$ in $X$.

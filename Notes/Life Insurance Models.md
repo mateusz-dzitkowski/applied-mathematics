@@ -5,7 +5,7 @@ We have:
 - $F_X(x) = P(X \le x)$,
 - $S(x) := 1 - F_X(x) = P(X \ge x)$ - survival function, probability that a newborn will survive to $x$,
 - $f_x(x) = F'_X(x)$
-Let us also define $(x)$ to be a life aged $(x)$, usually meant as a person aged $x$ years.
+Let us also define $(x)$ to be a life aged $x$, usually meant as a person aged $x$ years.
 ### Def 1.2 (Future lifetime)
 Define $T(x)$ to be the future lifetime of $(x)$, the amount of time that a person aged $x$ will live starting now. $T(x)$ is also a continuous, non-negative random variable, similar to $X$.
 We have:
