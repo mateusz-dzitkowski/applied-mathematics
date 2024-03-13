@@ -9,11 +9,11 @@ fn main() {
     g.add_node(Node::new("c"));
     g.add_node(Node::new("d"));
     g.add_edges(vec![
-        ("a", "b"),
-        ("b", "c"),
-        ("b", "d"),
-        ("c", "a"),
-        ("d", "a"),
+        Edge::new("a", "b"),
+        Edge::new("b", "c"),
+        Edge::new("b", "d"),
+        Edge::new("c", "a"),
+        Edge::new("d", "a"),
     ]);
     println!("{}", g.to_dot());
     g.save_graph("graph.txt");

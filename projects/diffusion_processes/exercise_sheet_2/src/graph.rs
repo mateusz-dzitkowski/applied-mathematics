@@ -20,7 +20,7 @@ pub struct Edge<T> {
 }
 
 impl<T> Edge<T> {
-    fn new(from: T, to: T) -> Self {
+    pub fn new(from: T, to: T) -> Self {
         Self { from, to }
     }
 }
@@ -31,7 +31,7 @@ pub struct Graph<T: Eq + Clone + Hash> {
     edges: Vec<Edge<T>>,
 }
 
-impl<'a, T: Eq + Clone + Hash + Display> Graph<T> {
+impl<T: Eq + Clone + Hash + Display> Graph<T> {
     pub fn add_node(&mut self, node: Node<T>) {
         self.nodes.insert(node.label.clone(), node);
     }
@@ -40,14 +40,14 @@ impl<'a, T: Eq + Clone + Hash + Display> Graph<T> {
         nodes.into_iter().for_each(|node| self.add_node(node))
     }
 
-    pub fn add_edge(&mut self, from: T, to: T) {
-        self.edges.push(Edge::new(from, to))
+    pub fn add_edge(&mut self, edge: Edge<T>) {
+        self.edges.push(edge);
     }
 
-    pub fn add_edges(&mut self, edges: Vec<(T, T)>) {
+    pub fn add_edges(&mut self, edges: Vec<Edge<T>>) {
         edges
             .into_iter()
-            .for_each(|(from, to)| self.add_edge(from, to))
+            .for_each(|edge| self.add_edge(edge))
     }
 
     pub fn contains(&self, key: T) -> bool {
@@ -146,15 +146,15 @@ mod tests {
     #[rstest]
     fn test_add_edge_adds_edge(mut graph: Graph<String>, a: Node<String>, b: Node<String>) {
         graph.add_nodes(vec![a.clone(), b.clone()]);
-        graph.add_edge(a.clone().label, b.clone().label);
+        graph.add_edge(Edge::new(a.clone().label, b.clone().label));
         assert_eq!(graph.edges, vec![Edge::new(a.label, b.label)]);
     }
 
     #[rstest]
     fn test_add_edges_adds_edges(mut graph: Graph<String>, a: Node<String>, b: Node<String>) {
         graph.add_edges(vec![
-            (a.clone().label, b.clone().label),
-            (a.clone().label, a.clone().label),
+            Edge::new(a.clone().label, b.clone().label),
+            Edge::new(a.clone().label, a.clone().label),
         ]);
         assert_eq!(
             graph.edges,
@@ -188,8 +188,8 @@ mod tests {
         let nodes = vec![a.clone(), b.clone(), c.clone()];
         graph.add_nodes(nodes);
         graph.add_edges(vec![
-            (a.clone().label, b.clone().label),
-            (a.clone().label, c.clone().label),
+            Edge::new(a.clone().label, b.clone().label),
+            Edge::new(a.clone().label, c.clone().label),
         ]);
         assert_eq!(graph.get_neighbors(a.label), vec![b, c]);
     }
@@ -203,8 +203,8 @@ mod tests {
         let nodes = vec![a.clone(), b.clone()];
         graph.add_nodes(nodes);
         graph.add_edges(vec![
-            (a.clone().label, b.clone().label),
-            (a.clone().label, b.clone().label),
+            Edge::new(a.clone().label, b.clone().label),
+            Edge::new(a.clone().label, b.clone().label),
         ]);
         assert_eq!(graph.get_neighbors(a.label), vec![b])
     }
@@ -218,9 +218,9 @@ mod tests {
     ) {
         graph.add_nodes(vec![a.clone(), b.clone(), c.clone()]);
         graph.add_edges(vec![
-            (a.clone().label, b.clone().label),
-            (b.clone().label, c.clone().label),
-            (c.clone().label, a.clone().label),
+            Edge::new(a.clone().label, b.clone().label),
+            Edge::new(b.clone().label, c.clone().label),
+            Edge::new(c.clone().label, a.clone().label),
         ]);
         assert_eq!(
             graph.to_dot(),
