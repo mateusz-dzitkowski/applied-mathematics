@@ -18,16 +18,16 @@ A fixed point of the mapping $T:X \rightarrow X$ is the point $x^*\in X$ such th
 Let $(X, d)$ be a [[#Def 1.1 (Metric and Metric Space)|metric space]]. A mapping $T: X\rightarrow X$ is called a contraction on $X$ of there exists a constant $0\lt k\lt1$ such that $$d(T(x), T(y)) \le kd(x, y)$$ for all $x, y \in X$.
 ### Theorem 1.1 (Banach's FPT)
 Let $(X, d)$  be a complete [[#Def 1.1 (Metric and Metric Space)|metric space]] and let $T:X\rightarrow X$ be a [[#Def 1.3 (Contraction)|contraction]] on $X$. Then $T$ has a unique [[#Def 1.2 (Fixed Point)|fixed point]] $x^*\in X$.
-#### Corollary
+#### Corollary 1.1 (Banach's FPT)
 The iterative sequence $x_{n+1} = T(x_n)$ for $n=1, 2, ...$ with arbitrary starting point $x_0 \in X$ converges, under assumptions of [[#Theorem 1.1 (Banach's FPT)|Banach's FPT]], to the unique [[#Def 1.2 (Fixed Point)|fixed point]] of $T$. Moreover, the following estimates hold: 
 - $d(x_m,x^*) \le \frac{k^m}{1-k}d(x_1, x_0)$ - the prior estimate,
 - $d(x_m, x^*) \le \frac{k}{1-k}d(x_{m-1}, x_m)$ - the posterior estimate.
 # 2. Applications of [[#Theorem 1.1 (Banach's FPT)|Banach's FPT]]
-## Applications to real-valued functions
+## 2.1 Applications to real-valued functions
 Let $g \in C^1[a, b]$, and suppose we want to find the solution to the equation $g(x)=0$ on $[a, b]$. We note that we can always rewrite this equation as $x = g(x) + x$, and then out problem is equivalent with finding a fixed point of the function $f(x) = x + g(x)$.
 ### Theorem 2.1 (Differentiable Contraction)
 Let $(\mathbb R,d)$  be a metric space of real numbers with the [[#Def 1.1 (Metric and Metric Space)|metric]] $d(x, y) = |x - y|$ and let $[a, b]$ be a closed interval in $\mathbb R$. Moreover, let $f: [a, b] \rightarrow [a, b]$ be a continuous and differentiable function such that $\sup\limits_{x\in[a,b]}|f'(x)| \le k \lt 1$. Then there exists a unique [[#Def 1.2 (Fixed Point)|fixed point]] $x^*\in[a,b]$ of $f$.
-#### Example
+#### Example 2.1
 We want to find the solution to the equation $cos(x) - 2x = 0$ on $[0, \pi]$. Then we can write this equation as $x=\frac{1}{2}cos(x)$, and try to find the fixed point of the function $f(x)=\frac{1}{2}cos(x)$ on $[0,\pi]$. We have to show that $f$ is a [[#Def 1.3 (Contraction)|contraction]] on $[0, \pi]$. To do so, we apply the [[#Theorem differentiable contraction|theorem 2.1]]. We have 
 $$
 \sup\limits_{x\in[0,\pi]}|f'(x)| = \sup\limits_{x\in[0,\pi]}\left|-\frac{1}{2}sin(x)\right|=\frac{1}{2}\lt1.
@@ -40,7 +40,7 @@ $$
 &\leq\sup\limits_{x,y\in[0,\pi]}\left|sin\left(\frac{x+y}{2}\right)\frac{1}{2}|x-y|\right|=\frac{1}{2}|x-y|\le|x-y|.
 \end{aligned}
 $$
-## Applications to integral equations
+## 2.2 Applications to integral equations
 We consider integral equations in the following form
 $$
 f(x) = g(x) + \mu\int_a^bk(x,y)f(y)dy,
@@ -64,3 +64,103 @@ d(T(f_1), T(f_2)) &= \sup\limits_{x\in[a,b]}\left|T(f_1)(x)-T(f_2)(x)\right| = \
 \end{aligned}
 $$
 It is now required that $c|\mu|(b-a)\lt1$, or $|\mu|\lt\frac{1}{c(b-a)}$, for $T$ to be a contraction. Applying the [[#Theorem 1.1 (Banach's FPT)|Banach's FPT]], we see that the map $T$ has a unique [[#Def 1.2 (Fixed Point)|fixed point]] $f^*\in C[a,b]$.
+### Theorem 2.3 (Integral equation)
+Consider the integral equation
+$$
+f(x) = g(x) + \mu \int_a^bk(x,y)f(y)dy.
+$$
+Suppose that $k$ and $g$ are continuous on $[a,b]^2$ and $[a,b]$ respectively, and assume that the parameter $\mu$ satisfies $|\mu| \lt \frac{1}{c(b-a)}$ with the constant $c$ such that $|k(x,y)| \lt c$ for all $(x,y) \in [a,b]^2$. Then the integral equation has a unique solution $f \in C[a, b]$. Moreover, this solution is a limit of the sequence $\{f_n\}$ where $f_0$ is a continuous function on $[a,b]$, and
+$$
+f_{n+1} = g(x) + \mu\int_a^bk(x,y)f_n(y)dy.
+$$
+## 2.3 Applications to differential equations
+Let's consider the initial value problem
+$$
+\begin{aligned}
+x'(t) &= f(t, x(t)) \\
+x(t_0) &= x_0
+\end{aligned}
+$$
+where $f:A \subset \mathbb{R}^2 \rightarrow \mathbb{R}$ is a given function and $x(t)$ is an unknown function that we want to find.
+### Theorem 2.4 (Picard-Lindelöf)
+Let $f$ be continuous on the rectangle 
+$$
+R = \left\{(t,x) \in \mathbb{R}_+ \times \mathbb{R}: |t-t_0| \le a, |x - x_0| \le b\right\}
+$$
+and thus bounded on $R$, say $|f(t, x)| \le c$ for all $(t, x) \in R$. Suppose that $f$ satisfies the Lipschitz condition on $R$ with respect to the second argument, i.e., there exists a constant $k$ such that
+$$
+|f(t,x) - f(t,y)| \le k|x-y|
+$$
+for all $(t,x), (t,y) \in R$.
+Then the initial value problem has a unique solution, which exists on the interval $[t_0-\beta, t_0+\beta]$, where
+$$
+\beta = \min\left\{a, \frac{b}{c}, \frac{1}{k}\right\}.
+$$
+### Corollary 2.1 (Picard-Lindelöf)
+Under the assumptions of [[#Theorem 2.4 (Picard-Lindelöf)|Picard-Lindelöf theorem]], the sequence given by
+$$
+\begin{aligned}
+x_0(t) &= x_0\\ 
+x_{n+1}(t) &= T(x_n)(t) = x_0 + \int_{t_0}^tf(s, x_n(s))ds
+\end{aligned}
+$$
+converges uniformly to the unique solution $x(t)$ on $J=[t_0-\beta,t_0+\beta]$.
+#### Example 2.2
+Consider the differential equation
+$$
+x'(t) = \sqrt{x(t)} + x^3(t), \quad x(1) = 2.
+$$
+We have 
+$$
+\begin{aligned}
+x_1(t) &= 2 + \int_1^t\left(\sqrt{2}+2^2\right)ds = 2 + \left(\sqrt{2} + 8\right)(t-1) \\
+x_2(t) &= 2 + \int_1^t\left(\sqrt{x_1(s)} + x_1(s)^3\right)ds = *\textrm{hot mess}*
+\end{aligned}
+$$
+## 2.4 Applications to matrix equations
+Suppose we want to find a solution of the matrix equation
+$$
+Ax = B
+$$
+where $A \in \mathbb{R}^{n \times m}, b \in \mathbb{R}^n$.
+We note that this equation can be rewritten as 
+$$
+x = (I-A)x + b
+$$
+where $I$ is the identity matrix.
+Let's define the map $T: \mathbb{R}^n \rightarrow \mathbb{R}^n$ by
+$$
+Tx = (I-A)x + b.
+$$
+Then the problem of solving the matrix equation $Ax=b$ is equivalent with finding a fixed point of $T$. 
+Let's define $\alpha_{ij} = \delta_{ij} - a_{ij}$ where $a_{ij}$ are elements of the matrix $A$, and $\delta_{ij}$ is the Kronecker delta. Using this notation we have 
+$$
+(Tx)_i = \sum_{j=1}^n\alpha_{ij}x_j + b_i
+$$
+We will show that $Ax=b$ has a unique solution if
+$$
+\sum_{j=1}^n|\alpha_{ij}| \le \alpha \lt 1.
+$$
+for all $i=1,2,\dots,n$. Consider the matrix space $(\mathbb{R}^n, d)$, with $d(x, y) = \max\limits_{1 \le i \le n}|x_i-y_i|$ for $x,y \in \mathbb{R}^n$. We have
+$$
+\begin{aligned}
+d(Tx, Ty) &= \max\limits_i \left|(Tx)_i - (Ty)_i\right| = \\ 
+&= \max\limits_i \left|\sum_{j=1}^n\alpha_{ij}(x_j-y_j)\right| \le \\
+&\le \max\limits_i \sum_{j=1}^n|\alpha_{ij}||x_j-y_j| \le \\
+&\le \max\limits_i \sum_{j=1}^n|\alpha_{ij}| \cdot \max\limits_j|x_j-y_j| = \\
+&= \max\limits_i \sum_{j=1}^n|\alpha_{ij}| \cdot d(x, y).
+\end{aligned}
+$$
+We notice that if $\sum_{j=1}^n|\alpha_{ij}| \lt 1$, for all $i=1,2,\dots,n$, then $\max\limits_i\sum_{j=1}^n|\alpha_{ij}|\lt1$. We have
+$$
+\sum_{j=1}^n|\alpha_{ij}| = |a_{i1}| + |a_{i2}| + \dots + |1-a_{ii}| + \dots + |a_{in}| \lt 1,
+$$
+so
+$$
+\sum_{j=1, j \ne i}^n|a_{ij}| \lt 1 - |1-a_{ii}| \lt |a_{ii}|.
+$$
+We get the condition for the matrix $A$ for which $T$ is a contraction. This condition is given by
+$$
+|a_{ii}| \gt \sum_{j=1, j \ne i}^n|a_{ij}|,
+$$
+or, in other words, matrix $A$ should be strictly diagonally dominant.
