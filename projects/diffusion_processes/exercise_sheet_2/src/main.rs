@@ -4,17 +4,13 @@ use graph::{Edge, Graph, Node};
 
 fn main() {
     let mut g = Graph::default();
-    g.add_node(Node::new("a"));
-    g.add_node(Node::new("b"));
-    g.add_node(Node::new("c"));
-    g.add_node(Node::new("d"));
-    g.add_edges(vec![
-        Edge::new("a", "b"),
-        Edge::new("b", "c"),
-        Edge::new("b", "d"),
-        Edge::new("c", "a"),
-        Edge::new("d", "a"),
-    ]);
+    g.add_nodes("a,b,c,d,e,f,g,h,i,j".split(",").map(Node::new));
+    g.add_edges(
+        "a-b,b-g,i-g,c-a,g-h,i-j,a-d,h-j,e-f,a-e,j-g,d-c,a-f,h-i,c-f"
+            .split(",")
+            .map(|pair| pair.split("-"))
+            .map(|mut item| Edge::new(item.next().unwrap(), item.next().unwrap()))
+    );
     println!("{}", g.to_dot());
     g.save_graph("graph.txt");
 }

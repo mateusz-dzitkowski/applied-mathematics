@@ -36,7 +36,8 @@ impl<T: Eq + Clone + Hash + Display> Graph<T> {
         self.nodes.insert(node.label.clone(), node);
     }
 
-    pub fn add_nodes(&mut self, nodes: Vec<Node<T>>) {
+    pub fn add_nodes<U>(&mut self, nodes: U) where U: IntoIterator<Item = Node<T>>
+    {
         nodes.into_iter().for_each(|node| self.add_node(node))
     }
 
@@ -44,7 +45,8 @@ impl<T: Eq + Clone + Hash + Display> Graph<T> {
         self.edges.push(edge);
     }
 
-    pub fn add_edges(&mut self, edges: Vec<Edge<T>>) {
+    pub fn add_edges<U>(&mut self, edges: U) where U: IntoIterator<Item = Edge<T>>
+    {
         edges
             .into_iter()
             .for_each(|edge| self.add_edge(edge))
