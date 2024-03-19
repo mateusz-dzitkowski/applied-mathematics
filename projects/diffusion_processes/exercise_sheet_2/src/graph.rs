@@ -1,5 +1,5 @@
-use std::collections::*;
-use std::fmt::Display;
+use std::collections::{HashMap, VecDeque};
+use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -31,12 +31,14 @@ pub struct Graph<T: Eq + Clone + Hash> {
     edges: Vec<Edge<T>>,
 }
 
-impl<T: Eq + Clone + Hash + Display> Graph<T> {
+impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
     pub fn add_node(&mut self, node: Node<T>) {
         self.nodes.insert(node.label.clone(), node);
     }
 
-    pub fn add_nodes<U>(&mut self, nodes: U) where U: IntoIterator<Item = Node<T>>
+    pub fn add_nodes<U>(&mut self, nodes: U)
+    where
+        U: IntoIterator<Item = Node<T>>,
     {
         nodes.into_iter().for_each(|node| self.add_node(node))
     }
@@ -45,15 +47,15 @@ impl<T: Eq + Clone + Hash + Display> Graph<T> {
         self.edges.push(edge);
     }
 
-    pub fn add_edges<U>(&mut self, edges: U) where U: IntoIterator<Item = Edge<T>>
+    pub fn add_edges<U>(&mut self, edges: U)
+    where
+        U: IntoIterator<Item = Edge<T>>,
     {
-        edges
-            .into_iter()
-            .for_each(|edge| self.add_edge(edge))
+        edges.into_iter().for_each(|edge| self.add_edge(edge))
     }
 
-    pub fn contains(&self, key: T) -> bool {
-        self.nodes.contains_key(&key)
+    pub fn contains(&self, key: &T) -> bool {
+        self.nodes.contains_key(key)
     }
 
     pub fn get_neighbors(&self, key: T) -> Vec<Node<T>> {
@@ -81,6 +83,40 @@ impl<T: Eq + Clone + Hash + Display> Graph<T> {
 
     pub fn get_edges(&self) -> Vec<Edge<T>> {
         self.edges.iter().cloned().collect()
+    }
+
+    pub fn get_shortest_path_lengths(&self, source: T) -> Option<HashMap<T, usize>> {
+        if !self.contains(&source) {
+            return None;
+        }
+
+        let mut lengths = HashMap::from([(source.clone(), 0)]);
+        let mut queue = VecDeque::from([(source, 0)]);
+
+        while let Some((node, length)) = queue.pop_front() {
+            if length > *lengths.entry(node.clone()).or_insert(usize::MAX) {
+                continue;
+            }
+            for edge in self
+                .edges
+                .iter()
+                .filter(|Edge { from, to }| from == &node || to == &node)
+            {
+                let neighbor = if edge.from == node {
+                    &edge.to
+                } else {
+                    &edge.from
+                };
+                let total_length = length + 1;
+
+                let neighbor_length = lengths.entry(neighbor.clone()).or_insert(usize::MAX);
+                if total_length < *neighbor_length {
+                    *neighbor_length = total_length;
+                    queue.push_back((neighbor.clone(), total_length));
+                }
+            }
+        }
+        Some(lengths)
     }
 
     pub fn to_dot(&self) -> String {
@@ -177,7 +213,7 @@ mod tests {
         #[case] expected: bool,
     ) {
         graph.add_node(to_insert.clone());
-        assert_eq!(graph.contains(a.label), expected);
+        assert_eq!(graph.contains(&a.label), expected);
     }
 
     #[rstest]
@@ -227,6 +263,44 @@ mod tests {
         assert_eq!(
             graph.to_dot(),
             "digraph g {\n\t\"a\" -> \"b\"\n\t\"b\" -> \"c\"\n\t\"c\" -> \"a\"\n}".to_string()
+        );
+    }
+
+    #[rstest]
+    fn test_get_shortest_path_lengths(
+        mut graph: Graph<String>,
+        a: Node<String>,
+        b: Node<String>,
+        c: Node<String>,
+    ) {
+        graph.add_nodes(vec![a.clone(), b.clone(), c.clone()]);
+        graph.add_edges(vec![
+            Edge::new(a.clone().label, b.clone().label),
+            Edge::new(b.clone().label, c.clone().label),
+        ]);
+        assert_eq!(
+            graph.get_shortest_path_lengths(a.clone().label),
+            HashMap::from([
+                (a.clone().label, 0),
+                (b.clone().label, 1),
+                (c.clone().label, 2)
+            ]),
+        );
+        assert_eq!(
+            graph.get_shortest_path_lengths(b.clone().label),
+            HashMap::from([
+                (a.clone().label, 1),
+                (b.clone().label, 0),
+                (c.clone().label, 1)
+            ]),
+        );
+        assert_eq!(
+            graph.get_shortest_path_lengths(c.clone().label),
+            HashMap::from([
+                (a.clone().label, 2),
+                (b.clone().label, 1),
+                (c.clone().label, 0)
+            ]),
         );
     }
 }

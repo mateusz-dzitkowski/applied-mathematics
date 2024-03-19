@@ -9,8 +9,10 @@ fn main() {
         "a-b,b-g,i-g,c-a,g-h,i-j,a-d,h-j,e-f,a-e,j-g,d-c,a-f,h-i,c-f"
             .split(",")
             .map(|pair| pair.split("-"))
-            .map(|mut item| Edge::new(item.next().unwrap(), item.next().unwrap()))
+            .map(|mut item| Edge::new(item.next().unwrap(), item.next().unwrap())),
     );
     println!("{}", g.to_dot());
     g.save_graph("graph.txt");
+
+    dbg!(g.get_shortest_path_lengths("d"));
 }
