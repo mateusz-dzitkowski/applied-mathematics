@@ -17,11 +17,20 @@ impl<T> Node<T> {
 pub struct Edge<T> {
     from: T,
     to: T,
+    weight: usize,
 }
 
 impl<T> Edge<T> {
-    pub fn new(from: T, to: T) -> Self {
-        Self { from, to }
+    pub fn new(from: T, to: T, weight: usize) -> Self {
+        Self { from, to, weight }
+    }
+
+    pub fn new_unweighted(from: T, to: T) -> Self {
+        Self {
+            from,
+            to,
+            weight: 1,
+        }
     }
 }
 
@@ -62,7 +71,7 @@ impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
         let mut neighbors: Vec<Node<T>> = self
             .edges
             .iter()
-            .filter_map(|Edge { from, to }| {
+            .filter_map(|Edge { from, to, weight }| {
                 if from == &key {
                     self.nodes.get(&to)
                 } else if to == &key {
@@ -100,14 +109,14 @@ impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
             for edge in self
                 .edges
                 .iter()
-                .filter(|Edge { from, to }| from == &node || to == &node)
+                .filter(|Edge { from, to, weight }| from == &node || to == &node)
             {
                 let neighbor = if edge.from == node {
                     &edge.to
                 } else {
                     &edge.from
                 };
-                let total_length = length + 1;
+                let total_length = length + edge.weight;
 
                 let neighbor_length = lengths.entry(neighbor.clone()).or_insert(usize::MAX);
                 if total_length < *neighbor_length {
@@ -184,21 +193,21 @@ mod tests {
     #[rstest]
     fn test_add_edge_adds_edge(mut graph: Graph<String>, a: Node<String>, b: Node<String>) {
         graph.add_nodes(vec![a.clone(), b.clone()]);
-        graph.add_edge(Edge::new(a.clone().label, b.clone().label));
-        assert_eq!(graph.edges, vec![Edge::new(a.label, b.label)]);
+        graph.add_edge(Edge::new_unweighted(a.clone().label, b.clone().label));
+        assert_eq!(graph.edges, vec![Edge::new_unweighted(a.label, b.label)]);
     }
 
     #[rstest]
     fn test_add_edges_adds_edges(mut graph: Graph<String>, a: Node<String>, b: Node<String>) {
         graph.add_edges(vec![
-            Edge::new(a.clone().label, b.clone().label),
-            Edge::new(a.clone().label, a.clone().label),
+            Edge::new_unweighted(a.clone().label, b.clone().label),
+            Edge::new_unweighted(a.clone().label, a.clone().label),
         ]);
         assert_eq!(
             graph.edges,
             vec![
-                Edge::new(a.clone().label, b.clone().label),
-                Edge::new(a.clone().label, a.clone().label)
+                Edge::new_unweighted(a.clone().label, b.clone().label),
+                Edge::new_unweighted(a.clone().label, a.clone().label)
             ]
         )
     }
@@ -226,8 +235,8 @@ mod tests {
         let nodes = vec![a.clone(), b.clone(), c.clone()];
         graph.add_nodes(nodes);
         graph.add_edges(vec![
-            Edge::new(a.clone().label, b.clone().label),
-            Edge::new(a.clone().label, c.clone().label),
+            Edge::new_unweighted(a.clone().label, b.clone().label),
+            Edge::new_unweighted(a.clone().label, c.clone().label),
         ]);
         assert_eq!(graph.get_neighbors(a.label), vec![b, c]);
     }
@@ -241,8 +250,8 @@ mod tests {
         let nodes = vec![a.clone(), b.clone()];
         graph.add_nodes(nodes);
         graph.add_edges(vec![
-            Edge::new(a.clone().label, b.clone().label),
-            Edge::new(a.clone().label, b.clone().label),
+            Edge::new_unweighted(a.clone().label, b.clone().label),
+            Edge::new_unweighted(a.clone().label, b.clone().label),
         ]);
         assert_eq!(graph.get_neighbors(a.label), vec![b])
     }
@@ -256,9 +265,9 @@ mod tests {
     ) {
         graph.add_nodes(vec![a.clone(), b.clone(), c.clone()]);
         graph.add_edges(vec![
-            Edge::new(a.clone().label, b.clone().label),
-            Edge::new(b.clone().label, c.clone().label),
-            Edge::new(c.clone().label, a.clone().label),
+            Edge::new_unweighted(a.clone().label, b.clone().label),
+            Edge::new_unweighted(b.clone().label, c.clone().label),
+            Edge::new_unweighted(c.clone().label, a.clone().label),
         ]);
         assert_eq!(
             graph.to_dot(),
@@ -275,32 +284,37 @@ mod tests {
     ) {
         graph.add_nodes(vec![a.clone(), b.clone(), c.clone()]);
         graph.add_edges(vec![
-            Edge::new(a.clone().label, b.clone().label),
-            Edge::new(b.clone().label, c.clone().label),
+            Edge::new(a.clone().label, b.clone().label, 2),
+            Edge::new(b.clone().label, c.clone().label, 3),
         ]);
         assert_eq!(
-            graph.get_shortest_path_lengths(a.clone().label),
+            graph.get_shortest_path_lengths(a.clone().label).unwrap(),
             HashMap::from([
                 (a.clone().label, 0),
-                (b.clone().label, 1),
-                (c.clone().label, 2)
+                (b.clone().label, 2),
+                (c.clone().label, 5),
             ]),
         );
         assert_eq!(
-            graph.get_shortest_path_lengths(b.clone().label),
-            HashMap::from([
-                (a.clone().label, 1),
-                (b.clone().label, 0),
-                (c.clone().label, 1)
-            ]),
-        );
-        assert_eq!(
-            graph.get_shortest_path_lengths(c.clone().label),
+            graph.get_shortest_path_lengths(b.clone().label).unwrap(),
             HashMap::from([
                 (a.clone().label, 2),
-                (b.clone().label, 1),
-                (c.clone().label, 0)
+                (b.clone().label, 0),
+                (c.clone().label, 3),
             ]),
         );
+        assert_eq!(
+            graph.get_shortest_path_lengths(c.clone().label).unwrap(),
+            HashMap::from([
+                (a.clone().label, 5),
+                (b.clone().label, 3),
+                (c.clone().label, 0),
+            ]),
+        );
+    }
+
+    #[rstest]
+    fn test_get_shortest_path_lengths_no_such_key(graph: Graph<String>) {
+        assert!(graph.get_shortest_path_lengths("abc".to_string()).is_none())
     }
 }
