@@ -17,11 +17,11 @@ impl<T> Node<T> {
 pub struct Edge<T> {
     from: T,
     to: T,
-    weight: usize,
+    weight: f64,
 }
 
 impl<T> Edge<T> {
-    pub fn new(from: T, to: T, weight: usize) -> Self {
+    pub fn new(from: T, to: T, weight: f64) -> Self {
         Self { from, to, weight }
     }
 
@@ -29,7 +29,7 @@ impl<T> Edge<T> {
         Self {
             from,
             to,
-            weight: 1,
+            weight: 1.,
         }
     }
 }
@@ -94,16 +94,16 @@ impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
         self.edges.iter().cloned().collect()
     }
 
-    pub fn get_shortest_path_lengths(&self, source: T) -> Option<HashMap<T, usize>> {
+    pub fn get_shortest_path_lengths(&self, source: T) -> Option<HashMap<T, f64>> {
         if !self.contains(&source) {
             return None;
         }
 
-        let mut lengths = HashMap::from([(source.clone(), 0)]);
-        let mut queue = VecDeque::from([(source, 0)]);
+        let mut lengths = HashMap::from([(source.clone(), 0.)]);
+        let mut queue = VecDeque::from([(source, 0.)]);
 
         while let Some((node, length)) = queue.pop_front() {
-            if length > *lengths.entry(node.clone()).or_insert(usize::MAX) {
+            if length > *lengths.entry(node.clone()).or_insert(f64::MAX) {
                 continue;
             }
             for edge in self
@@ -118,7 +118,7 @@ impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
                 };
                 let total_length = length + edge.weight;
 
-                let neighbor_length = lengths.entry(neighbor.clone()).or_insert(usize::MAX);
+                let neighbor_length = lengths.entry(neighbor.clone()).or_insert(f64::MAX);
                 if total_length < *neighbor_length {
                     *neighbor_length = total_length;
                     queue.push_back((neighbor.clone(), total_length));
@@ -284,31 +284,31 @@ mod tests {
     ) {
         graph.add_nodes(vec![a.clone(), b.clone(), c.clone()]);
         graph.add_edges(vec![
-            Edge::new(a.clone().label, b.clone().label, 2),
-            Edge::new(b.clone().label, c.clone().label, 3),
+            Edge::new(a.clone().label, b.clone().label, 2.),
+            Edge::new(b.clone().label, c.clone().label, 3.),
         ]);
         assert_eq!(
             graph.get_shortest_path_lengths(a.clone().label).unwrap(),
             HashMap::from([
-                (a.clone().label, 0),
-                (b.clone().label, 2),
-                (c.clone().label, 5),
+                (a.clone().label, 0.),
+                (b.clone().label, 2.),
+                (c.clone().label, 5.),
             ]),
         );
         assert_eq!(
             graph.get_shortest_path_lengths(b.clone().label).unwrap(),
             HashMap::from([
-                (a.clone().label, 2),
-                (b.clone().label, 0),
-                (c.clone().label, 3),
+                (a.clone().label, 2.),
+                (b.clone().label, 0.),
+                (c.clone().label, 3.),
             ]),
         );
         assert_eq!(
             graph.get_shortest_path_lengths(c.clone().label).unwrap(),
             HashMap::from([
-                (a.clone().label, 5),
-                (b.clone().label, 3),
-                (c.clone().label, 0),
+                (a.clone().label, 5.),
+                (b.clone().label, 3.),
+                (c.clone().label, 0.),
             ]),
         );
     }
