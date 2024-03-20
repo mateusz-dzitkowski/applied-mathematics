@@ -67,22 +67,22 @@ X = (S_1 - K)^+  =
 	(S^d - K)^+ ,& \omega = \omega_2.
 	\end{cases}
 $$
-Let $x = V_1(\varphi)$ be the value of the portfolio. Let $B_0 = 1$. We have
+Let $x = V_1(\varphi)$ be the value of the portfolio. Let $\beta_0 = 1$. We have
 $$
-x = \alpha_1S_1 + B_1(1+r).
+x = \alpha_1S_1 + \beta_1(1+r).
 $$
 Let $\alpha = \alpha_1$, and $\beta = \beta_1$. Looking for replication strategy $\varphi = (\alpha, \beta)$, we obtain the following equations:
 $$
 \begin{aligned}
-\alpha S^u + B(1+r) &= x^u = (S^u - K)^+ \\
-\alpha S^d + B(1+r) &= x^d = (S^d - K)^+.
+\alpha S^u + \beta(1+r) &= x^u = (S^u - K)^+ \\
+\alpha S^d + \beta(1+r) &= x^d = (S^d - K)^+.
 \end{aligned}
 $$
 Then, solving for $\alpha$ and $\beta$, we have
 $$
 \alpha = \frac{x^u - x^d}{S^u - S^d}, \quad \beta = \frac{x^dS^u - x^uS^d}{(1 + r)(S^u - S^d)}.
 $$
-Hence the price equals (bruh, how?)
+Hence the price equals
 $$
 \Pi(X) = \Pi_0(x) = \alpha S_0 + \beta.
 $$
