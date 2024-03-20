@@ -132,7 +132,7 @@ Let's define the map $T: \mathbb{R}^n \rightarrow \mathbb{R}^n$ by
 $$
 Tx = (I-A)x + b.
 $$
-Then the problem of solving the matrix equation $Ax=b$ is equivalent with finding a fixed point of $T$. 
+Then the problem of solving the matrix equation $Ax=b$ is equivalent with finding a [[#Def 1.2 (Fixed Point)|fixed point]] of $T$. 
 Let's define $\alpha_{ij} = \delta_{ij} - a_{ij}$ where $a_{ij}$ are elements of the matrix $A$, and $\delta_{ij}$ is the Kronecker delta. Using this notation we have 
 $$
 (Tx)_i = \sum_{j=1}^n\alpha_{ij}x_j + b_i
@@ -159,8 +159,62 @@ so
 $$
 \sum_{j=1, j \ne i}^n|a_{ij}| \lt 1 - |1-a_{ii}| \lt |a_{ii}|.
 $$
-We get the condition for the matrix $A$ for which $T$ is a contraction. This condition is given by
+We get the condition for the matrix $A$ for which $T$ is a [[#Def 1.3 (Contraction)|contraction]]]. This condition is given by
 $$
 |a_{ii}| \gt \sum_{j=1, j \ne i}^n|a_{ij}|,
 $$
 or, in other words, matrix $A$ should be strictly diagonally dominant.
+### Theorem 2.5 (Matrix equation)
+The matrix equation $Ax=b$ with $A \in \mathbb{R}^{n \times n}$ an $b \in \mathbb{R}^n$ has a unique solution $x \in \mathbb{R}^n$ if $A$ is strictly diagonally dominant. The iteration method is as follows
+$$
+x_{n+1} = (I - A)x_n + b, \quad x_0 \in \mathbb{R}^n.
+$$
+In general, we can rewrite the equation $Ax=b$ as $Qx = (Q-A)x + b$, where $Q \in \mathbb{R}^{n \times n}$. We then have the following iterative scheme
+$$
+Qx_{n+1} = (Q-A)x_n + b.
+$$
+Examples:
+- $Q = I$ - Richardson method,
+- $Q$ diagonal, with $q_{ii} = a_{ii}$ - Jacobi method,
+- $Q = D - L$ with $D$ diagonal, and $L$ lower triangular - Gauss-Seidel method.
+# 3. Normed spaces
+### Def 3.1 (Norm and normed space)
+A norm on a vector space $X$ is a real-valued function denoted by $||\cdot||$ which satisfies the following conditions:
+- $||x|| \ge 0$ for all $x$. $||x|| = 0$ iff $x=0$,
+- $||\alpha x|| = |\alpha|||x||$ for any $\alpha$, and $x \in X$,
+- $||x + y|| \le ||x|| + ||y||$ for all $x, y \in X$.
+A normed space is a vector space equipped with a norm, depicted by $(X, ||\cdot||)$, or with a shorthand $X$.
+#### Remark 3.1.1
+A norm on $X$ defined the metric $d(\cdot, \cdot)$ on $X \times X$, which is defined by $d(x, y) = ||x - y||$, and is called the metric induced by the norm $||\cdot||$.
+#### Remark 3.1.2
+Every normed space $X$ is a metric space, converse might not be true.
+For example, a metric defined by 
+$$
+d(x, y) = 
+	\begin{cases} 
+	1,& \quad x=y, \\
+	0,& \quad x \ne y,
+	\end{cases}
+$$
+then $||\alpha(x-y)|| = d(\alpha x, \alpha y) \ne |\alpha|d(x,y) = |\alpha|||x-y||$.
+### Lemma 3.1 (Norm continuity)
+The norm $|| \cdot ||$ defined on $X$ is a continuous mapping of $X$ into $\mathbb{R}$.
+#### Examples of normed spaces
+- $(\mathbb{R}^n, ||\cdot||_2)$, with $||x||_2 = \left(\sum_{m=1}^nx_i^2\right)^\frac{1}{2}$,
+- $(C[a,b], ||\cdot||)$, with $||f|| = \max\limits_{x \in [a,b]}|f(x)|$,
+- $(L^p(\Omega), ||\cdot||_{L^p(\Omega)})$, with $\Omega \subset \mathbb{R}$, $p \ge 1$ and 
+	$$
+	||f||_{L^p(\Omega)} = 
+		\begin{cases}
+		\left(\int_\Omega f(x)^pdx \right)^\frac{1}{p},& \quad 1 \le p \lt \infty, \\
+		ess\sup\limits_{x \in \Omega}|f(x)|,& \quad p = \infty.
+		\end{cases}
+	$$
+### Def 3.2 (Norm equivalence)
+Two normed spaces $(X, ||\cdot||_1)$, $(X, ||\cdot||_2)$ are called topologically equivalent, or two norms $||\cdot||_1$, and  $||\cdot||_2$ are called equivalent if there exist positive constants $C_1$, and $C_2$, such that 
+$$
+C_1||x||_2 \le ||x||_1 \le C_2||x||_2
+$$
+for all $x \in X$.
+### Theorem 3.1 (Equivalence of norms in finite dimensional spaces)
+All norms of finite dimensional space $X$ are equivalent.
