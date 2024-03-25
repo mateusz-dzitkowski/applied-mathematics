@@ -71,15 +71,21 @@ impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
         let mut neighbors: Vec<Node<T>> = self
             .edges
             .iter()
-            .filter_map(|Edge { from, to, weight }| {
-                if from == &key {
-                    self.nodes.get(&to)
-                } else if to == &key {
-                    self.nodes.get(&from)
-                } else {
-                    None
-                }
-            })
+            .filter_map(
+                |Edge {
+                     from,
+                     to,
+                     weight: _,
+                 }| {
+                    if from == &key {
+                        self.nodes.get(&to)
+                    } else if to == &key {
+                        self.nodes.get(&from)
+                    } else {
+                        None
+                    }
+                },
+            )
             .cloned()
             .collect();
         neighbors.dedup();
@@ -106,11 +112,13 @@ impl<T: Eq + Clone + Hash + Display + Debug> Graph<T> {
             if length > *lengths.entry(node.clone()).or_insert(f64::MAX) {
                 continue;
             }
-            for edge in self
-                .edges
-                .iter()
-                .filter(|Edge { from, to, weight }| from == &node || to == &node)
-            {
+            for edge in self.edges.iter().filter(
+                |Edge {
+                     from,
+                     to,
+                     weight: _,
+                 }| from == &node || to == &node,
+            ) {
                 let neighbor = if edge.from == node {
                     &edge.to
                 } else {

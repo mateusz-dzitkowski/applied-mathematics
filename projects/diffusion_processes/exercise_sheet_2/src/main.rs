@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod graph;
 
 use graph::{Edge, Graph, Node};
