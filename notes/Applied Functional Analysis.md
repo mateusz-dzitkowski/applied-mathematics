@@ -185,10 +185,10 @@ A norm on a vector space $X$ is a real-valued function denoted by $||\cdot||$ wh
 - $||x + y|| \le ||x|| + ||y||$ for all $x, y \in X$.
 A normed space is a vector space equipped with a norm, depicted by $(X, ||\cdot||)$, or with a shorthand $X$.
 #### Remark 3.1.1
-A norm on $X$ defined the metric $d(\cdot, \cdot)$ on $X \times X$, which is defined by $d(x, y) = ||x - y||$, and is called the metric induced by the norm $||\cdot||$.
+A [[#Def 3.1 (Norm and normed space)|norm]] on $X$ defines the [[#Def 1.1 (Metric and Metric Space)|metric]] $d(\cdot, \cdot)$ on $X \times X$, which is defined by $d(x, y) = ||x - y||$, and is called the metric induced by the norm $||\cdot||$.
 #### Remark 3.1.2
-Every normed space $X$ is a metric space, converse might not be true.
-For example, a metric defined by 
+Every [[#Def 3.1 (Norm and normed space)|normed space]] $X$ is a [[#Def 1.1 (Metric and Metric Space)|metric space]], converse might not be true.
+For example, a [[#Def 1.1 (Metric and Metric Space)|metric]] defined by 
 $$
 d(x, y) = 
 	\begin{cases} 
@@ -198,7 +198,7 @@ d(x, y) =
 $$
 then $||\alpha(x-y)|| = d(\alpha x, \alpha y) \ne |\alpha|d(x,y) = |\alpha|||x-y||$.
 ### Lemma 3.1 (Norm continuity)
-The norm $|| \cdot ||$ defined on $X$ is a continuous mapping of $X$ into $\mathbb{R}$.
+The [[#Def 3.1 (Norm and normed space)|norm]] $|| \cdot ||$ defined on $X$ is a continuous mapping of $X$ into $\mathbb{R}$.
 #### Examples of normed spaces
 - $(\mathbb{R}^n, ||\cdot||_2)$, with $||x||_2 = \left(\sum_{m=1}^nx_i^2\right)^\frac{1}{2}$,
 - $(C[a,b], ||\cdot||)$, with $||f|| = \max\limits_{x \in [a,b]}|f(x)|$,
@@ -211,10 +211,51 @@ The norm $|| \cdot ||$ defined on $X$ is a continuous mapping of $X$ into $\math
 		\end{cases}
 	$$
 ### Def 3.2 (Norm equivalence)
-Two normed spaces $(X, ||\cdot||_1)$, $(X, ||\cdot||_2)$ are called topologically equivalent, or two norms $||\cdot||_1$, and  $||\cdot||_2$ are called equivalent if there exist positive constants $C_1$, and $C_2$, such that 
+Two [[#Def 3.1 (Norm and normed space)|normed spaces]] $(X, ||\cdot||_1)$, $(X, ||\cdot||_2)$ are called topologically equivalent, or two [[#Def 3.1 (Norm and normed space)|norms]] $||\cdot||_1$, and  $||\cdot||_2$ are called equivalent if there exist positive constants $C_1$, and $C_2$, such that 
 $$
 C_1||x||_2 \le ||x||_1 \le C_2||x||_2
 $$
 for all $x \in X$.
 ### Theorem 3.1 (Equivalence of norms in finite dimensional spaces)
-All norms of finite dimensional space $X$ are equivalent.
+All [[#Def 3.1 (Norm and normed space)|norms]] of finite dimensional space $X$ are equivalent.
+### Def 3.3 (Convergence in normal spaces)
+A sequence $\{x_n\}$ in a [[#Def 3.1 (Norm and normed space)|normed space]] $(X, ||\cdot||)$ is convergent if there exists $x \in X$ such that $\lim\limits_{n \rightarrow \infty}||x_n - x|| = 0$.
+### Def 3.4 (Cauchy sequence)
+A sequence $\{x_n\}$ in a [[#Def 3.1 (Norm and normed space)|normed space]] $(X, ||\cdot||)$ is a Cauchy sequence if
+$$
+\lim\limits_{m,n \rightarrow \infty}||x_n - x_m|| = 0.
+$$
+### Def 3.5 (Complete space)
+We say that a [[#Def 3.3 (Convergence in normal spaces)|normal space]] $(X, ||\cdot||)$ is complete if every [[#Def 3.4 (Cauchy sequence)|Cauchy sequence]] $\{x_n\}$ in $X$ is convergent to some $x \in X$.
+### Def 3.6 (Banach space)
+A [[#Def 3.5 (Complete space)|complete]] [[#Def 3.1 (Norm and normed space)|normed]] space is called a Banach space.
+### Theorem 3.2 (Euclidean space is complete)
+The space $(\mathbb{R}^N, ||\cdot||_2)$ with the standard Euclidean norm is [[#Def 3.5 (Complete space)|complete]].
+### Theorem 3.3 ()
+Let $\Omega$ be a compact subset of $\mathbb{R}^n$. Then the set $C(\Omega)$ of all continuous functions on $\Omega$ equipped with the norm $||f|| = \max\limits_{x \in \Omega}|f(x)|$ is a [[#Def 3.6 (Banach space)|Banach space]].
+# 4. Hilbert spaces
+### Def 4.1 (Inner product and inner product space)
+Let $X$ be a vector space over the field $\mathbb{F}$ over the real or complex numbers. A mapping $\langle\cdot, \cdot\rangle:X^2 \rightarrow \mathbb{F}$ is called an inner product if for all $x,y \in X$ the following conditions are satisfied
+1. $\langle x, x\rangle \ge 0$, and $\langle x, x\rangle=0 \iff x=0$,
+2. $\langle x,y \rangle = \overline{\langle y,x \rangle}$,
+3. $\langle \alpha x,y \rangle = \alpha\langle x,y \rangle$ for $\alpha \in \mathbb{F}$,
+4. $\langle x+x',y\rangle = \langle x,y \rangle + \langle x',y\rangle$.
+The vector space $X$ together with an inner product $\langle\cdot,\cdot\rangle$ is called an inner product space or pre-Hilbert space and is denoted $(X, \langle\cdot,\cdot\rangle)$.
+#### Remark 4.1
+- $\overline{\langle x,y \rangle}$ denoted the complex conjugate of $\langle x,y \rangle$,
+- The condition $2$ implies that $\langle x,x \rangle$ must be a real number,
+- If $\mathbb{F} = \mathbb{R}$ then $\langle x,y \rangle = \langle y,x \rangle$,
+- Conditions $3$ and $4$ imply that the function $\langle \cdot,\cdot \rangle$ is linear in the first variable. It is easy to see that $\langle \cdot,\cdot \rangle$ is also linear in the second variable if $\mathbb{F}=\mathbb{R}$,
+#### Examples
+- $\mathbb{R}^N$, with $\langle x,y \rangle = \sum_{i=1}^Nx_iy_i$,
+- $C(\Omega)$, with $\langle f,g \rangle = \int_\Omega f(x)\overline{g(x)}dx$,
+- $L_2(\Omega)$, with $\langle f,g \rangle = \int_\Omega f(x)g(x)dx$.
+### Theorem 4.1 (Cauchy-Schwarz-Bunyakowski inequality)
+For all $x, y \in (X, \langle \cdot,\cdot \rangle)$ we have
+$$
+|\langle x,y \rangle|^2 \le \langle x,x \rangle\langle y,y \rangle.
+$$
+### Theorem 4.2 (Inner product space is normed)
+Every [[#Def 4.1 (Inner product and inner product space)|inner product space]] $(X, \langle \cdot,\cdot \rangle)$ is a [[#Def 3.1 (Norm and normed space)|normed space]] with respect to the norm $||x|| = \sqrt{|\langle x,x \rangle|}$.
+### Def 4.2 (Hilbert space)
+An [[#Def 4.1 (Inner product and inner product space)|inner product space]] $(X, \langle \cdot,\cdot \rangle)$ is called a Hilbert space if the normed space $(X, ||\cdot||)$ with the [[#Def 3.1 (Norm and normed space)|norm]] induced by the inner product is a [[#Def 3.6 (Banach space)|Banach space]].
