@@ -259,3 +259,44 @@ $$
 Every [[#Def 4.1 (Inner product and inner product space)|inner product space]] $(X, \langle \cdot,\cdot \rangle)$ is a [[#Def 3.1 (Norm and normed space)|normed space]] with respect to the norm $||x|| = \sqrt{|\langle x,x \rangle|}$.
 ### Def 4.2 (Hilbert space)
 An [[#Def 4.1 (Inner product and inner product space)|inner product space]] $(X, \langle \cdot,\cdot \rangle)$ is called a Hilbert space if the normed space $(X, ||\cdot||)$ with the [[#Def 3.1 (Norm and normed space)|norm]] induced by the inner product is a [[#Def 3.6 (Banach space)|Banach space]].
+### Theorem 4.2 (Parallelogram law)
+Let $(X, \langle \cdot,\cdot \rangle)$ be an [[#Def 4.1 (Inner product and inner product space)|inner product space]]. Then for all $x, y \in X$ we have
+$$
+||x+y||^2 + ||x-y||^2 = 2||x||^2 + 2||y||^2.
+$$
+#### Remark 4.2
+The parallelogram law is not valid for an arbitrary norm on a vector space.
+### Theorem 4.4 (Polarisation identity)
+For any two elements $x, y$ in an [[#Def 4.1 (Inner product and inner product space)|inner product space]] we have
+$$
+\langle x,y \rangle = \frac{1}{4}\left(||x+y||^2 - ||x-y||^2 + i||x+iy||^2 - i||x-iy||^2\right).
+$$
+### Theorem 4.5 (Normed space is inner product space sometimes)
+A [[#Def 3.1 (Norm and normed space)|normed space]] is an [[#Def 4.1 (Inner product and inner product space)|inner product space]] if and only if the norm of the normed space satisfies the parallelogram law.
+# 5. Linear operators
+### Def 5.1 (Linear operator)
+Let $(X, ||\cdot||_X)$ and $(Y, ||\cdot||_Y)$ be [[#Def 3.6 (Banach space)|Banach spaces]], and let $A: X \rightarrow Y$ be a map. We say that $A$ is linear if $A(\alpha x+\beta y) = \alpha Ax + \beta By$ for all $x,y \in X$, and $\alpha, \beta \in \mathbb{R}$. 
+### Def 5.2 (Bounded operator)
+A [[#Def 5.1 (Linear operator)|linear operator]] is bounded if there exists a constant $M \gt 0$ such that
+$$
+||Ax||_Y \le M||x||_X
+$$
+for all $x \in X$.
+We denote the set of all linear and bounded operators as
+$$
+\mathcal{L}(X, Y) = \left\{\ A: X \rightarrow Y | A \text{ is linear and bounded} \right\}.
+$$
+### Def 5.3 (Operator norm)
+A set $\mathcal{L}(X, Y)$ can be equipped with the operator norm
+$$
+||A||_{op} = \inf\left\{ M \,|\, ||Ax||_Y \le M||x||_X \right\} = \sup\limits_{x \ne 0}\frac{||Ax||_Y}{||x||_X} = \sup\limits_{||x||_X=1}||A_x||_Y.
+$$
+### Theorem 5.1 (Operator set is a Banach space)
+The set $\mathcal{L}(X, Y)$ equipped with $||\cdot||_{op}$ norm is a [[#Def 3.6 (Banach space)|Banach space]].
+### Theorem 5.2 ()
+Let $A: X \rightarrow Y$ be a [[#Def 5.1 (Linear operator)|linear operator]], then $A$ is [[#Def 5.2 (Bounded operator)|bounded]] if and only if $A$ is continuous.
+#### Example 5.1
+Consider a matrix $A \in \mathbb{R}^{m \times n}$. The matrix $A$ is a linear operator from $(\mathbb{R}^n, ||\cdot||_\alpha)$ to $(\mathbb{R}^m, ||\cdot||_\beta)$ and the corresponding induced norm (or the operator norm) on the space $\mathbb{R}^{m \times n}$ is defined by
+$$
+||A||_{op} = \sup\left\{ ||Ax||_\beta \,|\, ||x||_\alpha = 1 \right\}.
+$$
