@@ -1,8 +1,10 @@
 #![allow(dead_code)]
 
+mod edge;
 mod graph;
 
-use graph::{Edge, Graph, Node};
+use edge::UnweightedEdge;
+use graph::{Graph, Node};
 
 fn main() {
     let mut g = Graph::default();
@@ -11,7 +13,7 @@ fn main() {
         "a-b,b-g,i-g,c-a,g-h,i-j,a-d,h-j,e-f,a-e,j-g,d-c,a-f,h-i,c-f"
             .split(",")
             .map(|pair| pair.split("-"))
-            .map(|mut item| Edge::new_unweighted(item.next().unwrap(), item.next().unwrap())),
+            .map(|mut item| UnweightedEdge::new(item.next().unwrap(), item.next().unwrap())),
     );
     println!("{}", g.to_dot());
     g.save_graph("graph.txt");
