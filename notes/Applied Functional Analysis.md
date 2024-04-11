@@ -242,7 +242,7 @@ Let $X$ be a vector space over the field $\mathbb{F}$ over the real or complex n
 4. $\langle x+x',y\rangle = \langle x,y \rangle + \langle x',y\rangle$.
 The vector space $X$ together with an inner product $\langle\cdot,\cdot\rangle$ is called an inner product space or pre-Hilbert space and is denoted $(X, \langle\cdot,\cdot\rangle)$.
 #### Remark 4.1
-- $\overline{\langle x,y \rangle}$ denoted the complex conjugate of $\langle x,y \rangle$,
+- $\overline{\langle x,y \rangle}$ denotes the complex conjugate of $\langle x,y \rangle$,
 - The condition $2$ implies that $\langle x,x \rangle$ must be a real number,
 - If $\mathbb{F} = \mathbb{R}$ then $\langle x,y \rangle = \langle y,x \rangle$,
 - Conditions $3$ and $4$ imply that the function $\langle \cdot,\cdot \rangle$ is linear in the first variable. It is easy to see that $\langle \cdot,\cdot \rangle$ is also linear in the second variable if $\mathbb{F}=\mathbb{R}$,
@@ -284,19 +284,56 @@ $$
 for all $x \in X$.
 We denote the set of all linear and bounded operators as
 $$
-\mathcal{L}(X, Y) = \left\{\ A: X \rightarrow Y | A \text{ is linear and bounded} \right\}.
+\mathcal{L}(X, Y) = \left\{\ A: X \rightarrow Y : A \text{ is linear and bounded} \right\}.
 $$
 ### Def 5.3 (Operator norm)
 A set $\mathcal{L}(X, Y)$ can be equipped with the operator norm
 $$
-||A||_{op} = \inf\left\{ M \,|\, ||Ax||_Y \le M||x||_X \right\} = \sup\limits_{x \ne 0}\frac{||Ax||_Y}{||x||_X} = \sup\limits_{||x||_X=1}||A_x||_Y.
+||A||_{op} = \inf\left\{ M \,|\, ||Ax||_Y \le M||x||_X \right\} = \sup\limits_{x \ne 0}\frac{||Ax||_Y}{||x||_X} = \sup\limits_{||x||_X=1}||Ax||_Y.
 $$
 ### Theorem 5.1 (Operator set is a Banach space)
 The set $\mathcal{L}(X, Y)$ equipped with $||\cdot||_{op}$ norm is a [[#Def 3.6 (Banach space)|Banach space]].
-### Theorem 5.2 ()
+### Theorem 5.2 (Bounded iff continuous)
 Let $A: X \rightarrow Y$ be a [[#Def 5.1 (Linear operator)|linear operator]], then $A$ is [[#Def 5.2 (Bounded operator)|bounded]] if and only if $A$ is continuous.
 #### Example 5.1
 Consider a matrix $A \in \mathbb{R}^{m \times n}$. The matrix $A$ is a linear operator from $(\mathbb{R}^n, ||\cdot||_\alpha)$ to $(\mathbb{R}^m, ||\cdot||_\beta)$ and the corresponding induced norm (or the operator norm) on the space $\mathbb{R}^{m \times n}$ is defined by
 $$
-||A||_{op} = \sup\left\{ ||Ax||_\beta \,|\, ||x||_\alpha = 1 \right\}.
+||A||_{op} = \sup\left\{ ||Ax||_\beta \,:\, ||x||_\alpha = 1 \right\}.
 $$
+#### Example 5.2
+Let $\Omega \subset \mathbb{R}^n$ be an open and bounded set. We consider the integral operator $K: L^2(\Omega) \rightarrow L^2(\Omega)$ defined as follows
+$$
+Ku(x) = \int_\Omega k(x, y)u(y)dy, \text{ with } \iint_{\Omega^2}|k(x, y)|^2dxdy = c \lt \infty.
+$$
+It can be shown that the operator $K$ is bounded.
+### Def 5.4 (Unbounded linear operator)
+An unbounded [[#Def 5.1 (Linear operator)|linear operator]] $A: X \rightarrow Y$ is a pair $(A, D(A))$, where $D(A)$ is a linear subspace of $X$ and $A$ is not not bounded on $D(A)$.
+#### Example 5.3
+Consider $A = -\frac{d^2}{dx^2}$ on $L^2(\Omega)$. Since $C^2(\Omega) \subset L^2(\Omega)$, we define the operator $A$ only on its domain.
+$$
+A: \left\{ f \in C^2(\Omega): Af \in L^2(\Omega) \right\}\rightarrow Y.
+$$
+Let $f(x) = e^{-kx}$. Then
+$$
+||Af(x)||^2 = \int_0^1\left(-\frac{d^2}{dx^2}e^{-kx}\right)dx = k^4\int_0^1e^{-2kx}dx = \frac{k^3}{2}(1-e^{-2k}).
+$$
+### Def 5.5 (Operator range)
+The range of operator $A: D(A) \rightarrow Y$ is defined as
+$$
+R(A) = \left\{ g \in Y: g=Af, f \in D(A) \right\}.
+$$
+The kernel (null space) of the operator $A: D(A) \rightarrow Y$ is defined as
+$$
+Ker(A) = N(A) = \left\{ f \in D(A): Af = 0\right\}.
+$$
+### Theorem 5.3 (Invertible operator)
+The linear operator $A: D(A) \rightarrow Y$ is invertible if an only if $Ker(A) = \{0\}$.
+### Def 5.6 (Operator bounded from below)
+We say that a [[#Def 5.1 (Linear operator)|linear operator]] $A: X \rightarrow Y$ is bounded from below if there exists constant $C \gt 0$ such that 
+$$
+||Ax||_Y \ge C||x||_X.
+$$
+### Theorem 5.4 (Bounded operator is invertible)
+Let $A: X \rightarrow Y$ be a [[#Def 5.1 (Linear operator)|linear operator]]. Then the following propositions are equivalent
+- $A$ is bounded from below,
+- $A^{-1}: R(A) \rightarrow X$ exists and is bounded.
