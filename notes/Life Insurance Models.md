@@ -46,5 +46,36 @@ Typical life insurance products:
 5) annuities,
 6) unit - united life insurance.
 We have:
-- $T(x)$ - insurances payable at the moment of death,
-- $K(x)$ - insurances payable at the end of year of death.
+- $T = T(x)$ - insurances payable at the moment of death,
+- $K = K(x)$ - insurances payable at the end of year of death.
+### Def 1.7 (Net single premium)
+Let $A_x$, and $\overline{A}_x$ indicate the life insurance benefit of $1$ payable at the end of the year of death, and at the time of death, respectively. These two cases correspond to discrete, and continuous models. Let $b_t$ be the benefit function, $v_t$ be the discount function. Let $Z = Z_t = b_tv_t$.
+Then the net single premium is defined as
+$$
+NSP = E[Z] = \overline{A}_x = \int_0^\infty v_tg(t)dt.
+$$
+Usually we take $b_t = 1$, and $v_t = v^t$, with a fixed $v$. Then the $NSP$ takes the following form
+$$
+NSP = \int_0^\infty v^t{}_tp_x\mu_{x+t}dt,
+$$
+with $v=e^{-\delta}$.
+In the discrete case, substitute $t=k+1$, and $v=\frac{1}{1+i}$, then we have
+$$
+NSP = \sum_{k=0}^\infty v^{k+1}{}_kp_xq_{x+k}.
+$$
+Now let's explicitly define the life insurance benefits:
+$$
+\begin{aligned}
+\overline{A}_x &= \int_0^\infty v^t{}_tp_x\mu_{x+t}dt, \\
+\overline{A}_{x:\overline{n}|} &= \int_0^nv^t{}_tp_x\mu_{x+t}dt
+\end{aligned}
+$$
+### Def 1.8 (Life annuity)
+A life annuity is a series of periodic or continuous payments provided that the insured is alive. We have $Y$ - present value of future whole life annuity
+$$
+\begin{aligned}
+Y &= \int_0^Tv^tdt = \overline{a}_{\overline{T}|}, \\
+v &= e^{-\delta}, \\
+\overline{a}_{\overline{T}|} &= \frac{1 - v^T}{\delta}.
+\end{aligned}
+$$
