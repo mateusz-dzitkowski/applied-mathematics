@@ -79,3 +79,93 @@ v &= e^{-\delta}, \\
 \overline{a}_{\overline{T}|} &= \frac{1 - v^T}{\delta}.
 \end{aligned}
 $$
+# 2. Whole life insurance
+### Def 2.1 (L)
+Let $L$ be the loss of insurance company, so $L=$ the present value of venefits-present value of premiums.
+### Def 2.2 (Equivalence principle)
+Net premium is calculated in such a way that $E[L] = 0$. So if
+$$
+L = v^{k+1} - p\ddot{a}_{\overline{k+1}|},
+$$
+then
+$$
+p_x = \frac{A_x}{\ddot{a}_x}.
+$$
+### Def 2.3 (Endowment)
+Since $p_x = \frac{A_x}{\ddot{a}_x}$ describes the whole life premium, then let's define
+$$
+p_{x:\overline{n}|}^1 = \frac{A_{x:\overline{n}|}^1}{\ddot{a}_{x:\overline{n}|}} \text{ - term (?)},
+$$
+and
+$$
+p_{x:\overline{n}|} = \frac{A_{x:\overline{n}|}}{\ddot{a}_{x:\overline{n}|}} \text{ - endowment}.
+$$
+### Def 2.4 (Fully continuous case)
+Let
+$$
+\overline{a}_t = \int_0^tv^sds,
+$$
+then
+$$
+L = v^T - \overline{p}_{\overline{a}_{\overline{T}|}},
+$$
+and
+$$
+\overline{p}_x = \frac{\overline{A}_x}{\overline{a}_x}.
+$$
+### Def 2.5 (gross premiums)
+The continuous-discrete case:
+$$
+\begin{aligned}
+p(\overline{A}_x) &= \frac{\overline{A}_x}{\ddot{a}_x}, \\
+p(\overline{A}_{x:\overline{n}|}^1) &= \frac{\overline{A}_{x:\overline{n}|}^1}{\ddot{a}_{x:\overline{n}|}}, \\
+p(\overline{A}_{x:\overline{n}|}) &= \frac{\overline{A}_{x:\overline{n}|}}{\ddot{a}_{x:\overline{n}|}}.\\
+\end{aligned}
+$$
+The discrete-continuous case:
+$$
+\begin{aligned}
+\overline{p} &= \frac{A_x}{\overline{a}_x}, \\
+\overline{p}_{x:\overline{n}|}^1 &= \frac{A_{x:\overline{n}|}}{a_{x:\overline{n}|}}, \\
+\overline{p}_{x:\overline{n}|} &= \frac{A_{x:\overline{n}|}}{\overline{a}_{x:\overline{n}|}}.\\
+\end{aligned}
+$$
+### Def 2.6 (Gross premiums costs)
+The costs of gross premiums consist of:
+- Acquisition costs,
+- Agent's common,
+- Collection expenses,
+- Administration costs,
+- Claim hedging expenses.
+### Def 2.7 (Equivalence principle)
+Let $p_a = A$ (net premium), and $b_a = A + \cos{As}$ (gross premium).
+Then ${}_tL$ - financial loss of an insurance company,
+$$
+{}_tL = Z - PY,
+$$
+where $Y$ - present value of future payments, $P$ - net premium, $Z$ - present value of future payments of the benefits.
+Then the net reserve equals
+$$
+E[{}_tL] = {}_tV.
+$$
+### Def 2.8 (recursive formulas for net reserves)
+Let:
+- $b_k$ - sum insured in $k$-th year of the policy,
+- $\pi_0, \pi_1, \dots, \pi_k$ - annual premiums paid up to the moment $k$,
+- $L = Z - \sum_{m=0}^kz_mv^m =  b_{k+1}v^{k+1} - \sum_{m=0}^kz_mv^m$.
+The recursive formula:
+$$
+{}_kV + \pi_k = V(b_{k+1}q{x+k} + {}_{k+1}Vp_{x+k}).
+$$
+Another form:
+$$
+{}_kV + \pi_k = v({}_{k+1}V + (b_{k+1} - {}_{k+1}V)q_{x+k}).
+$$
+This gives us a division of the premium $\pi_k$:
+$$
+\begin{aligned}
+\pi_k &= \pi_k^s + \pi_k^r, \\
+\pi_k^s &= {}_{k+1}V_{v} - {}_{k}V, \\
+\pi_k^r &= (b_{k+1} - {}_{k+1}V)Vq_{x+k}.
+\end{aligned}
+$$
