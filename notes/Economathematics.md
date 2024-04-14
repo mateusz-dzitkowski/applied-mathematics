@@ -280,9 +280,53 @@ d_2 &= d_1 - \sigma\sqrt{T-t}.
 \end{aligned}
 $$
 # 4. Greeks (Sensitivity analysis)
-### Def 4.1 (Delta)
+### Def 4.1 (Greeks)
 Define 
 $$
-\Delta = \frac{\partial V}{\partial S}.
+\begin{aligned}
+\Delta &= \frac{\partial V}{\partial S}, \\
+\Gamma &= \frac{\partial^2 V}{\partial S^2}, \\
+\rho &= \frac{\partial V}{\partial r}, \\
+\Theta &= \frac{\partial V}{\partial t}, \\
+\mathcal{V} &= \frac{\partial V}{\partial \sigma}.
+\end{aligned}
 $$
-It describes how big the change in the price of some derivative is in relation to small changes if initial price of the underlying.
+### Theorem 4.1 (European call greeks)
+For european call option in [[#Def 3.1 (Black-Scholes model)|B-S market]] we have:
+$$
+\begin{aligned}
+\Delta &= \Phi(d_1), \\
+\Gamma &= \frac{1}{S_0\sigma\sqrt{T-t}}\phi(d_1), \\
+\rho &= K(T-t)e^{-r(T-t)}\Phi(d_2), \\
+\Theta &= \frac{S_t}{2\sqrt{T-t}}\phi(d_1) - rKe^{-r(T-t)}\Phi(d_2), \\
+\mathcal{V} &= S_t\phi(d_1)\sqrt{T-t}.
+\end{aligned}
+$$
+### Def 4.2 (Delta hedging)
+Assume that we have a portfolio $\phi$ with the value $V_t(\phi)$ at time $t$. We want to add some financial instrument/derivative with the value $F(t, S_t)$. The value of that portfolio equals
+$$
+p_t = V_t(\phi) + xF(t, S_t).
+$$
+We want 
+$$
+\Delta p  = \frac{\partial V}{\partial S} + x\frac{\partial F}{\partial S} = \Delta x + x\Delta F = 0,
+$$
+so 
+$$
+x = -\frac{\Delta v}{\Delta F}.
+$$
+### Def 4.3 (Gamma hedging)
+We will now add two new derivatives with two values: $F(t, S_t), G(t, S_t)$. Then
+$$
+p_t = V_t(\phi) + xF(t, S_t) + yG(t, S_t).
+$$
+We want
+$$
+\Delta p = 0, \quad \Gamma p = 0.
+$$
+Omitting the details because they are shit, we want to find $x$ and $y$ from the above equations.
+### Theorem 4.2 (Put-Call parity)
+For an european option we have:
+$$
+C(S, K, t, T) + Ke^{-r(T-t)} = P(S, K, t, T) + S.
+$$
