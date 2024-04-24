@@ -337,3 +337,96 @@ $$
 Let $A: X \rightarrow Y$ be a [[#Def 5.1 (Linear operator)|linear operator]]. Then the following propositions are equivalent
 - $A$ is bounded from below,
 - $A^{-1}: R(A) \rightarrow X$ exists and is bounded.
+# 7. Introduction to inverse problems
+### Def 7.1 (Inverse problem)
+An inverse problem is the task of recovering the parameter $u \in X$ from measured data $f \in Y$, when $f = Au + e$. Here
+- $X$ and $Y$ are vector spaces with appropriate topologies, whose elements represent model parameters and data, respectively,
+- $A: X \rightarrow Y$ (forward operator) is a known, continuous operator, that maps model parameters to data in absence of noise,
+- $e \in Y$ is a sample of random variable modelling the observation noise.
+Inverse problems are usually ill-posed.
+### Def 7.2 (Well-posed inverse problem)
+The inverse problem is well posed if the following three conditions hold:
+- It has a solution (existence),
+- The solution is unique (uniqueness),
+- The solution depends continuously on the data (stability).
+If at least one of the conditions fails, we say that the inverse problem is ill-posed.
+## 7.1 Variational methods
+The idea behind the variational methods 
+# TODO: last lecture
+# 9. The Sobolev spaces
+### Def 9.1 (Sobolev space)
+Let $\Omega \subset \mathbb{R}^n$ be an open set. The Sobolev space $H^k(\Omega)$ is defined by
+$$
+H^k(\Omega) = \left\{u \in L_{loc}^1(\Omega) \;|\; D^\alpha{u} \in L^2(\Omega),\; 0 \le |\alpha| \le k \right\}.
+$$
+with the norm
+$$
+||u||_{H^k(\Omega)}^2 = \sum_{0 \le |\alpha| \le k} ||D^\alpha{u}||_{L^2(\Omega)}^2.
+$$
+The Sobolev space $H^k(\Omega)$ is the Hilbert space with the inner product 
+$$
+\langle u,v \rangle_{H^k(\Omega)} = \sum_{0 \le |\alpha| \le k}\langle D^\alpha{u}, D^\alpha{v} \rangle.
+$$
+In the particular case $\Omega \subset \mathbb{R}$ and $k=1$, we have
+$$
+H^1(\Omega) = \left\{u \in L_{loc}^1(\Omega) \;|\; u \in L^2(\Omega) \;,\; u' \in L^2(\Omega) \right\},
+$$
+$$
+||u||_{H^1(\Omega)}^2 = \int_\Omega\left(u^2 + (u')^2\right)dx,
+$$
+$$
+\langle u, v \rangle_{H^1(\Omega)} = \int_\Omega \left(uv + u'v'\right)dx,
+$$
+where $u', v'$  are the weak derivatives of $u$ and $v$.
+By $H_0^1(\Omega)$ we denote the subspace of $H^1(\Omega)$ given by 
+$$
+H_0^1(\Omega) = \left\{u \in H^1(\Omega) \;|\; u = 0 \text{ on } \partial\Omega\right\}.
+$$
+### Theorem 9.1 (The Poincaré inequality)
+Let $1 \le k \le \infty$ and $\Omega \subset \mathbb{R}^n$ bounded at least in one direction. Then there exists a constant $c \gt 0$ dependent only on $k$ and $\Omega$ such that for every function $u \in H_0^k(\Omega)$ we have
+$$
+||u||_{L^k(\Omega)} \le c ||\nabla{u}||_{L^k(\Omega)}.
+$$
+### Theorem 9.2 (The Lax-Milgram theorem)
+Let $V$ be a vector space with the inner product $\langle\cdot,\cdot\rangle$, and the associated norm $||\cdot|| = \sqrt{\langle\cdot,\cdot\rangle}$. Let $a: V^2 \rightarrow \mathbb{R}$ be a bilinear form which satisfies the following:
+- It is continuous, i.e. there exists $M \gt 0$ such that $|a(u,v)| \le M||u||||v||$ for all $u,v \in V$,
+- It is coercive, i.e. there exists $\beta \gt 0$ such that $|a(v, v)| \ge \beta||v||^2$ for all $v \in V$.
+Then for any linear continuous form $l$ on $V$ there exists a unique $u \in V$ such that 
+$$
+a(u, v) = l(v), \text{ for all } v \in V.
+$$
+#### Example 9.1 (Dirichlet problem)
+Let $\Omega \subset \mathbb{R}^n$ ad $f: \Omega \rightarrow \mathbb{R}$ be a given function. We consider the Dirichlet boundary value problem for the Laplace operator
+$$
+\begin{aligned}
+-\Delta{u} &= f, \text{ in } \Omega, \\
+u &= 0, \text{ on } \partial\Omega.
+\end{aligned}
+$$
+### Theorem 9.3 (Weak formulation of Dirichlet problem)
+We have:
+- For every $f \in L^2(\Omega)$ there exists a unique $u \in H_0^1(\Omega)$ which satisfies:
+	$$
+	\begin{aligned}
+	\int \nabla{u}\nabla{v}dx &= \int fvdx, \\
+	u &\in H_0^1(\Omega),
+	\end{aligned}
+	$$
+	for every $v \in H_0^1(\Omega)$.
+- The solution $u$ of the Dirichlet problem satisfies:
+	$$
+	\begin{aligned}
+	-\Delta{u} &= f, \text{ in } \mathcal{D'(\Omega)} \text{ (equality as distributions)}, \\
+	u &= 0, \text{ on } \partial\Omega.
+	\end{aligned}
+	$$
+- For $u \in H_0^1(\Omega)$ the two above problems are equivalent.
+### Def 9.2 (Properties of bilinear forms)
+Let $a: V^2 \rightarrow \mathbb{R}$ be a bilinear form. We say that:
+- $a$ is symmetric if $a(u, v) = a(v, u)$ for all $u,v \in V$,
+- $a$ is positive if $a(v, v) \ge 0$ for all $v \in V$,
+- $a$ is positive definite if it is positive and $a(v, v) = 0$ holds only for $v=0$.
+### Theorem 9.4 (Solution to Dirichlet problem)
+Let $V$ be a vector space, $l: V \rightarrow \mathbb{R}$ be a linear form, and $a: V^2 \rightarrow \mathbb{R}$ be a bilinear, symmetric, positive form. Then the following statements are equivalent
+- $u \in V$ is a unique solution to $a(u, v) = l(v)$ for every $v \in V$,
+- there exists a $u \in V$ such that $J(u) \le J(v)$ for all $v \in V$, where $J(v) = \frac{1}{2}a(v, v) - l(v)$.
