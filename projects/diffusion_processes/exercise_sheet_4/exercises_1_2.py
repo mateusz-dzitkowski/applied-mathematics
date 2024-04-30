@@ -51,7 +51,7 @@ def plot_hist(walk_generator: RandomWalkGenerator, steps: int, walks: int):
 
 
 def main():
-    walk_gen = pearson_walk
+    walk_gen = square_lattice_walk
 
     plot_trajectory(walk_gen, 1000)
     # animate(walk_gen, 10_000)

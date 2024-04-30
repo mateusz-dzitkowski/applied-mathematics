@@ -42,6 +42,8 @@ def animate_random_walk(x: NDArray, y: NDArray):
 def plot_random_walk(x: NDArray, y: NDArray):
     fig, ax = _prepare_fig(x, y)
     ax.plot(x, y, linewidth=LINE_WIDTH)
+    ax.scatter(x[0], y[0], color="green")
+    ax.scatter(x[-1], y[-1], color="red")
     plt.show()
 
 
