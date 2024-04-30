@@ -24,8 +24,8 @@ def square_lattice_walk(steps: int, walks: int = 1) -> RandomWalk:
     axis = 0 if walks > 1 else None
     phi = rng.choice([0, 0.5, 1, 1.5], size=(steps - 1, walks)) * np.pi
     return (
-        np.concatenate([np.array([0]) if walks == 1 else np.array([[0]] * walks), np.cumsum(np.round(np.cos(phi)), axis=axis)]),
-        np.concatenate([np.array([0]) if walks == 1 else np.array([[0]] * walks), np.cumsum(np.round(np.sin(phi)), axis=axis)]),
+        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.round(np.cos(phi)), axis=axis)]),
+        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.round(np.sin(phi)), axis=axis)]),
     )
 
 
@@ -33,8 +33,8 @@ def pearson_walk(steps: int, walks: int = 1) -> RandomWalk:
     axis = 0 if walks > 1 else None
     phi = rng.uniform(high=2 * np.pi, size=(steps - 1, walks))
     return (
-        np.concatenate([np.array([0]) if walks == 1 else np.array([[0]] * walks), np.cumsum(np.cos(phi), axis=axis)]),
-        np.concatenate([np.array([0]) if walks == 1 else np.array([[0]] * walks), np.cumsum(np.sin(phi), axis=axis)]),
+        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.cos(phi), axis=axis)]),
+        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.sin(phi), axis=axis)]),
     )
 
 
@@ -53,8 +53,8 @@ def plot_hist(walk_generator: RandomWalkGenerator, steps: int, walks: int):
 def main():
     walk_gen = pearson_walk
 
-    # plot_trajectory(walk_gen, 1000)
-    animate(walk_gen, 10_000)
+    plot_trajectory(walk_gen, 1000)
+    # animate(walk_gen, 10_000)
     # plot_hist(walk_gen, 1_000, 10_000)
 
 
