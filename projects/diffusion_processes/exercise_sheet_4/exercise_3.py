@@ -11,7 +11,7 @@ FPS = 1
 BITRATE = 2400
 
 
-def animate_random_walk(g: nx.Graph, length: int):
+def animate_random_walk(g: nx.Graph, length: int, filename: str):
     fig, ax = plt.subplots()
 
     path = next(nx.generate_random_paths(g, sample_size=1, path_length=length))
@@ -29,9 +29,10 @@ def animate_random_walk(g: nx.Graph, length: int):
         func=animate,  # type: ignore
         frames=length,
     ).save(
-        filename="graph_animation.gif",
+        filename=filename,
         writer=animation.PillowWriter(fps=FPS, bitrate=BITRATE),
     )
+    plt.close()
 
 
 def hitting_times(g: nx.Graph, origin: int, sample_size: int = 10_000, transform: Callable[[list[int]], float | int] = mean) -> dict[int, float | int]:
@@ -60,8 +61,9 @@ def show_graph(g: nx.Graph):
 
 
 def main():
-    g = nx.barabasi_albert_graph(10, 2)
+    g = nx.watts_strogatz_graph(10, 4, 0.4)
     pprint(hitting_times(g, 0, transform=min))
+    pprint(hitting_times(g, 0, transform=mean))
     show_graph(g)
 
 

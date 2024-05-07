@@ -14,7 +14,7 @@ BITRATE = -1
 LINE_WIDTH = 0.5
 
 
-def animate_random_walk(x: NDArray, y: NDArray):
+def animate_random_walk(x: NDArray, y: NDArray, filename: str):
     fig, ax = _prepare_fig(x, y)
 
     ax.scatter([0], [0], color="green")  # color the start point
@@ -35,9 +35,10 @@ def animate_random_walk(x: NDArray, y: NDArray):
         func=animate,  # type: ignore
         frames=len(x) // step,
     ).save(
-        filename="animation.gif",
+        filename=filename,
         writer=animation.PillowWriter(fps=FPS, bitrate=BITRATE),
     )
+    plt.close()
 
 
 def plot_random_walk(x: NDArray, y: NDArray):

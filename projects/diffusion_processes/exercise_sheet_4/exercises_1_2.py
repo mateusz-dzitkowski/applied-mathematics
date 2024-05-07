@@ -38,8 +38,9 @@ def pearson_walk(steps: int, walks: int = 1) -> RandomWalk:
     )
 
 
-def animate(walk_generator: RandomWalkGenerator, steps: int):
-    animate_random_walk(*walk_generator(steps))
+def animate(walk_generator: RandomWalkGenerator, steps: int, filename: str):
+    x, y = walk_generator(steps)
+    animate_random_walk(x, y, filename)
 
 
 def plot_trajectory(walk_generator: RandomWalkGenerator, steps: int):
