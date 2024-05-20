@@ -430,3 +430,18 @@ Let $a: V^2 \rightarrow \mathbb{R}$ be a bilinear form. We say that:
 Let $V$ be a vector space, $l: V \rightarrow \mathbb{R}$ be a linear form, and $a: V^2 \rightarrow \mathbb{R}$ be a bilinear, symmetric, positive form. Then the following statements are equivalent
 - $u \in V$ is a unique solution to $a(u, v) = l(v)$ for every $v \in V$,
 - there exists a $u \in V$ such that $J(u) \le J(v)$ for all $v \in V$, where $J(v) = \frac{1}{2}a(v, v) - l(v)$.
+#### Corollary
+The weak solution $u$ of the Dirichlet problem is a solution of the minimisation problem
+$$
+\begin{cases}
+J(u) \le J(v), \quad \forall v \in H_0^1(\Omega), \\
+u \in H_0^1(\Omega).
+\end{cases}
+$$
+### Theorem 9.5 (Unique solution to minimisation problem)
+Let $V$ be a linear space and $J: V \rightarrow \mathbb{R}$ be a strictly convex functional. Then there exists at most one solution $u$ to the minimisation problem. 
+$$
+J(u) \le J(v), \quad \forall v \in V, \quad u \in V.
+$$
+### Theorem 9.6 (Convex bilinear form)
+Let $V$ be a linear vector space and $a: V^2 \rightarrow \mathbb{R}$ be a bilinear form which is symmetric, and positive definite. Then the quadratic form $q: V \rightarrow \mathbb{R}$, which is defined by $q(v) = a(v, v)$, is strictly convex.
