@@ -53,12 +53,15 @@ def total_number_of_infected(solution: DataFrame) -> float:
     return solution["i"].iloc[-1] + solution["r"].iloc[-1]
 
 
-def get_phase_portrait(beta: float, r: float, s_max: float = 1, i_max: float = 1) -> go.Figure:
+def get_phase_portrait(beta: float, r: float, s_max: float = 1, i_max: float = 1, normalised: bool = False) -> go.Figure:
     s, i = np.meshgrid(
         np.linspace(0, s_max, 20),
         np.linspace(0, i_max, 20),
     )
     u, v = phase_portrait(s, i, beta, r)
+    if normalised:
+        norm = np.sqrt(u**2 + v**2)
+        u, v = u / norm, v / norm
     return ff.create_quiver(s, i, u, v, scale=0.02)
 
 
@@ -81,7 +84,7 @@ def show_solution(beta: float, r: float, t_max: float, initial: list[float], num
     plot_solution(df, beta, r)
 
 
-def show_phase_portrait_and_trajectories(beta: float, r: float, num_trajectories: int, n: int = 1000, t_max: float = 10.):
+def show_phase_portrait_and_trajectories(beta: float, r: float, num_trajectories: int, n: int = 1000, t_max: float = 10., normalised: bool = False):
     t = np.linspace(0, t_max, n)
     equations = get_equations(beta, r)
 
@@ -91,20 +94,43 @@ def show_phase_portrait_and_trajectories(beta: float, r: float, num_trajectories
         in np.random.default_rng().uniform(size=(num_trajectories, 3))
     ]
 
-    fig = get_phase_portrait(beta, r)
+    fig = get_phase_portrait(beta, r, normalised=normalised)
     fig = add_trajectories(fig, *solutions)
     fig.show()
 
 
+def show_total_number_of_infected(beta_max: float = 5, n_beta: int = 1000, t_max: float = 10., n_t: int = 1000):
+    t = np.linspace(0, t_max, n_t)
+    beta = np.linspace(0, beta_max, n_beta)
+
+    solutions = [solve(get_equations(b, 1), [0.99, 0.01, 0.], t) for b in beta]
+    totals = [total_number_of_infected(solution) for solution in solutions]
+
+    xp.line(
+        x=beta,
+        y=totals,
+    ).update_layout(
+        xaxis_title="beta",
+        yaxis_title="total infected",
+    ).show()
+
+
 def main():
-    beta = 1
-    r = 1
-    t = np.linspace(0, 10, 1000)
+    show_solution(
+        beta=1.9,
+        r=1,
+        t_max=20,
+        initial=[0.99, 0.01, 0],
+    )
 
-    equations = get_equations(beta, r)
-    solution = solve(equations, [0.99, 0.01, 0.], t)
+    show_phase_portrait_and_trajectories(
+        beta=1.1,
+        r=1,
+        num_trajectories=20,
+        normalised=True,
+    )
 
-    print(total_number_of_infected(solution))
+    show_total_number_of_infected()
 
 
 if __name__ == "__main__":
