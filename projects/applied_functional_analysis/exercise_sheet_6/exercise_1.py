@@ -28,7 +28,7 @@ def A(alpha: float, n: int) -> NDArray:
     return diag_ones + diag_inner - upper - lower
 
 
-def f(x: NDArray) -> NDArray:
+def f_true(x: NDArray) -> NDArray:
     return np.sin(2 * np.pi * x)
 
 
@@ -38,7 +38,7 @@ def f_prime_true(x: NDArray) -> NDArray:
 
 def f_with_noise(delta: float, k: int) -> Callable[[NDArray], NDArray]:
     def inner(x: NDArray) -> NDArray:
-        return f(x) + np.sqrt(2) * delta * np.sin(2 * np.pi * k * x)
+        return f_true(x) + np.sqrt(2) * delta * np.sin(2 * np.pi * k * x)
     return inner
 
 
@@ -51,7 +51,8 @@ def solve(n: int, foo: Callable[[NDArray], NDArray], alpha: float) -> DataFrame:
     return DataFrame(
         data={
             "x": x_v,
-            "f": f_v,
+            "f": f_true(x_v),
+            "f_delta": f_v,
             "u": u_v,
         }
     )
@@ -62,24 +63,78 @@ def derivatives(df) -> DataFrame:
     return DataFrame(
         data={
             "x": x,
-            "f": df["f"].diff() / df["x"].diff(),
-            "f_true": f_prime_true(x),
+            "f": f_prime_true(x),
+            "f_delta": df["f_delta"].diff() / df["x"].diff(),
             "u": df["u"].diff() / df["x"].diff(),
         }
-    )
+    ).dropna()
 
 
-def main():
-    n = 4000
-    delta = 0.01
-    k = 91
-    alpha = 0.0001
+def function_error(alpha: float, delta: float, k: int, n: int = 1000) -> float:
+    # ||u_alpha - f||
+    f_foo = f_with_noise(delta, k)
+    solution = solve(n, f_foo, alpha)
 
+    return np.linalg.norm(solution["u"] - solution["f"])
+
+
+def function_derivatives_error(alpha: float, delta: float, k: int, n: int = 1000) -> float:
+    # ||u_alpha' - f'||
     f_foo = f_with_noise(delta, k)
     solution = solve(n, f_foo, alpha)
     solution_derivatives = derivatives(solution)
 
-    xp.line(solution_derivatives, x="x", y=["f", "f_true", "u"]).show()
+    return np.linalg.norm(solution_derivatives["u"] - solution_derivatives["f"])
+
+
+def show_functions(n: int, delta: float, k: int, alpha: float):
+    f_foo = f_with_noise(delta, k)
+    solution = solve(n, f_foo, alpha)
+
+    xp.line(solution, x="x", y=["f", "f_delta", "u"]).show()
+
+
+def show_function_derivatives(n: int, delta: float, k: int, alpha: float):
+    f_foo = f_with_noise(delta, k)
+    solution = solve(n, f_foo, alpha)
+    solution_derivatives = derivatives(solution)
+
+    xp.line(solution_derivatives, x="x", y=["f", "f_delta", "u"]).show()
+
+
+def show_function_errors(alpha_max: float, delta: float, k: int, num_alphas: int = 100):
+    alpha = np.linspace(0, alpha_max, num_alphas)
+    errors = np.array([function_error(a, delta, k) for a in alpha])
+
+    xp.line(
+        x=alpha,
+        y=errors,
+    ).update_layout(
+        title=f"{delta=}, {k=}",
+        xaxis_title="alpha",
+        yaxis_title="||u_alpha - f||",
+    ).show()
+
+
+def show_function_derivatives_errors(alpha_max: float, delta: float, k: int, num_alphas: int = 100):
+    alpha = np.linspace(0, alpha_max, num_alphas)
+    errors = np.array([function_derivatives_error(a, delta, k) for a in alpha])
+
+    xp.line(
+        x=alpha,
+        y=errors,
+    ).update_layout(
+        title=f"{delta=}, {k=}",
+        xaxis_title="alpha",
+        yaxis_title="||u_alpha' - f'||",
+    ).show()
+a
+
+def main():
+    delta = 0.01
+    k = 12345
+
+    show_function_derivatives_errors(0.002, delta, k, num_alphas=200)
 
 
 if __name__ == "__main__":
