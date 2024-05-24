@@ -91,7 +91,13 @@ def show_functions(n: int, delta: float, k: int, alpha: float):
     f_foo = f_with_noise(delta, k)
     solution = solve(n, f_foo, alpha)
 
-    xp.line(solution, x="x", y=["f", "f_delta", "u"]).show()
+    xp.line(
+        solution,
+        x="x",
+        y=["f", "f_delta", "u"],
+    ).update_layout(
+        title=f"{n=}, {delta=}, {k=}, {alpha=}",
+    ).show()
 
 
 def show_function_derivatives(n: int, delta: float, k: int, alpha: float):
@@ -99,42 +105,49 @@ def show_function_derivatives(n: int, delta: float, k: int, alpha: float):
     solution = solve(n, f_foo, alpha)
     solution_derivatives = derivatives(solution)
 
-    xp.line(solution_derivatives, x="x", y=["f", "f_delta", "u"]).show()
+    xp.line(
+        solution_derivatives,
+        x="x",
+        y=["f", "f_delta", "u"],
+    ).update_layout(
+        title=f"{n=}, {delta=}, {k=}, {alpha=}",
+    ).show()
 
 
-def show_function_errors(alpha_max: float, delta: float, k: int, num_alphas: int = 100):
+def show_function_errors(alpha_max: float, n: int, delta: float, k: int, num_alphas: int = 200):
     alpha = np.linspace(0, alpha_max, num_alphas)
-    errors = np.array([function_error(a, delta, k) for a in alpha])
+    errors = np.array([function_error(a, delta, k, n) for a in alpha])
 
     xp.line(
         x=alpha,
         y=errors,
     ).update_layout(
-        title=f"{delta=}, {k=}",
+        title=f"{n=}, {delta=}, {k=}",
         xaxis_title="alpha",
         yaxis_title="||u_alpha - f||",
     ).show()
 
 
-def show_function_derivatives_errors(alpha_max: float, delta: float, k: int, num_alphas: int = 100):
+def show_function_derivatives_errors(alpha_max: float, n: int, delta: float, k: int, num_alphas: int = 200):
     alpha = np.linspace(0, alpha_max, num_alphas)
-    errors = np.array([function_derivatives_error(a, delta, k) for a in alpha])
+    errors = np.array([function_derivatives_error(a, delta, k, n) for a in alpha])
 
     xp.line(
         x=alpha,
         y=errors,
     ).update_layout(
-        title=f"{delta=}, {k=}",
+        title=f"{n=}, {delta=}, {k=}",
         xaxis_title="alpha",
         yaxis_title="||u_alpha' - f'||",
     ).show()
-a
+
 
 def main():
-    delta = 0.01
-    k = 12345
+    delta = 0.001
+    k = 1234
+    n = 1000
 
-    show_function_derivatives_errors(0.002, delta, k, num_alphas=200)
+    show_function_errors(0.0001, n, delta, k)
 
 
 if __name__ == "__main__":
