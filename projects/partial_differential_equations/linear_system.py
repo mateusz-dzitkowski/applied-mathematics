@@ -21,6 +21,7 @@ class Solution:
         u = self.values.reshape(self.mesh.shape)
 
         plt.contourf(x, y, u, 20, cmap="viridis")
+        plt.colorbar()
         plt.show()
 
 
