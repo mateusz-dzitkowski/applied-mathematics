@@ -7,9 +7,6 @@ from nptyping import NDArray
 import numpy as np
 
 
-DIM = 2
-
-
 @dataclass
 class Mesh(ABC):
     points: NDArray
@@ -22,7 +19,7 @@ class Mesh(ABC):
     def new(cls, num_points: int, start: float = 0, end: float = 1) -> "Mesh":
         grid = np.linspace(start, end, num_points)
 
-        points = np.array(list(product(grid, repeat=DIM)))
+        points = np.array(list(product(grid, grid)))
         elements = cls.make_elements(num_points)
         print(elements)
         return Mesh(points=points, elements=elements)
