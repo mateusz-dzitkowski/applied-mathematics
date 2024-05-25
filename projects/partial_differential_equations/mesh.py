@@ -39,6 +39,10 @@ class Mesh(ABC):
     @abstractmethod
     def element_area(self) -> float: ...
 
+    @property
+    @abstractmethod
+    def topological_dimension(self) -> str: ...
+
 
 class QuadraticMesh(Mesh):
     @staticmethod
@@ -59,6 +63,10 @@ class QuadraticMesh(Mesh):
         x_min, y_min = self.points[0]
         x_max, y_max = self.points[-1]
         return (x_max - x_min) / (self.shape[0] - 1) * (y_max - y_min) / (self.shape[1] - 1)
+
+    @property
+    def topological_dimension(self) -> str:
+        return "quad"
 
 
 class TriangularMesh(Mesh):
@@ -88,6 +96,10 @@ class TriangularMesh(Mesh):
         x_min, y_min = self.points[0]
         x_max, y_max = self.points[-1]
         return (x_max - x_min) / (self.shape[0] - 1) * (y_max - y_min) / (self.shape[1] - 1) / 2
+
+    @property
+    def topological_dimension(self) -> str:
+        return "triangle"
 
 
 def test_quadratic_mesh_generation():

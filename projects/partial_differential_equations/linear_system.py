@@ -6,6 +6,7 @@ import scipy.sparse as sp
 import numpy as np
 from nptyping import NDArray
 import scipy.sparse.linalg as spla
+import meshio
 
 from projects.partial_differential_equations.mesh import Mesh, TriangularMesh
 
@@ -23,6 +24,13 @@ class Solution:
         plt.contourf(x, y, u, 20, cmap="viridis")
         plt.colorbar()
         plt.show()
+
+    def to_vtk(self, file_name: str):
+        meshio.Mesh(
+            points=self.mesh.points,
+            cells=[(self.mesh.topological_dimension, np.array(self.mesh.elements))],
+            point_data={"displacement": self.values},
+        ).write(file_name)
 
 
 @dataclass
@@ -106,5 +114,5 @@ if __name__ == "__main__":
         .assemble(TriangularMesh.new(50))
         .with_boundary_conditions()
         .solve()
-        .plot()
+        .to_vtk("result.vtk")
     )
