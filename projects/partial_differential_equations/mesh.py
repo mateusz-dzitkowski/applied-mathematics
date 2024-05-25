@@ -21,7 +21,7 @@ class Mesh(ABC):
 
         points = np.array(list(product(grid, grid)))
         elements = cls.make_elements(num_points)
-        print(elements)
+
         return Mesh(points=points, elements=elements)
 
 
