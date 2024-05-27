@@ -49,3 +49,66 @@ These are the so-called characteristics equation, and $X_\xi(t)$ are called the 
 We have to impose initial conditions. Assume that $u(x, 0) = \phi(x)$, then let $X_\xi(0) = \xi$, and obtain $U_\xi(0) = u(X_\xi(0), 0) = \phi(X_\xi(0)) = \phi(\xi)$.
 In order to find the solution at any $(x, t)$ we find a unique characteristic $X_\xi(t)$ passing through $(x, t)$, go back to $t=0$, and use the initial condition, then read the solution from $U_\xi(t)$. 
 
+# 3. Heat equation
+Consider a homogenous initial-boundary value problem (IBV):
+$$
+\begin{cases}
+u_t = \alpha^2u_{xx}, &\quad (x, t) \in (0, L) \times (0, T], \\
+u(x, 0) = \varphi(x), &\quad x \in [0, L], \\
+u(0, t) = u(L, t) = 0, &\quad t \in [0, T],
+\end{cases}
+$$
+assume that $\varphi$ is continuous on $[0, L]$, and that $\varphi(0) = \varphi(L) = 0$.
+The Fourier's method gives
+$$
+u(x, t) = \sum_{n=1}^\infty A_n\sin\left(\frac{n\pi}{L}x\right)\exp\left(-\frac{\alpha^2n^2\pi^2}{L^2}t\right),
+$$
+where
+$$
+A_n = \frac{2}{L}\int_0^L\varphi(x)\sin\left(\frac{n\pi}{L}x\right)dx.
+$$
+### Theorem 3.1 (Classical solution)
+Let $\varphi \in C([0, L])$, and $\varphi(0) = \varphi(L) = 0$. Then $u(x, t)$ defined by the above is a classical solution of homogenous IBV problem. Moreover $u \in C^\infty([0, L] \times [0, T])$.
+
+### Definition 3.2 (Green's function)
+Notice that
+$$
+\begin{aligned}
+u(x, t) &= \sum_{n=1}^\infty\int_0^L\frac{2}{L}\sin\left(\frac{n\pi}{L}x\right)\sin\left(\frac{n\pi}{L}y\right)\exp\left(-\frac{\alpha^2n^2\pi^2}{L^2}t\right)\varphi(y)dy = \\
+&= \int_0^L\sum_{n=1}^\infty\frac{2}{L}\sin\left(\frac{n\pi}{L}x\right)\sin\left(\frac{n\pi}{L}y\right)\exp\left(-\frac{\alpha^2n^2\pi^2}{L^2}t\right)\varphi(y)dy = \\
+&= \int_0^LG(x, y, t)\varphi(y)dy.
+\end{aligned}
+$$
+We say that $G$, defined by $G(x, y, t) = \sum_{n=1}^\infty\frac{2}{L}\sin\left(\frac{n\pi}{L}x\right)\sin\left(\frac{n\pi}{L}y\right)\exp\left(-\frac{\alpha^2n^2\pi^2}{L^2}t\right)$ is the Green's function for homogenous IBV for the heat equation.
+
+
+Now let's consider a non-homogenous heat equation:
+$$
+\begin{cases}
+u_t = \alpha^2u_{xx} + f(x, t), &\quad (x, t) \in (0, L) \times (0, T], \\
+u(x, 0) = \varphi(x), &\quad x \in [0, L], \\
+u(0, t) = u(L, t) = 0, &\quad t \in [0, T],
+\end{cases}
+$$
+Suppose that
+$$
+\begin{aligned}
+u(x, t) &= \sum_{n=1}^\infty u_n(t)\sin\left(\frac{n\pi}{L}x\right), \\
+f(x, t) &= \sum_{n=1}^\infty f_n(t)\sin\left(\frac{n\pi}{L}x\right).
+\end{aligned}
+$$
+Plugging into the equation, and integrating yields
+$$
+u(x, t) = \int_0^t\int_0^LG(x, y, t-\tau)f(y, \tau)dyd\tau.
+$$
+### Theorem 3.3 (Green's function for heat equation in $\mathbb{R}$)
+The Green's function given by
+$$
+G(x, y, t) = \frac{1}{\sqrt{4\pi}t}\exp\left(-\frac{(x-y)^2}{4t}\right)
+$$
+is:
+- the Green's function for heat equation in $\mathbb{R}$,
+- the fundamental solution of the heat equation,
+- the Gauss characteristic kernel,
+- the heat kernel.
+
