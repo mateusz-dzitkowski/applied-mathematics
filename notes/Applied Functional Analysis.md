@@ -445,3 +445,118 @@ J(u) \le J(v), \quad \forall v \in V, \quad u \in V.
 $$
 ### Theorem 9.6 (Convex bilinear form)
 Let $V$ be a linear vector space and $a: V^2 \rightarrow \mathbb{R}$ be a bilinear form which is symmetric, and positive definite. Then the quadratic form $q: V \rightarrow \mathbb{R}$, which is defined by $q(v) = a(v, v)$, is strictly convex.
+
+# 10. Digression
+Consider the following problem
+$$
+\begin{cases}
+-\left(a(x)u'(x) = f(x)\right),  \\
+u'(0) = u'(1) = 0,
+\end{cases}
+$$
+where we are given $f$, and $u$, and are searching for $a$. We want to decide if the above problem is well-posed, as in if the solution exists, is unique, and depends continuously on the given conditions. We shall derive the required conditions that $u$ should fulfil to satisfy 
+$$
+||a_1 - a_2|| \le C||u_1 - u_2||.
+$$
+
+Let $u_j$ denote the solution for $a_j$, with $j=1, 2$. We have
+$$
+a_1(x) - a_2(x) = -\frac{1}{u_1'(x)u_2'(x)}\int_0^xf(y)dy\left(u_2'(x) - u_1'(x)\right),
+$$
+squaring both sides, and integrating, we get
+$$
+||a_1 - a_2||^2 \le \frac{1}{\gamma^4}\left(\int_0^1f(x)dx\right)^2\int_0^1\left(u_2'(x) - u_1'(x)\right)^2dx.
+$$
+So here we assumed that
+$$
+u \in C^2([0, 1]), \quad 0 \lt \gamma \lt u'(x), \quad ||u||_{C^2} \le M.
+$$
+Integration by parts and the Cauchy-Schwarz inequality yields
+$$
+\begin{aligned}
+\int_0^1\left(u_2'(x) - u_1'(x)\right)^2dx &= \int_0^1\left(u_1(x) - u_2(x)\right)\left(u_2''(x) - u_1''(x)\right)dx \le \\
+&\le ||u_1-u_2||_{L^2(0, 1}||u_1'' - u_2''||_{L^2(0, 1)} \le \\
+&\le 2M||u_1 - u_2||_{L^2(0, 1)}.
+\end{aligned}
+$$
+So we have 
+$$
+||a_1 - a_2||_{L^2(0, 1)} \le \sqrt{2M}||u_1 - u_2||_{L^2(0, 1)},
+$$
+and the space that $u$ should belong to is
+$$
+C = \left\{ u \in C^2([0, 1]): \quad 0 \lt \gamma \lt u'(x), \quad ||u||_{C^2} \le M \right\}.
+$$
+If $u$ is measured in a real world, we would like to regularise it, to fit into the space $C$. 
+
+### Regularisation and iterative reconstruction
+Consider the following problem
+$$
+\begin{cases}
+-\nabla(a \nabla u) = f,\\
+\frac{\partial u}{\partial n} = 0.
+\end{cases}
+$$
+
+Assume that measurements $u_\delta$ of the exact solution $u$ for $x \in \Omega$ are given. We define the objective functional
+$$
+J(u, a) = \int_\Omega\left(u(x) - u_\delta(x)\right)^2dx,
+$$
+where $u$ implicitly depends on $a$, via the differential equation at hand. Also, $J: H^1(\Omega)^2 \rightarrow \mathbb{R}$.
+
+We denote by $u_a \in H^1(\Omega)$ the unique weak solution to the PDE. Moreover, we impose on $a$ to be a function in $H^1(\Omega)$.
+
+We introduce the so-called *reduced objective functional*:
+$$
+J'(a) = J(u_a, a) + \frac{\alpha}{2}||a||^2_{H^1(\Omega)}.
+$$
+Then we get the constrained optimisation problem
+$$
+\min\limits_{a \in H^1(\Omega)}J'(a) \quad\quad(*)
+$$
+subject to 
+$$
+\begin{cases}
+-\nabla(a \nabla u) = f,\\
+\frac{\partial u}{\partial n} = 0.
+\end{cases}
+$$
+To solve this problem we introduce the Lagrangian 
+$$
+\mathcal{L}(u, a, p) = J(u, a) + \frac{\alpha}{2}||a||^2_{H^1(\Omega)} + \int_\Omega a \nabla u \nabla pdx - \int_\Omega fpdx,
+$$
+where $p \in H^1(\Omega)$ is a Lagrange multiplier or the adjoint variable.
+
+The method of Lagrange multipliers states that te solution to the problem $(*)$ has to be a stationary point of the Lagrangian, that is it has to satisfy the following set of equations:
+$$
+\begin{cases}
+\delta_u\mathcal{L}(u, a, p, h_u) &= 0, \quad \forall h_u \in H^1(\Omega), \\
+\delta_a\mathcal{L}(u, a, p, h_a) &= 0, \quad \forall h_a \in H^1(\Omega), \\
+\delta_p\mathcal{L}(u, a, p, h_p) &= 0, \quad \forall h_p \in H^1(\Omega), \\
+\end{cases}
+$$
+where for $F: \mathcal{U} \rightarrow \mathbb{R}$, $\delta_uF(u, h)$ is defined by
+$$
+\lim\limits_{\epsilon \rightarrow 0}F(u, h) = \lim\limits_{\epsilon \rightarrow 0}\frac{F(u + \epsilon h) - F(u)}{\epsilon}.
+$$
+
+Then we get the following:
+$$
+\begin{cases}
+-\nabla (a \nabla p) &= -(u - u_\delta), &\quad \frac{\partial u}{\partial n} = 0, \quad\quad &(1)\\
+\alpha a - \alpha\Delta a &= -\nabla u \nabla p &\quad \frac{\partial a}{\partial n} = 0, \quad\quad &(2)\\
+-\nabla(a \nabla u) &= f, &\quad \frac{\partial p}{\partial n} = 0. \quad\quad &(3)
+\end{cases}
+$$
+### The algorithm (The Landweber iterative method)
+
+Input: $u_\delta$, $\tau > 0$, $\alpha > 0$.
+Output: $u$, $a$.
+
+Set $j = 0$, initialise $a_0(x) \in H^1(\Omega)$
+Repeat until satisfied:
+1. Solve $(3)$ for $u_j$ with $a_j$,
+2. Solve $(1)$ for $p_j$ with $a_j$ and $u_j$,
+3. Solve $(2)$ for $a$ with $a_{j-1}$, $u_j$, and $p_j$,
+4. Update $a_{j+1} = a_j - \tau a$,
+5. Set $j = j + 1$.
