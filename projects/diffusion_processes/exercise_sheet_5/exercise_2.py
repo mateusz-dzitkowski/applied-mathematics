@@ -156,14 +156,13 @@ def simulate(
     return simulation
 
 
-def get_average_fraction_of_infected_nodes(graph: nx.Graph, p: float, max_steps: int, num_runs: int, initial_infectious: int) -> NDArray:
+def get_average_fraction_of_infected_nodes(graph: nx.Graph, p: float, max_steps: int, num_runs: int, initial_infectious: int | tuple[int, int]) -> NDArray:
     simulations = [simulate(graph=graph, p=p, max_steps=max_steps, initial_infectious=initial_infectious) for _ in range(num_runs)]
     fractions = np.array([simulation.get_fraction_of_infected_nodes() for simulation in simulations])
     return fractions.mean(axis=0)
 
 
 def get_average_measures(graph: nx.Graph, p: float, max_steps: int, num_runs: int = 300) -> Measures:
-    print(f"getting measures for {p=}")
     list_measures = [simulate(graph, max_steps, p, shortcircuit=True).to_measures() for _ in range(num_runs)]
     return Measures(
         total_infected_proportion=np.mean([measure.total_infected_proportion for measure in list_measures]),
@@ -197,6 +196,7 @@ def show_measures():
         data_frame=total_infected,
         x="p",
         y=["twod_lattice", "random", "watts_strogatz", "barabasi_albert"],
+        title="Fraction of total infected",
     ).show()
 
     time_to_clear = DataFrame(data={
@@ -210,6 +210,7 @@ def show_measures():
         data_frame=time_to_clear,
         x="p",
         y=["twod_lattice", "random", "watts_strogatz", "barabasi_albert"],
+        title="Time to clear infection",
     ).show()
 
     time_to_peak = DataFrame(data={
@@ -223,6 +224,7 @@ def show_measures():
         data_frame=time_to_peak,
         x="p",
         y=["twod_lattice", "random", "watts_strogatz", "barabasi_albert"],
+        title="Time to peak number of infected",
     ).show()
 
 

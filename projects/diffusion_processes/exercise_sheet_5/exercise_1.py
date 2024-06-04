@@ -55,14 +55,14 @@ def total_number_of_infected(solution: DataFrame) -> float:
 
 def get_phase_portrait(beta: float, r: float, s_max: float = 1, i_max: float = 1, normalised: bool = False) -> go.Figure:
     s, i = np.meshgrid(
-        np.linspace(0, s_max, 20),
-        np.linspace(0, i_max, 20),
+        np.linspace(0, s_max, 10),
+        np.linspace(0, i_max, 10),
     )
     u, v = phase_portrait(s, i, beta, r)
     if normalised:
         norm = np.sqrt(u**2 + v**2)
         u, v = u / norm, v / norm
-    return ff.create_quiver(s, i, u, v, scale=0.02)
+    return ff.create_quiver(s, i, u, v, scale=0.02, showlegend=False)
 
 
 def add_trajectories(fig: go.Figure, *solutions: DataFrame) -> go.Figure:
@@ -71,6 +71,7 @@ def add_trajectories(fig: go.Figure, *solutions: DataFrame) -> go.Figure:
             go.Scatter(
                 x=solution["s"],
                 y=solution["i"],
+                showlegend=False,
             ),
         )
     return fig
@@ -96,6 +97,14 @@ def show_phase_portrait_and_trajectories(beta: float, r: float, num_trajectories
 
     fig = get_phase_portrait(beta, r, normalised=normalised)
     fig = add_trajectories(fig, *solutions)
+    fig.update_yaxes(scaleanchor="x", scaleratio=1)
+    fig.update_layout(
+        autosize=False,
+        width=1000,
+        height=700,
+        xaxis_title="S",
+        yaxis_title="I",
+    )
     fig.show()
 
 
