@@ -156,14 +156,30 @@ def simulate(
     return simulation
 
 
-def get_average_fraction_of_infected_nodes(graph: nx.Graph, p: float, max_steps: int, num_runs: int, initial_infectious: int | tuple[int, int]) -> NDArray:
-    simulations = [simulate(graph=graph, p=p, max_steps=max_steps, initial_infectious=initial_infectious) for _ in range(num_runs)]
+def get_average_fraction_of_infected_nodes(
+    graph: nx.Graph,
+    p: float,
+    max_steps: int,
+    num_runs: int,
+    initial_infectious: int | tuple[int, int],
+    step_forward: StepForward = step_forward_synchronous,
+) -> NDArray:
+    simulations = [
+        simulate(graph=graph, p=p, max_steps=max_steps, initial_infectious=initial_infectious, step_forward=step_forward)
+        for _ in range(num_runs)
+    ]
     fractions = np.array([simulation.get_fraction_of_infected_nodes() for simulation in simulations])
     return fractions.mean(axis=0)
 
 
-def get_average_measures(graph: nx.Graph, p: float, max_steps: int, num_runs: int = 300) -> Measures:
-    list_measures = [simulate(graph, max_steps, p, shortcircuit=True).to_measures() for _ in range(num_runs)]
+def get_average_measures(
+    graph: nx.Graph,
+    p: float,
+    max_steps: int,
+    num_runs: int = 300,
+    step_forward: StepForward = step_forward_synchronous,
+) -> Measures:
+    list_measures = [simulate(graph, max_steps, p, shortcircuit=True, step_forward=step_forward).to_measures() for _ in range(num_runs)]
     return Measures(
         total_infected_proportion=np.mean([measure.total_infected_proportion for measure in list_measures]),
         time_to_clear=np.mean([measure.time_to_clear for measure in list_measures]),
@@ -171,19 +187,19 @@ def get_average_measures(graph: nx.Graph, p: float, max_steps: int, num_runs: in
     )
 
 
-def get_measures_per_p(graph: nx.Graph, max_steps: int, num_p: int = 20) -> DataFrame:
+def get_measures_per_p(graph: nx.Graph, max_steps: int, num_p: int = 20, step_forward: StepForward = step_forward_synchronous) -> DataFrame:
     p_list = np.linspace(0, 1, num_p)
     return DataFrame(data=[
-        asdict(get_average_measures(graph, p, max_steps)) | {"p": p}
+        asdict(get_average_measures(graph, p, max_steps, step_forward=step_forward)) | {"p": p}
         for p in p_list
     ])
 
 
-def show_measures():
-    twod_lattice = get_measures_per_p(nx.grid_2d_graph(10, 10), 100)
-    random = get_measures_per_p(nx.erdos_renyi_graph(100, 0.0365), 100)
-    watts_strogatz = get_measures_per_p(nx.watts_strogatz_graph(100, 4, 0.4), 100)
-    barabasi_albert = get_measures_per_p(nx.barabasi_albert_graph(100, 2), 100)
+def show_measures(step_forward: StepForward = step_forward_synchronous):
+    twod_lattice = get_measures_per_p(nx.grid_2d_graph(10, 10), 100, step_forward=step_forward)
+    random = get_measures_per_p(nx.erdos_renyi_graph(100, 0.0365), 100, step_forward=step_forward)
+    watts_strogatz = get_measures_per_p(nx.watts_strogatz_graph(100, 4, 0.4), 100, step_forward=step_forward)
+    barabasi_albert = get_measures_per_p(nx.barabasi_albert_graph(100, 2), 100, step_forward=step_forward)
 
     total_infected = DataFrame(data={
         "p": twod_lattice["p"],
@@ -260,7 +276,14 @@ def animate(g: nx.Graph, simulation: Simulation, filename: str, grid_layout: boo
 
 
 def main():
-    show_measures()
+    graph = nx.grid_2d_graph(6, 6)
+    simulation = simulate(
+        graph=graph,
+        max_steps=36,
+        p=0.5,
+        shortcircuit=True,
+    )
+    animate(graph, simulation, "2d_lattice.gif", grid_layout=True)
 
 
 if __name__ == "__main__":
