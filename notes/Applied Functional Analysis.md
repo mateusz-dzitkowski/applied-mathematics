@@ -560,3 +560,38 @@ Repeat until satisfied:
 3. Solve $(2)$ for $a$ with $a_{j-1}$, $u_j$, and $p_j$,
 4. Update $a_{j+1} = a_j - \tau a$,
 5. Set $j = j + 1$.
+
+# 11. Vector space bases
+### Def 11.1 (Orthogonal and orthonormal sets)
+We call a set of vectors $\left\{e_i\right\}$  in a vector space with a scalar product orthogonal when 
+$$
+\langle e_i, e_j \rangle = 0, \quad i \ne j.
+$$
+Additionally if $||e_i||^2 = 1$ we call it orthonormal, in short $\langle e_i, e_j \rangle = \delta_{ij}$.
+#### Fact
+The orthogonal set $\{e_i\}$ is linearly independent.
+### Theorem 11.2 (Bessel inequality)
+Let $\{e_i\}$ be an orthonormal set in a Hilbert space $\mathcal{H}$, and $\psi$ any vector in $\mathcal{H}$. Then
+$$
+\sum_{i \in I} |\langle \psi, e_i \rangle|^2 \le ||\psi||^2.
+$$
+### Theorem 11.3
+Let $\{e_i\}$ be an orthonormal set of vectors in a Hilbert space $\mathcal{H}$. Then:
+- $\sum_{n=1}^\infty\alpha_ie_i$  converges iff $\sum_{n=1}^\infty|\alpha_i|^2$ converges,
+- If $\psi = \sum_{n=1}^\infty \alpha_ie_i$ and $\psi = \sum_{n=1}^\infty \beta_ie_i$ then $a_i = \beta_i$ for all $i$. 
+### Theorem 11.4
+The following conditions are equivalent for a Hilbert space $\mathcal{H}$ and an orthonormal set $\{e_i\}$:
+- If $\langle \psi, e_i \rangle = 0$ for all $i \in I$, then $\psi = 0$,
+- Any $\psi \in \mathcal{H}$ has a form $\psi = \sum_{i \in I}\langle \psi, e_i \rangle e_i$,
+- For any $\psi \in \mathcal{H}$, $||\psi||^2 = \sum_{i \in I}|\langle \psi, e_i \rangle|^2$.
+We call such set $\{e_i\}$ a complete orthonormal set or just a basis of $\mathcal{H}$.
+#### Remarks
+- Alas, bases can be uncountable, for example:
+	$l^2(\mathbb{R})$ - all functions that are non-zero at finite set of points in $\mathbb{R}$ such that 
+	$$
+	\sum_{x \in \mathbb{R}}|f(x)|^2 \lt \infty.
+	$$
+- Nearly always we deal with countable bases. Such Hilbert spaces are called separable.
+### Theorem 11.5
+Given a basis there exists an isomorphism between separable $\mathcal{H}$, and $l^2$.
+#### Examples
