@@ -204,7 +204,7 @@ def main():
         v[:, -1] = 0
         v[-1, :] = 0
 
-    def p_bcs(p: NDArray, x: NDArray, y: NDArray):
+    def p_bcs(p: NDArray, _: NDArray, __: NDArray):
         p[:, -1] = p[:, -2]
         p[0, :] = p[1, :]
         p[:, 0] = p[:, 1]
