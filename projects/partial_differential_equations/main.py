@@ -6,7 +6,7 @@ from matplotlib import (
 )
 
 from projects.partial_differential_equations.domain import Domain
-from projects.partial_differential_equations.solution import UVP
+from projects.partial_differential_equations.uvp import UVP
 
 """
 Considering the equations (Incompressible Navier-Stokes):
