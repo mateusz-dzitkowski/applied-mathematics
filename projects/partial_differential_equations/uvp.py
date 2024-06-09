@@ -263,7 +263,7 @@ class UVP:
             blit=False,
         ).save(
             filename=filename,
-            writer=animation.PillowWriter(fps=30, bitrate=-1),
+            writer=animation.PillowWriter(fps=200, bitrate=-1),  # TODO: how the fuck do I make the video not be so slow
         )
 
 

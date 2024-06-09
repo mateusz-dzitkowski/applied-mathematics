@@ -23,76 +23,28 @@ p = p(t, x, y)
 
 def main():
     def u_bcs(u: NDArray, t: float, x: NDArray, y: NDArray):
-        u[0, :] = 0
-        u[-1, :] = 0
-        u[50:, 0] = 0
-        u[50:, -1] = 0
-
-        u[:50, 0] = 1
-        u[:50, -1] = 1
+        u[0, :] = u[-1, :] = 0
+        u[:, 0] = (4 * 1.5 * y * (0.41 - y) / 0.41**2)[:, 0]
 
         u[:, :] = np.where(
-            np.logical_and(
-                np.logical_and(
-                    0.45 < x,
-                    x < 0.55
-                ),
-                np.logical_or(
-                    y < 0.2,
-                    np.logical_and(
-                        y > 0.25,
-                        y < 0.5,
-                    )
-                )
-            ),
+            np.sqrt((x - 0.2)**2 + (y - 0.2)**2) < 0.05,
             0,
-            u,
+            u
         )
 
     def v_bcs(v: NDArray, t: float, x: NDArray, y: NDArray):
-        v[0, :] = 0
-        v[-1, :] = 0
-        v[50:, 0] = 0
-        v[50:, -1] = 0
+        v[0, :] = v[-1, :] = 0
 
         v[:, :] = np.where(
-            np.logical_and(
-                np.logical_and(
-                    0.45 < x,
-                    x < 0.55
-                ),
-                np.logical_or(
-                    y < 0.2,
-                    np.logical_and(
-                        y > 0.25,
-                        y < 0.5,
-                    )
-                )
-            ),
+            np.sqrt((x - 0.2) ** 2 + (y - 0.2) ** 2) < 0.05,
             0,
-            v,
+            v
         )
 
     def p_bcs(p: NDArray, t: float, x: NDArray, y: NDArray):
-        p[:, :] = np.where(
-            np.logical_and(
-                np.logical_and(
-                    0.45 < x,
-                    x < 0.55
-                ),
-                np.logical_or(
-                    y < 0.2,
-                    np.logical_and(
-                        y > 0.25,
-                        y < 0.5,
-                    )
-                )
-            ),
-            0,
-            p,
-        )
+        p[:, -1] = 0
 
-    domain = Domain.new((1000, 100, 100), (1, 1, 1))
+    domain = Domain.new((5000, 100, 50), (5, 1, 0.41))
     (
         UVP.new(domain=domain)
         .with_boundary_conditions(
@@ -101,11 +53,10 @@ def main():
             p_bcs=p_bcs,
         )
         .with_parameters(
-            f=(np.ones(domain.shape.xy), np.zeros(domain.shape.xy)),
             rho=1.0,
             nu=0.001,
         )
-        .animate(filename="animation.gif")
+        .animate(filename="animation.mp4")
     )
 
 
