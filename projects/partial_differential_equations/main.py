@@ -1,9 +1,5 @@
 import numpy as np
 from nptyping import NDArray
-from matplotlib import (
-    cm,
-    pyplot as plt
-)
 
 from projects.partial_differential_equations.domain import Domain
 from projects.partial_differential_equations.uvp import UVP
@@ -26,9 +22,9 @@ p = p(t, x, y)
 
 
 def main():
-    domain = Domain.new((500, 41, 41), (0.5, 2, 2))
+    domain = Domain.new((1000, 100, 100), (0.5, 2, 2))
     rho = 1.0
-    nu = 0.1
+    nu = 0.001
 
     f = np.zeros(domain.shape.xy), np.zeros(domain.shape.xy)
 
@@ -56,14 +52,8 @@ def main():
         print(step)
         uvp = uvp.solve_for_next_uvp(f, u_bcs, v_bcs, p_bcs, rho, nu)
 
-    fig = plt.figure(figsize=(11, 7), dpi=100)
-    plt.contourf(domain.x, domain.y, uvp.p, alpha=0.5, cmap=cm.viridis)
-    plt.colorbar()
-    plt.contour(domain.x, domain.y, uvp.p, cmap=cm.viridis)
-    plt.streamplot(domain.x, domain.y, uvp.u, uvp.v)
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.show()
+        if step % 5 == 0:
+            uvp.show()
 
 
 if __name__ == "__main__":

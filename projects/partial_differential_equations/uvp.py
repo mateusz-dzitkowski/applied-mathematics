@@ -1,6 +1,10 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Self
 
+from matplotlib import (
+    cm,
+    pyplot as plt,
+)
 import numpy as np
 from nptyping import NDArray
 
@@ -9,6 +13,26 @@ from projects.partial_differential_equations.domain import Domain
 
 FunctionXY = Callable[[NDArray, NDArray], ...]
 BoundaryConditions = Callable[[NDArray, NDArray, NDArray], ...]  # for now assume that BCs are time-independent
+
+
+def d_dx(values: NDArray, dx: float) -> NDArray:
+    # first derivative wrt x
+    return (values[1:-1, 2:] - values[1:-1, 0:-2]) / (2 * dx)
+
+
+def d2_dx2(values: NDArray, dx: float) -> NDArray:
+    # second derivative wrt x
+    return (values[1:-1, 2:] - 2 * values[1:-1, 1:-1] + values[1:-1, 0:-2]) / dx**2
+
+
+def d_dy(values: NDArray, dy: float) -> NDArray:
+    # first derivative wrt y
+    return (values[2:, 1:-1] - values[0:-2, 1:-1]) / (2 * dy)
+
+
+def d2_dy2(values: NDArray, dy: float) -> NDArray:
+    # second derivative wrt y
+    return (values[2:, 1:-1] - 2 * values[1:-1, 1:-1] + values[0:-2, 1:-1]) / dy**2
 
 
 @dataclass
@@ -49,18 +73,12 @@ class UVP:
 
         rhs = np.zeros(self.domain.shape.xy)
         rhs[1:-1, 1:-1] = rho * (
-            (f_x[1:-1, 2:] - f_x[1:-1, 0:-2]) / (2 * dx)
-            + (f_y[2:, 1:-1] - f_y[0:-2, 1:-1]) / (2 * dy)
-            + (
-                (u[1:-1, 2:] - u[1:-1, 0:-2]) / (2 * dx)
-                + (v[2:, 1:-1] - v[0:-2, 1:-1]) / (2 * dy)
-            ) / dt
-            - 2 * (
-                (u[2:, 1:-1] - u[0:-2, 1:-1]) / (2 * dy)
-                * (v[1:-1, 2:] - v[1:-1, 0:-2]) / (2 * dx)
-            )
-            - ((u[1:-1, 2:] - u[1:-1, 0:-2]) / (2 * dx))**2
-            - ((v[2:, 1:-1] - v[0:-2, 1:-1]) / (2 * dy))**2
+            d_dx(f_x, dx)
+            + d_dy(f_y, dy)
+            + (d_dx(u, dx) + d_dy(v, dy)) / dt
+            - 2 * d_dy(u, dy) * d_dx(v, dx)
+            - d_dx(u, dx)**2
+            - d_dy(v, dy)**2
         )
         return rhs
 
@@ -69,7 +87,7 @@ class UVP:
         f: tuple[NDArray, NDArray],
         apply_boundary_conditions: BoundaryConditions,
         rho: float = 1,
-        num_iterations: int = 10,
+        num_iterations: int = 100,
     ) -> NDArray:
         rhs = self.build_pressure_equation_rhs(f, rho)
         _, dx, dy = self.domain.diff
@@ -78,15 +96,14 @@ class UVP:
         p_previous = self.p.copy()
         for _ in range(num_iterations):
             p_next = p_previous.copy()
-            p_next[1:-1, 1:-1] = (
-                (
-                    (p_previous[1:-1, 2:] + p_previous[1:-1, 0:-2]) * dy**2
-                    + (p_previous[2:, 1:-1] + p_previous[0:-2, 1:-1]) * dx**2
-                ) / (2 * (dx**2 + dy**2)) -
-                dx**2 * dy**2 / (2 * (dx**2 + dy**2)) * rhs[1:-1, 1:-1]
-            )
 
             apply_boundary_conditions(p_next, self.domain.x, self.domain.y)
+
+            p_next[1:-1, 1:-1] = (
+                (p_previous[1:-1, 2:] + p_previous[1:-1, 0:-2]) * dx**2
+                + (p_previous[2:, 1:-1] + p_previous[0:-2, 1:-1]) * dy**2
+                - rhs[1:-1, 1:-1] * dx**2 * dy**2
+            ) / (2 * (dx**2 + dy**2))
 
         return p_next
 
@@ -104,14 +121,13 @@ class UVP:
 
         u_new[1:-1, 1:-1] = (
             u_old[1:-1, 1:-1]
-            - u_old[1:-1, 1:-1] * dt / dx * (u_old[1:-1, 1:-1] - u_old[1:-1, 0:-2])
-            - v_old[1:-1, 1:-1] * dt / dy * (u_old[1:-1, 1:-1] - u_old[0:-2, 1:-1])
-            - dt / (2 * rho * dx) * (p_new[1:-1, 2:] - p_new[1:-1, 0:-2])
-            + nu * (
-                dt / dx ** 2 * (u_old[1:-1, 2:] - 2 * u_old[1:-1, 1:-1] + u_old[1:-1, 0:-2])
-                + dt / dy ** 2 * (u_old[2:, 1:-1] - 2 * u_old[1:-1, 1:-1] + u_old[0:-2, 1:-1])
+            + dt * (
+                - u_old[1:-1, 1:-1] * d_dx(u_old, dx)
+                - v_old[1:-1, 1:-1] * d_dy(u_old, dy)
+                - d_dx(p_new, dx) / rho
+                + nu * (d2_dx2(u_old, dx) + d2_dy2(u_old, dy))
+                + f[0][1:-1, 1:-1]
             )
-            + dt * f[0][1:-1, 1:-1]
         )
 
         apply_boundary_conditions(u_new, self.domain.x, self.domain.y)
@@ -132,14 +148,13 @@ class UVP:
         v_new = np.zeros_like(v_old)
         v_new[1:-1, 1:-1] = (
             v_old[1:-1, 1:-1]
-            - u_old[1:-1, 1:-1] * dt / dx * (v_old[1:-1, 1:-1] - v_old[1:-1, 0:-2])
-            - v_old[1:-1, 1:-1] * dt / dy * (v_old[1:-1, 1:-1] - v_old[0:-2, 1:-1])
-            - dt / (2 * rho * dy) * (p_new[2:, 1:-1] - p_new[0:-2, 1:-1])
-            + nu * (
-                dt / dx**2 * (v_old[1:-1, 2:] - 2 * v_old[1:-1, 1:-1] + v_old[1:-1, 0:-2])
-                + dt / dy**2 * (v_old[2:, 1:-1] - 2 * v_old[1:-1, 1:-1] + v_old[0:-2, 1:-1])
+            + dt * (
+                - u_old[1:-1, 1:-1] * d_dx(v_old, dx)
+                - v_old[1:-1, 1:-1] * d_dy(v_old, dy)
+                - d_dy(p_new, dy) / rho
+                + nu * (d2_dx2(v_old, dx) + d2_dy2(v_old, dy))
+                + f[1][1:-1, 1:-1]
             )
-            + dt * f[1][1:-1, 1:-1]
         )
 
         apply_boundary_conditions(v_new, self.domain.x, self.domain.y)
@@ -154,13 +169,33 @@ class UVP:
         p_bcs: BoundaryConditions,
         rho: float = 1,
         nu: float = 1,
-    ) -> "UVP":
+        inplace: bool = False,
+    ) -> Self | None:
         p_new = self.solve_for_pressure(f, p_bcs, rho)
         u_new = self.solve_for_u(f, p_new, u_bcs, rho, nu)
         v_new = self.solve_for_v(f, p_new, v_bcs, rho, nu)
-        return UVP(
+
+        uvp_new = UVP(
             u=u_new,
             v=v_new,
             p=p_new,
             domain=self.domain,
         )
+
+        if inplace:
+            self.u = uvp_new.u
+            self.v = uvp_new.v
+            self.p = uvp_new.p
+            return None
+        else:
+            return uvp_new
+
+    def show(self):
+        fig = plt.figure(figsize=(11, 7), dpi=100)
+        plt.contourf(self.domain.x, self.domain.y, self.p, alpha=0.5, cmap=cm.viridis)
+        plt.colorbar()
+        plt.contour(self.domain.x, self.domain.y, self.p, cmap=cm.viridis)
+        plt.streamplot(self.domain.x, self.domain.y, self.u, self.v)
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()
