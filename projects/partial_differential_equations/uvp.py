@@ -106,13 +106,13 @@ class UVP:
         for _ in range(num_iterations):
             p_next = p_previous.copy()
 
-            apply_boundary_conditions(p_next, self.t, self.domain.x, self.domain.y)
-
             p_next[1:-1, 1:-1] = (
                 (p_previous[1:-1, 2:] + p_previous[1:-1, 0:-2]) * dx**2
                 + (p_previous[2:, 1:-1] + p_previous[0:-2, 1:-1]) * dy**2
                 - rhs[1:-1, 1:-1] * dx**2 * dy**2
             ) / (2 * (dx**2 + dy**2))
+
+            apply_boundary_conditions(p_next, self.t, self.domain.x, self.domain.y)
 
         return p_next
 
@@ -222,23 +222,33 @@ class UVP:
         nu: float = 1,
     ):
         fig, ax = _prepare_fig(self.domain)
-        quiver = ax.quiver(
+        scalar_field = ax.pcolormesh(
             self.domain.x,
             self.domain.y,
-            self.u,
-            self.v,
+            self.p,
+            cmap=cm.Blues,
+            vmin=-4,
+            vmax=4,
+        )
+        vector_field = ax.quiver(
+            # TODO: this is ugly, determine slices from the size of the domain or something
+            self.domain.x[::3, ::3],
+            self.domain.y[::3, ::3],
+            self.u[::3, ::3],
+            self.v[::3, ::3],
             scale=8,
         )
 
-        def update_quiver(n: int, _quiver, uvp: UVP):
+        def update_quiver(n: int, _vector_field, _scalar_field, uvp: UVP):
             print(n)
             uvp.solve_for_next_uvp(f, u_bcs, v_bcs, p_bcs, rho, nu, inplace=True)
-            _quiver.set_UVC(uvp.u, uvp.v)
+            _vector_field.set_UVC(uvp.u[::3, ::3], uvp.v[::3, ::3])
+            _scalar_field.set_array(uvp.p)
 
         animation.FuncAnimation(
             fig=fig,
             func=update_quiver,  # type: ignore
-            fargs=(quiver, self),
+            fargs=(vector_field, scalar_field, self),
             frames=self.domain.shape.t - 1,
             blit=False,
         ).save(
