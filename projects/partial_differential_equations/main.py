@@ -22,15 +22,6 @@ p = p(t, x, y)
 
 
 def main():
-    domain = Domain.new((1000, 100, 100), (1, 1, 1))
-    rho = 1.0
-    nu = 0.001
-
-    f = (
-        np.ones(domain.shape.xy),
-        np.zeros(domain.shape.xy),
-    )
-
     def u_bcs(u: NDArray, t: float, x: NDArray, y: NDArray):
         u[0, :] = 0
         u[-1, :] = 0
@@ -38,6 +29,7 @@ def main():
         u[50:, -1] = 0
 
         u[:50, 0] = 1
+        u[:50, -1] = 1
 
         u[:, :] = np.where(
             np.logical_and(
@@ -100,14 +92,20 @@ def main():
             p,
         )
 
-    UVP.initial(domain=domain).animate(
-        f=f,
-        u_bcs=u_bcs,
-        v_bcs=v_bcs,
-        p_bcs=p_bcs,
-        filename="animation.gif",
-        rho=rho,
-        nu=nu,
+    domain = Domain.new((1000, 100, 100), (1, 1, 1))
+    (
+        UVP.new(domain=domain)
+        .with_boundary_conditions(
+            u_bcs=u_bcs,
+            v_bcs=v_bcs,
+            p_bcs=p_bcs,
+        )
+        .with_parameters(
+            f=(np.ones(domain.shape.xy), np.zeros(domain.shape.xy)),
+            rho=1.0,
+            nu=0.001,
+        )
+        .animate(filename="animation.gif")
     )
 
 
