@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from typing import Callable, Self
 
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
 from matplotlib import (
+    animation,
     cm,
     pyplot as plt,
 )
@@ -12,7 +15,7 @@ from projects.partial_differential_equations.domain import Domain
 
 
 FunctionXY = Callable[[NDArray, NDArray], ...]
-BoundaryConditions = Callable[[NDArray, NDArray, NDArray], ...]  # for now assume that BCs are time-independent
+BoundaryConditions = Callable[[NDArray, float, NDArray, NDArray], ...]
 
 
 def d_dx(values: NDArray, dx: float) -> NDArray:
@@ -41,6 +44,7 @@ class UVP:
     v: NDArray  # y component of velocity
     p: NDArray  # pressure
     domain: Domain
+    current_step: int
 
     @classmethod
     def initial(
@@ -57,10 +61,15 @@ class UVP:
             v=v(x, y),
             p=p(x, y),
             domain=domain,
+            current_step=0,
         )
 
     def __iter__(self):
         return iter((self.u, self.v, self.p))
+
+    @property
+    def t(self) -> float:
+        return self.domain.t[self.current_step]  # type: ignore
 
     def build_pressure_equation_rhs(
         self,
@@ -97,7 +106,7 @@ class UVP:
         for _ in range(num_iterations):
             p_next = p_previous.copy()
 
-            apply_boundary_conditions(p_next, self.domain.x, self.domain.y)
+            apply_boundary_conditions(p_next, self.t, self.domain.x, self.domain.y)
 
             p_next[1:-1, 1:-1] = (
                 (p_previous[1:-1, 2:] + p_previous[1:-1, 0:-2]) * dx**2
@@ -130,7 +139,7 @@ class UVP:
             )
         )
 
-        apply_boundary_conditions(u_new, self.domain.x, self.domain.y)
+        apply_boundary_conditions(u_new, self.t, self.domain.x, self.domain.y)
 
         return u_new
 
@@ -157,7 +166,7 @@ class UVP:
             )
         )
 
-        apply_boundary_conditions(v_new, self.domain.x, self.domain.y)
+        apply_boundary_conditions(v_new, self.t, self.domain.x, self.domain.y)
 
         return v_new
 
@@ -180,12 +189,14 @@ class UVP:
             v=v_new,
             p=p_new,
             domain=self.domain,
+            current_step=self.current_step + 1,
         )
 
         if inplace:
             self.u = uvp_new.u
             self.v = uvp_new.v
             self.p = uvp_new.p
+            self.current_step = uvp_new.current_step
             return None
         else:
             return uvp_new
@@ -199,3 +210,48 @@ class UVP:
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.show()
+
+    def animate(
+        self,
+        f: tuple[NDArray, NDArray],
+        u_bcs: BoundaryConditions,
+        v_bcs: BoundaryConditions,
+        p_bcs: BoundaryConditions,
+        filename: str,
+        rho: float = 1,
+        nu: float = 1,
+    ):
+        fig, ax = _prepare_fig(self.domain)
+        quiver = ax.quiver(
+            self.domain.x,
+            self.domain.y,
+            self.u,
+            self.v,
+            scale=8,
+        )
+
+        def update_quiver(n: int, _quiver, uvp: UVP):
+            print(n)
+            uvp.solve_for_next_uvp(f, u_bcs, v_bcs, p_bcs, rho, nu, inplace=True)
+            _quiver.set_UVC(uvp.u, uvp.v)
+
+        animation.FuncAnimation(
+            fig=fig,
+            func=update_quiver,  # type: ignore
+            fargs=(quiver, self),
+            frames=self.domain.shape.t - 1,
+            blit=False,
+        ).save(
+            filename=filename,
+            writer=animation.PillowWriter(fps=30, bitrate=-1),
+        )
+
+
+def _prepare_fig(domain: Domain) -> tuple[Figure, Axes]:
+    fig, ax = plt.subplots(figsize=(10, 10))
+
+    ax.set_aspect("equal")
+    ax.set_xlim([domain.x.min(), domain.x.max()])
+    ax.set_ylim([domain.y.min(), domain.y.max()])
+
+    return fig, ax

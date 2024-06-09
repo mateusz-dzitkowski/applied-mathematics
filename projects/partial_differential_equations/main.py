@@ -22,38 +22,53 @@ p = p(t, x, y)
 
 
 def main():
-    domain = Domain.new((1000, 100, 100), (0.5, 2, 2))
+    domain = Domain.new((1000, 40, 40), (1, 2, 2))
     rho = 1.0
-    nu = 0.001
+    nu = 0.01
 
     f = np.zeros(domain.shape.xy), np.zeros(domain.shape.xy)
 
-    def u_bcs(u: NDArray, _: NDArray, __: NDArray):
+    def u_bcs(u: NDArray, t: float, x: NDArray, y: NDArray):
         u[0, :] = 0
-        u[:, 0] = 0
-        u[:, -1] = 0
-        u[-1, :] = 1
+        u[:, 0] = (1 + np.sin(y - 40*t))[:, 0]
+        u[:, -1] = -(y * (2 - y) * (1 - 0.5 * y))[:, -1]
+        u[-1, :] = 0
 
-    def v_bcs(v: NDArray, _: NDArray, __: NDArray):
-        v[0, :] = 0
+        u[:, :] = np.where(
+            np.logical_and(np.abs(x - 1) <= 0.5, np.abs(y - 1) <= 0.5),
+            0,
+            u,
+        )
+
+        u[:, :] = np.where(
+            np.logical_and(np.abs(x - 1) <= 0.5, np.abs(y - 1) <= 0.5),
+            0,
+            u,
+        )
+
+    def v_bcs(v: NDArray, t: float, x: NDArray, y: NDArray):
         v[:, 0] = 0
         v[:, -1] = 0
-        v[-1, :] = 0
 
-    def p_bcs(p: NDArray, _: NDArray, __: NDArray):
-        p[:, -1] = p[:, -2]
-        p[0, :] = p[1, :]
-        p[:, 0] = p[:, 1]
-        p[-1, :] = 0
+        v[:, :] = np.where(
+            np.logical_and(np.abs(x - 1) <= 0.3, np.abs(y - 1) <= 0.3),
+            0,
+            v,
+        )
 
-    uvp = UVP.initial(domain=domain)
+    def p_bcs(p: NDArray, t: float, x: NDArray, y: NDArray):
+        p[:, 0] = 0
+        p[:, -1] = 0
 
-    for step in range(uvp.domain.shape.t):
-        print(step)
-        uvp = uvp.solve_for_next_uvp(f, u_bcs, v_bcs, p_bcs, rho, nu)
-
-        if step % 5 == 0:
-            uvp.show()
+    UVP.initial(domain=domain).animate(
+        f=f,
+        u_bcs=u_bcs,
+        v_bcs=v_bcs,
+        p_bcs=p_bcs,
+        filename="animation.gif",
+        rho=rho,
+        nu=nu,
+    )
 
 
 if __name__ == "__main__":
