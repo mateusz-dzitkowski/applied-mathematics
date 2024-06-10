@@ -14,6 +14,23 @@ from nptyping import NDArray
 from projects.partial_differential_equations.domain import Domain
 
 
+"""
+Considering the equations (Incompressible Navier-Stokes):
+(1) u_t = 𝛎Δu - (u·∇)u - ∇p/ϱ + f
+(2) ∇·u = 0
+
+Taking the divergence of (1) and applying (2) we get
+(1') u_t = 𝛎Δu - (u·∇)u - ∇p/ϱ + f
+(2') Δp = ϱ(∇f - ∇·(u·∇)u)
+which is known as the velocity-pressure formulation of the Navier-Stokes equations
+
+In the computations we let vector(u) = (u, v), and
+u = u(t, x, y)
+v = v(t, x, y)
+p = p(t, x, y)
+"""
+
+
 FunctionXY = Callable[[NDArray, NDArray], ...]
 BoundaryConditions = Callable[[NDArray, float, NDArray, NDArray], ...]
 
@@ -230,40 +247,54 @@ class UVP:
         plt.ylabel('Y')
         plt.show()
 
-    def animate(self, filename: str):
+    def animate(
+        self,
+        filename: str,
+        total_number_of_frames: int = 300,
+        fps: int = 30,
+        x_spacing: int = 3,
+        y_spacing: int = 3,
+        p_range: tuple[float, float] = (-2, 2),
+    ):
+        assert total_number_of_frames < self.domain.shape.t
+        iterations_per_frame = self.domain.shape.t // total_number_of_frames
+
+        x_slice = slice(None, None, x_spacing)
+        y_slice = slice(None, None, y_spacing)
+
         fig, ax = _prepare_fig(self.domain)
         scalar_field = ax.pcolormesh(
             self.domain.x,
             self.domain.y,
             self.p,
             cmap=cm.Blues,
-            vmin=-4,
-            vmax=4,
+            vmin=p_range[0],
+            vmax=p_range[1],
         )
         vector_field = ax.quiver(
-            # TODO: this is ugly, determine slices from the size of the domain or something
-            self.domain.x[::3, ::3],
-            self.domain.y[::3, ::3],
-            self.u[::3, ::3],
-            self.v[::3, ::3],
+            self.domain.x[x_slice, y_slice],
+            self.domain.y[x_slice, y_slice],
+            self.u[x_slice, y_slice],
+            self.v[x_slice, y_slice],
             scale=8,
         )
 
-        def update_quiver(n: int, _vector_field, _scalar_field, uvp: UVP):
-            print(n)
-            uvp.solve_for_next_uvp(inplace=True)
-            _vector_field.set_UVC(uvp.u[::3, ::3], uvp.v[::3, ::3])
+        def update_fields(n: int, _vector_field, _scalar_field, uvp: UVP):
+            print(f"{n} / {total_number_of_frames}")
+            for _ in range(iterations_per_frame):
+                uvp.solve_for_next_uvp(inplace=True)
+            _vector_field.set_UVC(uvp.u[x_slice, y_slice], uvp.v[x_slice, y_slice])
             _scalar_field.set_array(uvp.p)
 
         animation.FuncAnimation(
             fig=fig,
-            func=update_quiver,  # type: ignore
+            func=update_fields,  # type: ignore
             fargs=(vector_field, scalar_field, self),
-            frames=self.domain.shape.t - 1,
+            frames=total_number_of_frames,
             blit=False,
         ).save(
             filename=filename,
-            writer=animation.PillowWriter(fps=200, bitrate=-1),  # TODO: how the fuck do I make the video not be so slow
+            writer=animation.PillowWriter(fps=fps, bitrate=-1),
         )
 
 
