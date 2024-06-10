@@ -237,15 +237,28 @@ class UVP:
             )
         )
 
-    def show(self):
+    def show(self, at: float | None = None):
+        if at is not None:
+            assert self.t <= at
+            while self.t < at:
+                self.solve_for_next_uvp(inplace=True)
+
         fig = plt.figure(figsize=(11, 7), dpi=100)
-        plt.contourf(self.domain.x, self.domain.y, self.p, alpha=0.5, cmap=cm.viridis)
+        plt.pcolormesh(
+            self.domain.x,
+            self.domain.y,
+            self.p,
+            cmap=cm.Blues,
+            vmin=self.p.min(),
+            vmax=self.p.max(),
+        )
         plt.colorbar()
-        plt.contour(self.domain.x, self.domain.y, self.p, cmap=cm.viridis)
         plt.streamplot(self.domain.x, self.domain.y, self.u, self.v)
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.show()
+
+        return self
 
     def animate(
         self,

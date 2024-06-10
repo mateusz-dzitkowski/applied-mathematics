@@ -37,7 +37,14 @@ def p_bcs(p: NDArray, t: float, x: NDArray, y: NDArray):
         rho=1.0,
         nu=0.001,
     )
-    .animate(
-        filename="cavity_flow.gif",
-    )
+    .show(at=0.0)
+    .show(at=0.5)
+    .show(at=1.0)
+    .show(at=1.5)
+    .show(at=2.0)
+    .show(at=2.5)
+    .show(at=3.0)
+    # .animate(
+    #     filename="cavity_flow.gif",
+    # )
 )
