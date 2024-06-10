@@ -61,10 +61,10 @@ class UVP:
     u: NDArray  # x component of velocity
     v: NDArray  # y component of velocity
     p: NDArray  # pressure
-    u_bcs: BoundaryConditions
-    v_bcs: BoundaryConditions
-    p_bcs: BoundaryConditions
-    f: tuple[NDArray, NDArray]
+    u_bcs: BoundaryConditions  # u boundary conditions
+    v_bcs: BoundaryConditions  # v boundary conditions
+    p_bcs: BoundaryConditions  # p boundary conditions
+    f: tuple[NDArray, NDArray]  # external force in x and y
     rho: float
     nu: float
     current_step: int
@@ -317,5 +317,7 @@ def _prepare_fig(domain: Domain) -> tuple[Figure, Axes]:
     ax.set_aspect("equal")
     ax.set_xlim([domain.x.min(), domain.x.max()])
     ax.set_ylim([domain.y.min(), domain.y.max()])
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
 
     return fig, ax
