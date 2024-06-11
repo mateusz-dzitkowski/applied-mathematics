@@ -56,15 +56,12 @@ class Network:
         elif opinion == Opinion.UP:
             self.graph.nodes[spinson][OPINION] = Opinion.DOWN
 
-    @property
     def epsilon_coin_flip(self) -> bool:
         return uniform(0, 1) < self.epsilon
 
-    @property
     def coin_flip(self) -> bool:
         return uniform(0, 1) < self.coin_weight
 
-    @property
     def acts_independently(self) -> bool:
         return uniform(0, 1) < self.p
 
@@ -74,12 +71,12 @@ class Network:
     def step(self):
         for _ in self.graph.nodes:
             spinson = choice(list(self.graph.nodes))
-            if self.acts_independently and self.coin_flip:
+            if self.acts_independently() and self.coin_flip():
                 self.flip_opinion(spinson)
             else:
                 if opinion := self.q_panel_unanimous(spinson):
                     self.graph.nodes[spinson][OPINION] = opinion
-                elif self.epsilon_coin_flip:
+                elif self.epsilon_coin_flip():
                     self.flip_opinion(spinson)
 
     def simulate(self, steps: int = 1000) -> Iterable[float]:
