@@ -10,7 +10,7 @@ from projects.partial_differential_equations.uvp import UVP
 https://www.researchgate.net/publication/244990017_On_Consistency_of_Finite_Difference_Approximations_to_the_Navier-Stokes_Equations
 """
 
-NU = 10**-7
+NU = 10**-5
 
 
 def u_true(t: float, x: NDArray, y: NDArray) -> NDArray:
@@ -90,6 +90,7 @@ ax = fig.add_subplot(1, 1, 1)
 ax.plot(num_points_list, all_errors["u"], label="u")
 ax.plot(num_points_list, all_errors["v"], label="v")
 ax.plot(num_points_list, all_errors["p"], label="p")
+ax.set_xscale("log")
 ax.set_yscale("log")
 ax.legend()
 ax.grid()

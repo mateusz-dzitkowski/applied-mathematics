@@ -42,9 +42,15 @@ def p_bcs(p: NDArray, t: float, x: NDArray, y: NDArray):
     )
     .with_parameters(
         rho=1.0,
-        nu=0.005,
+        nu=0.0007,
     )
-    .animate(
-        filename="flow_past_a_cylinder.gif",
-    )
+    .show(at=1)
+    .show(at=2)
+    .show(at=3)
+    .show(at=4)
+    .show(at=5)
+    .show(at=6)
+    .show(at=7)
+    .show(at=8)
+    .discard()
 )

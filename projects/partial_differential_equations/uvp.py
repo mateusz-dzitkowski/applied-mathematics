@@ -31,7 +31,6 @@ p = p(t, x, y)
 """
 
 
-FunctionXY = Callable[[NDArray, NDArray], ...]
 BoundaryConditions = Callable[[NDArray, float, NDArray, NDArray], ...]
 
 
@@ -130,7 +129,7 @@ class UVP:
     def t(self) -> float:
         return self.domain.t[self.current_step]  # type: ignore
 
-    def build_pressure_equation_rhs(self) -> NDArray:
+    def build_pressure_equation_rhs(self, u_new: NDArray, v_new: NDArray) -> NDArray:
         u, v, _ = self
         dt, dx, dy = self.domain.diff
         f_x, f_y = self.f
@@ -139,15 +138,15 @@ class UVP:
         rhs[1:-1, 1:-1] = self.rho * (
             d_dx(f_x, dx)
             + d_dy(f_y, dy)
-            + (d_dx(u, dx) + d_dy(v, dy)) / dt
-            - 2 * d_dy(u, dy) * d_dx(v, dx)
-            - d_dx(u, dx)**2
-            - d_dy(v, dy)**2
+            + (d_dx(u_new, dx) + d_dy(v_new, dy)) / dt
+            - 2 * d_dy(u_new, dy) * d_dx(v_new, dx)
+            - d_dx(u_new, dx)**2
+            - d_dy(v_new, dy)**2
         )
         return rhs
 
-    def solve_for_pressure(self, num_iterations: int = 100) -> NDArray:
-        rhs = self.build_pressure_equation_rhs()
+    def solve_for_pressure(self, u_new: NDArray, v_new: NDArray, num_iterations: int = 100) -> NDArray:
+        rhs = self.build_pressure_equation_rhs(u_new, v_new)
         _, dx, dy = self.domain.diff
 
         p_next = None
@@ -156,8 +155,8 @@ class UVP:
             p_next = p_previous.copy()
 
             p_next[1:-1, 1:-1] = (
-                (p_previous[1:-1, 2:] + p_previous[1:-1, 0:-2]) * dx**2
-                + (p_previous[2:, 1:-1] + p_previous[0:-2, 1:-1]) * dy**2
+                (p_previous[1:-1, 2:] + p_previous[1:-1, 0:-2]) * dy**2
+                + (p_previous[2:, 1:-1] + p_previous[0:-2, 1:-1]) * dx**2
                 - rhs[1:-1, 1:-1] * dx**2 * dy**2
             ) / (2 * (dx**2 + dy**2))
 
@@ -165,7 +164,7 @@ class UVP:
 
         return p_next
 
-    def solve_for_u(self, p_new: NDArray) -> NDArray:
+    def solve_for_u(self) -> NDArray:
         u_old, v_old, _ = self
         dt, dx, dy = self.domain.diff
         u_new = np.zeros_like(u_old)
@@ -175,7 +174,7 @@ class UVP:
             + dt * (
                 - u_old[1:-1, 1:-1] * d_dx(u_old, dx)
                 - v_old[1:-1, 1:-1] * d_dy(u_old, dy)
-                - d_dx(p_new, dx) / self.rho
+                - d_dx(self.p, dx) / self.rho
                 + self.nu * (d2_dx2(u_old, dx) + d2_dy2(u_old, dy))
                 + self.f[0][1:-1, 1:-1]
             )
@@ -185,7 +184,7 @@ class UVP:
 
         return u_new
 
-    def solve_for_v(self, p_new: NDArray) -> NDArray:
+    def solve_for_v(self) -> NDArray:
         u_old, v_old, _ = self
         dt, dx, dy = self.domain.diff
 
@@ -195,7 +194,7 @@ class UVP:
             + dt * (
                 - u_old[1:-1, 1:-1] * d_dx(v_old, dx)
                 - v_old[1:-1, 1:-1] * d_dy(v_old, dy)
-                - d_dy(p_new, dy) / self.rho
+                - d_dy(self.p, dy) / self.rho
                 + self.nu * (d2_dx2(v_old, dx) + d2_dy2(v_old, dy))
                 + self.f[1][1:-1, 1:-1]
             )
@@ -206,9 +205,9 @@ class UVP:
         return v_new
 
     def solve_for_next_uvp(self, inplace: bool = False) -> Self | None:
-        p_new = self.solve_for_pressure()
-        u_new = self.solve_for_u(p_new)
-        v_new = self.solve_for_v(p_new)
+        u_new = self.solve_for_u()
+        v_new = self.solve_for_v()
+        p_new = self.solve_for_pressure(u_new, v_new)
 
         if inplace:
             self.u = u_new
@@ -237,27 +236,37 @@ class UVP:
             )
         )
 
-    def show(self, at: float | None = None):
+    def discard(self):
+        # jupyter displaying repr of this object after invoking show, this is to deal with it and not get migraine along the way
+        pass
+
+    def show(self, at: float | None = None, fig: Figure | None = None, ax: Axes | None = None) -> Self:
         if at is not None:
             assert self.t <= at
             while self.t < at:
                 self.solve_for_next_uvp(inplace=True)
 
-        fig = plt.figure(figsize=(11, 7), dpi=100)
-        plt.pcolormesh(
+        if fig is None or ax is None:
+            fig, ax = _prepare_fig(self.domain)
+
+        color_mesh = ax.pcolormesh(
             self.domain.x,
             self.domain.y,
             self.p,
             cmap=cm.Blues,
             vmin=self.p.min(),
             vmax=self.p.max(),
+            shading="gouraud",
         )
-        plt.colorbar()
-        plt.streamplot(self.domain.x, self.domain.y, self.u, self.v)
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.show()
-
+        ax.streamplot(self.domain.x, self.domain.y, self.u, self.v)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_title(f"t = {self.t}")
+        plt.colorbar(
+            mappable=color_mesh,
+            ax=ax
+        )
+        fig.show()
         return self
 
     def animate(
@@ -283,6 +292,7 @@ class UVP:
             cmap=cm.Blues,
             vmin=p_range[0],
             vmax=p_range[1],
+            shading="gouraud",
         )
         vector_field = ax.quiver(
             self.domain.x[x_slice, y_slice],
