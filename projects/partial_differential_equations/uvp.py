@@ -277,6 +277,7 @@ class UVP:
         x_spacing: int = 3,
         y_spacing: int = 3,
         p_range: tuple[float, float] = (-2, 2),
+        scale: float = 8,
     ):
         assert total_number_of_frames < self.domain.shape.t
         iterations_per_frame = self.domain.shape.t // total_number_of_frames
@@ -299,7 +300,7 @@ class UVP:
             self.domain.y[x_slice, y_slice],
             self.u[x_slice, y_slice],
             self.v[x_slice, y_slice],
-            scale=8,
+            scale=scale,
         )
 
         def update_fields(n: int, _vector_field, _scalar_field, uvp: UVP):
