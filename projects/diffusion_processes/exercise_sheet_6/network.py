@@ -79,14 +79,18 @@ class Network:
                 elif self.epsilon_coin_flip():
                     self.flip_opinion(spinson)
 
-    def simulate(self, steps: int = 1000) -> Iterable[float]:
+    def simulate_gen_magnetization(self, steps: int = 1000) -> Iterable[float]:
         for _ in range(steps):
             self.step()
             yield self.magnetization
 
+    def simulate(self, steps: int = 1000):
+        for _ in range(steps):
+            self.step()
+
     @property
     def opinions_as_int(self) -> list[int]:
-        return [self.graph.nodes[node][OPINION].value for node in self.graph.nodes]
+        return [attrs[OPINION].value for attrs in self.graph.nodes.values()]
 
     @property
     def magnetization(self) -> float:
