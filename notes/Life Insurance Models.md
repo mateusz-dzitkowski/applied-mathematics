@@ -169,3 +169,50 @@ $$
 \pi_k^r &= (b_{k+1} - {}_{k+1}V)Vq_{x+k}.
 \end{aligned}
 $$
+### Def 2.9 (Zillmer's reserve)
+$$
+{}_kV^z = {}_kV_x - \alpha(1-{}_kV_x), \quad k=0, 1, 2\dots.
+$$
+
+# 3 Multiple decrement model
+### Def 3.1
+Let $T(x) = T$ be the time to leave the initial status, $J(x) = J$ - the cause of leaving the status,
+$J = j, j = 1, 2, 3, \dots, m$. $T(x) \sim g(t)$, with
+$$
+g(t, j)dt = P(t \lt T \lt t + dt | J=j),
+$$
+and 
+$$
+g(t) = \sum_{j=1}^mg(t, j).
+$$
+### Def 3.2
+Let:
+- ${}_tp_x^{(\tau)}$ - probability of staying in the status up to time $t$,
+- ${}_tq_x^{(\tau)} = 1 - {}_tp_x^{(\tau)}$ - probability of leaving the status up to time $t$,
+- ${}_tq_x^{(j)}$ - probability of leaving the status due to cause $j$.
+We have:
+$$
+\begin{aligned}
+{}_tq_x^{(\tau)} &= G(t) = \int_0^tg(s)ds \\
+{}_tq_x^{(j)} &= \int_0^tg(s, j)ds \\
+\mu_{x+t}^{(\tau)} &= \frac{g(t)}{1 - G(t)} \text{ - force of decrement} \\
+{}_tp_x^{(\tau)} &= \exp\left(-\int_0^t\mu_{x+s}^{(\tau)}ds\right) \\
+\mu_{x+t}^{(j)} &= \frac{g(t, j)}{P(T \gt t)} = \frac{g(t, j)}{1 - G(t)} \text{ - force of decremrnt due to j}.
+\end{aligned}
+$$
+### Theorem 3.3
+Properties of the functions defined above:
+$$
+\begin{aligned}
+{}_tq_x^{(\tau)} &= \sum_{j=1}^m{}_tq_x^{(j)} \\
+{\mu_{x+t}^{(\tau)}} &= \sum_{j=1}^m\mu_{x+t}^{(j)} \\
+g(t, j) &= {}_tp_x^{(\tau)}\mu_{x+t}^{(j)} \\
+g(t) &= {}_tp_x^{(\tau)} \mu_{x+t}^{(\tau)} \\
+{}_tq_x^{(j)} &= \int_0^t{}_sp_x^{(\tau)}\mu_{x+s}^{(j)}ds
+\end{aligned}
+$$
+### Def 3.4
+$K(x)$ - the number of years before leaving the status. We have:
+$$
+P(K = k, J = j) = P(k \lt T \le k+ 1, J = j).
+$$
