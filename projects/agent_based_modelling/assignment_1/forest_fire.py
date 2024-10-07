@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from itertools import product
 from enum import StrEnum, auto
-from typing import Callable
+from typing import Callable, Iterator
 
 from mesa import Agent, Model, DataCollector
-from mesa.space import SingleGrid
+from mesa.space import SingleGrid, Position
 
 
 class TreeState(StrEnum):
@@ -24,20 +24,34 @@ Wind = tuple[int, int]
 
 class Tree(Agent):
     state: TreeState
+    model: "ForestFire"
 
-    def __init__(self, unique_id: int, model: Model):
+    def __init__(self, unique_id: int, model: "ForestFire"):
         super().__init__(unique_id=unique_id, model=model)
         self.state = TreeState.FINE
 
     def step(self) -> None:
-        if self.state == TreeState.BURNING:
-            grid: SingleGrid = self.model.grid  # type: ignore
-            # TODO: wind
-            for neighbor in grid.iter_neighbors(self.pos, moore=True):
+        if self.state != TreeState.BURNING:
+            return
+
+        for pos in self._custom_neighborhood_plus_wind():
+            if self.model.grid.out_of_bounds(pos) or pos == self.pos:
+                continue
+
+            if neighbor := self.model.grid[pos]:
                 if neighbor.state == TreeState.FINE:
                     neighbor.state = TreeState.BURNING
 
-            self.state = TreeState.BURNED_DOWN
+        self.state = TreeState.BURNED_DOWN
+
+    def _custom_neighborhood_plus_wind(self) -> Iterator[Position]:
+        base_x_shift = [-1, 0, 1]
+        base_y_shift = [-1, 0, 1]
+        x_shift = [x + self.model.wind[0] for x in base_x_shift]
+        y_shift = [y + self.model.wind[1] for y in base_y_shift]
+
+        for x, y in product(x_shift, y_shift):
+            yield self.pos[0] + x, self.pos[1] + y
 
 
 class ForestFire(Model):

@@ -28,7 +28,7 @@ model_params = {
     "height": 100,
     "width": 100,
     "p": Slider("Tree density", 0.65, 0.01, 1.0, 0.01),
-    "wind_x": Slider("Wind X", 0, -2, 2, 1),
+    "wind_x": Slider("Wind X", 0, 0, 2, 1),
     "wind_y": Slider("Wind Y", 0, -2, 2, 1),
 }
 
