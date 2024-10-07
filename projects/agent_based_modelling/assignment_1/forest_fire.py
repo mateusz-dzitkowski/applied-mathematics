@@ -58,7 +58,7 @@ class ForestFire(Model):
     grid: SingleGrid
     wind: Wind
 
-    def __init__(self, width: int, height: int, p: float, wind_x: int, wind_y: int):
+    def __init__(self, width: int, height: int, p: float, wind_x: int = 0, wind_y: int = 0):
         super().__init__()
         self.grid = SingleGrid(width=width, height=height, torus=False)
         self.wind = wind_x, wind_y
