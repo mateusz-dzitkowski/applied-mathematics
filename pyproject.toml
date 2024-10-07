@@ -17,6 +17,7 @@ wikipedia = "^1.4.0"
 plotly = "^5.21.0"
 meshio = "^5.3.5"
 sympy = "^1.13.3"
+mesa = "^2.4.0"
 
 
 [build-system]
