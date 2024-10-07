@@ -1,9 +1,9 @@
 from itertools import product
 from random import sample
 
+import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
-import networkx as nx
 
 from projects.diffusion_processes.exercise_sheet_6.network import Network, QPanel
 
@@ -16,7 +16,12 @@ def nn_q_panel(q) -> QPanel:
     return inner
 
 
-def plot_time_evolution_of_magnetization(graph: nx.Graph, q_panel: QPanel, p_vals: list = np.arange(0, 0.5, 0.02).tolist(), num_runs: int = 100):
+def plot_time_evolution_of_magnetization(
+    graph: nx.Graph,
+    q_panel: QPanel,
+    p_vals: list = np.arange(0, 0.5, 0.02).tolist(),
+    num_runs: int = 100,
+):
     for p in p_vals:
         m_values = np.zeros((num_runs, 1000))
         for i in range(num_runs):

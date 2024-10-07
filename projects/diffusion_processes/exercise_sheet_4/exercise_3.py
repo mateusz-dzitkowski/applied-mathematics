@@ -2,10 +2,9 @@ from pprint import pprint
 from statistics import mean
 from typing import Callable
 
+import networkx as nx
 from matplotlib import animation
 from matplotlib import pyplot as plt
-import networkx as nx
-
 
 FPS = 1
 BITRATE = 2400
@@ -35,14 +34,19 @@ def animate_random_walk(g: nx.Graph, length: int, filename: str):
     plt.close()
 
 
-def hitting_times(g: nx.Graph, origin: int, sample_size: int = 10_000, transform: Callable[[list[int]], float | int] = mean) -> dict[int, float | int]:
+def hitting_times(
+    g: nx.Graph,
+    origin: int,
+    sample_size: int = 10_000,
+    transform: Callable[[list[int]], float | int] = mean,
+) -> dict[int, float | int]:
     result: dict[int, list[int]] = dict()
 
     for path in nx.generate_random_paths(g, sample_size=sample_size, path_length=2 * len(g.nodes)):
         if origin not in path:
             continue
 
-        path = path[path.index(origin):]  # fix the path to be starting at origin
+        path = path[path.index(origin) :]  # fix the path to be starting at origin
         for node in g.nodes:
             if node not in path:
                 continue

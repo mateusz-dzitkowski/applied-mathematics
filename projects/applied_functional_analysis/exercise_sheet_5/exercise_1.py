@@ -1,6 +1,6 @@
-from nptyping import NDArray
 import numpy as np
 import plotly.graph_objects as go
+from nptyping import NDArray
 
 
 def line(n: int) -> NDArray:
@@ -44,7 +44,7 @@ def f_delta(x: NDArray, t: float, delta: float) -> NDArray:
 
 
 def f_numerical(x: NDArray, t: float) -> NDArray:
-    return -t * np.diff(u(x), n=2) / np.diff(x)[0]**2
+    return -t * np.diff(u(x), n=2) / np.diff(x)[0] ** 2
 
 
 def f_delta_numerical(x: NDArray, t: float, delta: float) -> NDArray:
@@ -60,6 +60,13 @@ if __name__ == "__main__":
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x, y=f_delta(x, T, DELTA), mode="lines", name="f_delta(x)"))
-    fig.add_trace(go.Scatter(x=x, y=f_delta_numerical(x, T, DELTA), mode="lines", name="f_delta(x) (numerical)"))
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=f_delta_numerical(x, T, DELTA),
+            mode="lines",
+            name="f_delta(x) (numerical)",
+        )
+    )
     fig.update_layout(xaxis_title="x", title=f"delta = {DELTA}")
     fig.show()

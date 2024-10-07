@@ -1,9 +1,9 @@
-from itertools import product
 from enum import StrEnum, auto
+from itertools import product
 from typing import Callable, Iterator
 
-from mesa import Agent, Model, DataCollector
-from mesa.space import SingleGrid, Position
+from mesa import Agent, DataCollector, Model
+from mesa.space import Position, SingleGrid
 
 
 class TreeState(StrEnum):
@@ -64,11 +64,13 @@ class ForestFire(Model):
         self.wind = wind_x, wind_y
         self._init_trees(p)
 
-        self.datacollector = DataCollector({
-            TreeState.FINE: state_counter(TreeState.FINE),
-            TreeState.BURNING: state_counter(TreeState.BURNING),
-            TreeState.BURNED_DOWN: state_counter(TreeState.BURNED_DOWN),
-        })
+        self.datacollector = DataCollector(
+            {
+                TreeState.FINE: state_counter(TreeState.FINE),
+                TreeState.BURNING: state_counter(TreeState.BURNING),
+                TreeState.BURNED_DOWN: state_counter(TreeState.BURNED_DOWN),
+            }
+        )
         self.running = True
 
     def _init_trees(self, p: float):

@@ -1,6 +1,6 @@
-from nptyping import NDArray
 import numpy as np
 import plotly.graph_objects as go
+from nptyping import NDArray
 
 
 def square(m: int, n: int) -> list[NDArray]:
@@ -14,13 +14,13 @@ def heaviside(x: NDArray) -> NDArray:
 
 
 def K(x: NDArray, y: NDArray, sigma: float) -> NDArray:
-    return np.exp(-np.square(x - y) / (2 * sigma ** 2)) / (np.sqrt(2 * np.pi) * sigma)
+    return np.exp(-np.square(x - y) / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma)
 
 
 def f(x: NDArray) -> NDArray:
     # return heaviside(x - 0.3) - heaviside(x - 0.5) + heaviside(x - 0.9) + 3 * x  # lines 6
     # return heaviside(x - 0.2) + heaviside(x - 0.5) + heaviside(x - 0.7) + heaviside(x - 0.9)  # lines 7
-    return - x + np.sin(8 * x) + heaviside(x - 0.2) + heaviside(x - 0.5) - heaviside(x - 0.8)  # lines 8
+    return -x + np.sin(8 * x) + heaviside(x - 0.2) + heaviside(x - 0.5) - heaviside(x - 0.8)  # lines 8
     # return heaviside(x - 0.3) - heaviside(x - 0.5)  # normal
 
 
@@ -52,14 +52,20 @@ def plot_condition():
     fig.show()
 
 
-def plot_everything(_x: NDArray, _y: NDArray, _f: NDArray, _u: NDArray, _recovered_f: NDArray, sigma: float, cutoff: float):
+def plot_everything(
+    _x: NDArray,
+    _y: NDArray,
+    _f: NDArray,
+    _u: NDArray,
+    _recovered_f: NDArray,
+    sigma: float,
+    cutoff: float,
+):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=_y, y=_f, mode="lines", name="Original f"))
     fig.add_trace(go.Scatter(x=_x, y=_u, mode="lines", name="u"))
     fig.add_trace(go.Scatter(x=_y, y=_recovered_f, mode="lines", name="Recovered f"))
-    fig.update_layout(
-        title=f"N = {len(_y)}, M = {len(_x)}, sigma = {sigma}, cutoff = {cutoff}"
-    )
+    fig.update_layout(title=f"N = {len(_y)}, M = {len(_x)}, sigma = {sigma}, cutoff = {cutoff}")
     fig.show()
 
 

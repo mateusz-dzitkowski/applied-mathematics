@@ -1,10 +1,9 @@
 from enum import Enum
 from random import choice, uniform
 from statistics import mean
-from typing import Callable, Sequence, Iterable
+from typing import Callable, Iterable, Sequence
 
 import networkx as nx
-
 
 QPanel = Callable[[nx.Graph, int], Sequence[int]]
 
@@ -36,7 +35,14 @@ class Network:
     epsilon: float
     coin_weight: float
 
-    def __init__(self, graph: nx.Graph, q_panel: QPanel, p: float, epsilon: float = 0, coin_weight: float = 0.5):
+    def __init__(
+        self,
+        graph: nx.Graph,
+        q_panel: QPanel,
+        p: float,
+        epsilon: float = 0,
+        coin_weight: float = 0.5,
+    ):
         assert 0 <= p <= 1
         assert 0 <= epsilon <= 1
         assert 0 <= coin_weight <= 1

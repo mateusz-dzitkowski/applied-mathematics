@@ -1,18 +1,19 @@
 from dataclasses import dataclass, replace
 from typing import Callable, Self
 
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
+import numpy as np
 from matplotlib import (
     animation,
     cm,
+)
+from matplotlib import (
     pyplot as plt,
 )
-import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from nptyping import NDArray
 
 from projects.partial_differential_equations.domain import Domain
-
 
 """
 Considering the equations (Incompressible Navier-Stokes):
@@ -96,9 +97,12 @@ class UVP:
         v: NDArray | None = None,
         p: NDArray | None = None,
     ) -> Self:
-        if u is not None: self.u = u
-        if v is not None: self.v = v
-        if p is not None: self.p = p
+        if u is not None:
+            self.u = u
+        if v is not None:
+            self.v = v
+        if p is not None:
+            self.p = p
         return self
 
     def with_boundary_conditions(
@@ -107,9 +111,12 @@ class UVP:
         v_bcs: BoundaryConditions | None = None,
         p_bcs: BoundaryConditions | None = None,
     ):
-        if u_bcs is not None: self.u_bcs = u_bcs
-        if v_bcs is not None: self.v_bcs = v_bcs
-        if p_bcs is not None: self.p_bcs = p_bcs
+        if u_bcs is not None:
+            self.u_bcs = u_bcs
+        if v_bcs is not None:
+            self.v_bcs = v_bcs
+        if p_bcs is not None:
+            self.p_bcs = p_bcs
         return self
 
     def with_parameters(
@@ -119,10 +126,14 @@ class UVP:
         nu: float | None = None,
         current_step: int | None = None,
     ):
-        if f is not None: self.f = f
-        if rho is not None: self.rho = rho
-        if nu is not None: self.nu = nu
-        if current_step is not None: self.current_step = current_step
+        if f is not None:
+            self.f = f
+        if rho is not None:
+            self.rho = rho
+        if nu is not None:
+            self.nu = nu
+        if current_step is not None:
+            self.current_step = current_step
         return self
 
     @property
@@ -140,8 +151,8 @@ class UVP:
             + d_dy(f_y, dy)
             + (d_dx(u_new, dx) + d_dy(v_new, dy)) / dt
             - 2 * d_dy(u_new, dy) * d_dx(v_new, dx)
-            - d_dx(u_new, dx)**2
-            - d_dy(v_new, dy)**2
+            - d_dx(u_new, dx) ** 2
+            - d_dy(v_new, dy) ** 2
         )
         return rhs
 
@@ -169,15 +180,12 @@ class UVP:
         dt, dx, dy = self.domain.diff
         u_new = np.zeros_like(u_old)
 
-        u_new[1:-1, 1:-1] = (
-            u_old[1:-1, 1:-1]
-            + dt * (
-                - u_old[1:-1, 1:-1] * d_dx(u_old, dx)
-                - v_old[1:-1, 1:-1] * d_dy(u_old, dy)
-                - d_dx(self.p, dx) / self.rho
-                + self.nu * (d2_dx2(u_old, dx) + d2_dy2(u_old, dy))
-                + self.f[0][1:-1, 1:-1]
-            )
+        u_new[1:-1, 1:-1] = u_old[1:-1, 1:-1] + dt * (
+            -u_old[1:-1, 1:-1] * d_dx(u_old, dx)
+            - v_old[1:-1, 1:-1] * d_dy(u_old, dy)
+            - d_dx(self.p, dx) / self.rho
+            + self.nu * (d2_dx2(u_old, dx) + d2_dy2(u_old, dy))
+            + self.f[0][1:-1, 1:-1]
         )
 
         self.u_bcs(u_new, self.t, self.domain.x, self.domain.y)
@@ -189,15 +197,12 @@ class UVP:
         dt, dx, dy = self.domain.diff
 
         v_new = np.zeros_like(v_old)
-        v_new[1:-1, 1:-1] = (
-            v_old[1:-1, 1:-1]
-            + dt * (
-                - u_old[1:-1, 1:-1] * d_dx(v_old, dx)
-                - v_old[1:-1, 1:-1] * d_dy(v_old, dy)
-                - d_dy(self.p, dy) / self.rho
-                + self.nu * (d2_dx2(v_old, dx) + d2_dy2(v_old, dy))
-                + self.f[1][1:-1, 1:-1]
-            )
+        v_new[1:-1, 1:-1] = v_old[1:-1, 1:-1] + dt * (
+            -u_old[1:-1, 1:-1] * d_dx(v_old, dx)
+            - v_old[1:-1, 1:-1] * d_dy(v_old, dy)
+            - d_dy(self.p, dy) / self.rho
+            + self.nu * (d2_dx2(v_old, dx) + d2_dy2(v_old, dy))
+            + self.f[1][1:-1, 1:-1]
         )
 
         self.v_bcs(v_new, self.t, self.domain.x, self.domain.y)
@@ -259,13 +264,10 @@ class UVP:
             shading="gouraud",
         )
         ax.streamplot(self.domain.x, self.domain.y, self.u, self.v)
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
+        ax.set_xlabel("X")
+        ax.set_ylabel("Y")
         ax.set_title(f"t = {self.t}")
-        plt.colorbar(
-            mappable=color_mesh,
-            ax=ax
-        )
+        plt.colorbar(mappable=color_mesh, ax=ax)
         fig.show()
         return self
 

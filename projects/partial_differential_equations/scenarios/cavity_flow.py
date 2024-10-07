@@ -1,4 +1,3 @@
-import numpy as np
 from nptyping import NDArray
 
 from projects.partial_differential_equations.domain import Domain

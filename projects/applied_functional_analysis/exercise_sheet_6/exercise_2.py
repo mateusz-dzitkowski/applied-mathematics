@@ -1,8 +1,8 @@
 from typing import Callable
-from nptyping import NDArray
-import numpy as np
-from plotly import express as xp
 
+import numpy as np
+from nptyping import NDArray
+from plotly import express as xp
 
 Function = Callable[[NDArray], NDArray]
 
@@ -22,13 +22,14 @@ def u(x: NDArray) -> NDArray:
 def u_delta(delta: float) -> Function:
     def inner(x: NDArray) -> NDArray:
         return u(x) + delta * np.sin(x / delta**2)
+
     return inner
 
 
 def a(x: NDArray, f_function: Function, u_function: Function) -> NDArray:
     _x = x[1:]
     dx = np.diff(x)
-    return np.concatenate([np.array([0]),  - dx / np.diff(u_function(x)) * np.cumsum(f_function(_x) * dx)])
+    return np.concatenate([np.array([0]), -dx / np.diff(u_function(x)) * np.cumsum(f_function(_x) * dx)])
 
 
 def main():

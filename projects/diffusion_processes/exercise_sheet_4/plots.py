@@ -1,10 +1,9 @@
 import numpy as np
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
-from matplotlib import pyplot as plt
 from matplotlib import animation
+from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from nptyping import NDArray
-
 
 AX_OVERHEAD = 2
 FIG_SIZE = (10, 10)
@@ -18,14 +17,15 @@ def animate_random_walk(x: NDArray, y: NDArray, filename: str):
     fig, ax = _prepare_fig(x, y)
 
     ax.scatter([0], [0], color="green")  # color the start point
-    lines, = ax.plot([0], [0], linewidth=LINE_WIDTH)
+    (lines,) = ax.plot([0], [0], linewidth=LINE_WIDTH)
     scat_current = ax.scatter([0], [0], color="red")
 
     step = int(x.size) // NUM_STEPS
+
     def animate(n: int):
         _n = step * n
-        lines.set_xdata(x[:_n+1])
-        lines.set_ydata(y[:_n+1])
+        lines.set_xdata(x[: _n + 1])
+        lines.set_ydata(y[: _n + 1])
         scat_current.set_offsets([x[_n], y[_n]])
         return lines
 

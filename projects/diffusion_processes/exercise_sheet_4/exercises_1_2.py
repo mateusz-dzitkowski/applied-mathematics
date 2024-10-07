@@ -1,14 +1,12 @@
 from typing import Protocol
 
-from nptyping import NDArray
 import numpy as np
-
+from nptyping import NDArray
 from plots import (
     animate_random_walk,
-    plot_random_walk,
     plot_histograms,
+    plot_random_walk,
 )
-
 
 rng = np.random.default_rng()
 
@@ -24,8 +22,18 @@ def square_lattice_walk(steps: int, walks: int = 1) -> RandomWalk:
     axis = 0 if walks > 1 else None
     phi = rng.choice([0, 0.5, 1, 1.5], size=(steps - 1, walks)) * np.pi
     return (
-        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.round(np.cos(phi)), axis=axis)]),
-        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.round(np.sin(phi)), axis=axis)]),
+        np.concatenate(
+            [
+                np.zeros(1 if walks == 1 else (1, walks)),
+                np.cumsum(np.round(np.cos(phi)), axis=axis),
+            ]
+        ),
+        np.concatenate(
+            [
+                np.zeros(1 if walks == 1 else (1, walks)),
+                np.cumsum(np.round(np.sin(phi)), axis=axis),
+            ]
+        ),
     )
 
 
@@ -33,8 +41,18 @@ def pearson_walk(steps: int, walks: int = 1) -> RandomWalk:
     axis = 0 if walks > 1 else None
     phi = rng.uniform(high=2 * np.pi, size=(steps - 1, walks))
     return (
-        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.cos(phi), axis=axis)]),
-        np.concatenate([np.zeros(1 if walks == 1 else (1, walks)), np.cumsum(np.sin(phi), axis=axis)]),
+        np.concatenate(
+            [
+                np.zeros(1 if walks == 1 else (1, walks)),
+                np.cumsum(np.cos(phi), axis=axis),
+            ]
+        ),
+        np.concatenate(
+            [
+                np.zeros(1 if walks == 1 else (1, walks)),
+                np.cumsum(np.sin(phi), axis=axis),
+            ]
+        ),
     )
 
 

@@ -1,6 +1,6 @@
-from nptyping import NDArray
 import numpy as np
 import plotly.graph_objects as go
+from nptyping import NDArray
 
 
 def line(n: int) -> NDArray:

@@ -1,11 +1,10 @@
-import traceback
-from queue import Queue
 import re
-from threading import Thread
+import traceback
 from csv import writer
+from queue import Queue
+from threading import Thread
 
 import wikipedia as wp
-
 
 Storage = set[tuple[str, str]]
 
@@ -42,7 +41,7 @@ class Scraper:
                     self.storage.add((w_page.title, link))
                     self.queue.put(link)
                 done.add(q_page)
-            except:
+            except Exception:
                 print(f"ERROR when working on {q_page}")
                 print(traceback.format_exc())
                 self.queue.put(q_page)

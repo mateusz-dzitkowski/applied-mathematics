@@ -1,12 +1,16 @@
 import numpy as np
-from scipy.integrate import odeint
+from nptyping import NDArray
 from pandas import DataFrame
 from plotly import (
     express as xp,
+)
+from plotly import (
     figure_factory as ff,
+)
+from plotly import (
     graph_objects as go,
 )
-from nptyping import NDArray
+from scipy.integrate import odeint
 
 
 def get_equations(beta: float, r: float):
@@ -85,15 +89,18 @@ def show_solution(beta: float, r: float, t_max: float, initial: list[float], num
     plot_solution(df, beta, r)
 
 
-def show_phase_portrait_and_trajectories(beta: float, r: float, num_trajectories: int, n: int = 1000, t_max: float = 10., normalised: bool = False):
+def show_phase_portrait_and_trajectories(
+    beta: float,
+    r: float,
+    num_trajectories: int,
+    n: int = 1000,
+    t_max: float = 10.0,
+    normalised: bool = False,
+):
     t = np.linspace(0, t_max, n)
     equations = get_equations(beta, r)
 
-    solutions = [
-        solve(equations, [s_0, i_0, r_0], t)
-        for s_0, i_0, r_0
-        in np.random.default_rng().uniform(size=(num_trajectories, 3))
-    ]
+    solutions = [solve(equations, [s_0, i_0, r_0], t) for s_0, i_0, r_0 in np.random.default_rng().uniform(size=(num_trajectories, 3))]
 
     fig = get_phase_portrait(beta, r, normalised=normalised)
     fig = add_trajectories(fig, *solutions)
@@ -108,11 +115,11 @@ def show_phase_portrait_and_trajectories(beta: float, r: float, num_trajectories
     fig.show()
 
 
-def show_total_number_of_infected(beta_max: float = 5, n_beta: int = 1000, t_max: float = 10., n_t: int = 1000):
+def show_total_number_of_infected(beta_max: float = 5, n_beta: int = 1000, t_max: float = 10.0, n_t: int = 1000):
     t = np.linspace(0, t_max, n_t)
     beta = np.linspace(0, beta_max, n_beta)
 
-    solutions = [solve(get_equations(b, 1), [0.99, 0.01, 0.], t) for b in beta]
+    solutions = [solve(get_equations(b, 1), [0.99, 0.01, 0.0], t) for b in beta]
     totals = [total_number_of_infected(solution) for solution in solutions]
 
     xp.line(

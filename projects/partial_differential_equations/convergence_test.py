@@ -1,5 +1,5 @@
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 from nptyping import NDArray
 
 from projects.partial_differential_equations.domain import Domain

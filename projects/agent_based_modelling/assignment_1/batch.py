@@ -1,10 +1,12 @@
+import numpy as np
 from matplotlib import pyplot as plt
 from mesa.batchrunner import batch_run
-import numpy as np
 from pandas import DataFrame
 
-from projects.agent_based_modelling.assignment_1.forest_fire import ForestFire, TreeState
-
+from projects.agent_based_modelling.assignment_1.forest_fire import (
+    ForestFire,
+    TreeState,
+)
 
 if __name__ == "__main__":
     results = batch_run(

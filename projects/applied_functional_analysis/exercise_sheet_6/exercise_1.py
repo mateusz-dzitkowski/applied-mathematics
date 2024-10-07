@@ -1,8 +1,9 @@
 from typing import Callable
-from nptyping import NDArray
+
 import numpy as np
-from plotly import express as xp
+from nptyping import NDArray
 from pandas import DataFrame
+from plotly import express as xp
 
 
 def line(n: int) -> NDArray:
@@ -39,6 +40,7 @@ def f_prime_true(x: NDArray) -> NDArray:
 def f_with_noise(delta: float, k: int) -> Callable[[NDArray], NDArray]:
     def inner(x: NDArray) -> NDArray:
         return f_true(x) + np.sqrt(2) * delta * np.sin(2 * np.pi * k * x)
+
     return inner
 
 

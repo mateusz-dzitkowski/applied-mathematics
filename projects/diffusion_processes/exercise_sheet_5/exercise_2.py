@@ -1,18 +1,19 @@
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from enum import StrEnum, auto
 from random import choice, uniform
-from typing import TypeAlias, Protocol
+from typing import Protocol, TypeAlias
 
 import networkx as nx
 import numpy as np
-from nptyping import NDArray
-from plotly import express as xp
-from pandas import DataFrame
 from matplotlib import (
     animation,
+)
+from matplotlib import (
     pyplot as plt,
 )
-
+from nptyping import NDArray
+from pandas import DataFrame
+from plotly import express as xp
 
 STATE = "state"
 FPS = 1
@@ -47,9 +48,7 @@ class Simulation:
         self.steps.append(step)
 
     def get_fraction_of_infected_nodes(self) -> list[float]:
-        return [
-            len([1 for state in step.values() if state == NodeState.INFECTIOUS]) / len(step) for step in self.steps
-        ]
+        return [len([1 for state in step.values() if state == NodeState.INFECTIOUS]) / len(step) for step in self.steps]
 
     def get_total_infected_fraction(self) -> float:
         last_step = self.steps[-1]
@@ -58,7 +57,8 @@ class Simulation:
     def get_time_to_clear(self) -> int:
         # evil list comprehension hack
         return next(
-            n for n, step in enumerate(self.steps)
+            n
+            for n, step in enumerate(self.steps)
             if all(state != NodeState.INFECTIOUS for state in step.values())  # what the fuck
         )
 
@@ -165,7 +165,13 @@ def get_average_fraction_of_infected_nodes(
     step_forward: StepForward = step_forward_synchronous,
 ) -> NDArray:
     simulations = [
-        simulate(graph=graph, p=p, max_steps=max_steps, initial_infectious=initial_infectious, step_forward=step_forward)
+        simulate(
+            graph=graph,
+            p=p,
+            max_steps=max_steps,
+            initial_infectious=initial_infectious,
+            step_forward=step_forward,
+        )
         for _ in range(num_runs)
     ]
     fractions = np.array([simulation.get_fraction_of_infected_nodes() for simulation in simulations])
@@ -187,12 +193,14 @@ def get_average_measures(
     )
 
 
-def get_measures_per_p(graph: nx.Graph, max_steps: int, num_p: int = 20, step_forward: StepForward = step_forward_synchronous) -> DataFrame:
+def get_measures_per_p(
+    graph: nx.Graph,
+    max_steps: int,
+    num_p: int = 20,
+    step_forward: StepForward = step_forward_synchronous,
+) -> DataFrame:
     p_list = np.linspace(0, 1, num_p)
-    return DataFrame(data=[
-        asdict(get_average_measures(graph, p, max_steps, step_forward=step_forward)) | {"p": p}
-        for p in p_list
-    ])
+    return DataFrame(data=[asdict(get_average_measures(graph, p, max_steps, step_forward=step_forward)) | {"p": p} for p in p_list])
 
 
 def show_measures(step_forward: StepForward = step_forward_synchronous):
@@ -201,13 +209,15 @@ def show_measures(step_forward: StepForward = step_forward_synchronous):
     watts_strogatz = get_measures_per_p(nx.watts_strogatz_graph(100, 4, 0.4), 100, step_forward=step_forward)
     barabasi_albert = get_measures_per_p(nx.barabasi_albert_graph(100, 2), 100, step_forward=step_forward)
 
-    total_infected = DataFrame(data={
-        "p": twod_lattice["p"],
-        "twod_lattice": twod_lattice["total_infected_proportion"],
-        "random": random["total_infected_proportion"],
-        "watts_strogatz": watts_strogatz["total_infected_proportion"],
-        "barabasi_albert": barabasi_albert["total_infected_proportion"],
-    })
+    total_infected = DataFrame(
+        data={
+            "p": twod_lattice["p"],
+            "twod_lattice": twod_lattice["total_infected_proportion"],
+            "random": random["total_infected_proportion"],
+            "watts_strogatz": watts_strogatz["total_infected_proportion"],
+            "barabasi_albert": barabasi_albert["total_infected_proportion"],
+        }
+    )
     xp.line(
         data_frame=total_infected,
         x="p",
@@ -215,13 +225,15 @@ def show_measures(step_forward: StepForward = step_forward_synchronous):
         title="Fraction of total infected",
     ).show()
 
-    time_to_clear = DataFrame(data={
-        "p": twod_lattice["p"],
-        "twod_lattice": twod_lattice["time_to_clear"],
-        "random": random["time_to_clear"],
-        "watts_strogatz": watts_strogatz["time_to_clear"],
-        "barabasi_albert": barabasi_albert["time_to_clear"],
-    })
+    time_to_clear = DataFrame(
+        data={
+            "p": twod_lattice["p"],
+            "twod_lattice": twod_lattice["time_to_clear"],
+            "random": random["time_to_clear"],
+            "watts_strogatz": watts_strogatz["time_to_clear"],
+            "barabasi_albert": barabasi_albert["time_to_clear"],
+        }
+    )
     xp.line(
         data_frame=time_to_clear,
         x="p",
@@ -229,13 +241,15 @@ def show_measures(step_forward: StepForward = step_forward_synchronous):
         title="Time to clear infection",
     ).show()
 
-    time_to_peak = DataFrame(data={
-        "p": twod_lattice["p"],
-        "twod_lattice": twod_lattice["time_to_peak"],
-        "random": random["time_to_peak"],
-        "watts_strogatz": watts_strogatz["time_to_peak"],
-        "barabasi_albert": barabasi_albert["time_to_peak"],
-    })
+    time_to_peak = DataFrame(
+        data={
+            "p": twod_lattice["p"],
+            "twod_lattice": twod_lattice["time_to_peak"],
+            "random": random["time_to_peak"],
+            "watts_strogatz": watts_strogatz["time_to_peak"],
+            "barabasi_albert": barabasi_albert["time_to_peak"],
+        }
+    )
     xp.line(
         data_frame=time_to_peak,
         x="p",

@@ -18,7 +18,11 @@ class Domain:
     y: NDArray
 
     @classmethod
-    def new(cls, shape: tuple[int, int, int], max_vals: tuple[float, float, float] = (1, 1, 1)) -> "Domain":
+    def new(
+        cls,
+        shape: tuple[int, int, int],
+        max_vals: tuple[float, float, float] = (1, 1, 1),
+    ) -> "Domain":
         # Assume that t, x, and y range from 0 to t_max, x_max, y_max
         x, y = np.meshgrid(
             np.linspace(0, max_vals[1], shape[1]),

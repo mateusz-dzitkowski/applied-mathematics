@@ -1,12 +1,16 @@
 from mesa.visualization import (
     CanvasGrid,
     ChartModule,
+    ModularServer,
     PieChartModule,
     Slider,
-    ModularServer,
 )
 
-from projects.agent_based_modelling.assignment_1.forest_fire import TreeState, Tree, ForestFire
+from projects.agent_based_modelling.assignment_1.forest_fire import (
+    ForestFire,
+    Tree,
+    TreeState,
+)
 
 
 def forest_fire_portrayal(tree: Tree):
@@ -32,8 +36,6 @@ model_params = {
     "wind_y": Slider("Wind Y", 0, -2, 2, 1),
 }
 
-server = ModularServer(
-    ForestFire, [canvas_element, tree_chart, pie_chart], "Forest Fire", model_params
-)
+server = ModularServer(ForestFire, [canvas_element, tree_chart, pie_chart], "Forest Fire", model_params)
 
 server.launch(open_browser=True)
