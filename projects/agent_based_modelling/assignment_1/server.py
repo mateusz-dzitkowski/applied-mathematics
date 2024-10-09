@@ -1,27 +1,30 @@
 from mesa.visualization import (
     CanvasGrid,
-    ChartModule,
     ModularServer,
-    PieChartModule,
     Slider,
 )
 
 from projects.agent_based_modelling.assignment_1.forest_fire import (
     ForestFire,
     Tree,
-    TreeState,
 )
 
 
-def forest_fire_portrayal(tree: Tree):
+def forest_fire_portrayal(tree: Tree | None) -> dict | None:
     if tree is None:
-        return
-    portrayal = {"Shape": "rect", "w": 1, "h": 1, "Filled": "true", "Layer": 0}
-    (x, y) = tree.pos
-    portrayal["x"] = x
-    portrayal["y"] = y
-    portrayal["Color"] = tree.state.color()
-    return portrayal
+        return None
+
+    x, y = tree.pos
+    return dict(
+        Shape="rect",
+        x=x,
+        y=y,
+        w=1,
+        h=1,
+        Color=tree.state.color(),
+        Filled=True,
+        Layer=0,
+    )
 
 
 canvas_element = CanvasGrid(forest_fire_portrayal, 100, 100, 700, 700)
