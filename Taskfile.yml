@@ -1,0 +1,10 @@
+version: "3"
+
+tasks:
+  lint:
+    desc: Fix the fixable linting errors
+    cmd: poetry run ruff check . --fix
+
+  format:
+    desc: Fix the formatting errors if there are any
+    cmd: poetry run ruff format .

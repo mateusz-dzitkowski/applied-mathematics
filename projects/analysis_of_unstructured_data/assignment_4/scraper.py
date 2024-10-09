@@ -1,12 +1,11 @@
-from typing import Iterator
-import httpx
-from bs4 import BeautifulSoup
-from text_unidecode import unidecode
 from itertools import combinations
-from matplotlib import pyplot as plt
+from typing import Iterator
 
+import httpx
 import networkx as nx
-
+from bs4 import BeautifulSoup
+from matplotlib import pyplot as plt
+from text_unidecode import unidecode
 
 PAPERS = "papers"
 COPAPERS = "copapers"
@@ -43,7 +42,7 @@ def get_site() -> BeautifulSoup:
 def get_groups_of_coauthors(soup: BeautifulSoup) -> Iterator[list[str]]:
     for section in soup.find_all("ol", attrs={"type": "1", "start": "1"}):
         for paper in section.find_all("font", recursive=False):
-            just_names: str = paper.text.split("\"")[0].split("(")[0]
+            just_names: str = paper.text.split('"')[0].split("(")[0]
             just_names_fixed = just_names.replace(". ", ".").replace(".", ". ")
             yield [unidecode(item.strip()) for item in just_names_fixed.split(",") if item.strip() != ""]
 

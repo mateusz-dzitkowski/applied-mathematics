@@ -1,9 +1,15 @@
 from enum import StrEnum, auto
 from itertools import product
-from typing import Callable, Iterator
+from typing import Any, Iterator
 
 from mesa import Agent, DataCollector, Model
 from mesa.space import Position, SingleGrid
+from mesa.batchrunner import batch_run
+from numpy import arange
+from pandas import DataFrame
+
+
+Wind = tuple[int, int]
 
 
 class TreeState(StrEnum):
@@ -17,9 +23,6 @@ class TreeState(StrEnum):
             TreeState.BURNING: "#880000",
             TreeState.BURNED_DOWN: "#000000",
         }[self]
-
-
-Wind = tuple[int, int]
 
 
 class Tree(Agent):
@@ -66,12 +69,39 @@ class ForestFire(Model):
 
         self.datacollector = DataCollector(
             {
-                TreeState.FINE: state_counter(TreeState.FINE),
-                TreeState.BURNING: state_counter(TreeState.BURNING),
-                TreeState.BURNED_DOWN: state_counter(TreeState.BURNED_DOWN),
+                "opposite_edge_hit": opposite_edge_hit,
             }
         )
         self.running = True
+
+    @classmethod
+    def batch_run(
+        cls,
+        width: int,
+        height: int,
+        wind_x: int,
+        wind_y: int,
+        iterations: int,
+    ) -> DataFrame:
+        return DataFrame(
+            data=batch_run(
+                model_cls=cls,
+                parameters=dict(
+                    width=width,
+                    height=height,
+                    p=arange(start=0, stop=1, step=0.01),
+                    wind_x=wind_x,
+                    wind_y=wind_y,
+                ),
+                iterations=iterations,
+                number_processes=None,
+            )
+        )
+
+    def step(self) -> None:
+        self.agents.shuffle_do("step")
+        self.datacollector.collect(self)
+        self.running = self._is_burning
 
     def _init_trees(self, p: float):
         for contents, (x, y) in self.grid.coord_iter():
@@ -83,15 +113,10 @@ class ForestFire(Model):
 
                 self.grid.place_agent(tree, (x, y))
 
-    def step(self) -> None:
-        self.agents.shuffle_do("step")
-        self.datacollector.collect(self)
-        if state_counter(TreeState.BURNING)(self) == 0:
-            self.running = False
+    @property
+    def _is_burning(self) -> bool:
+        return any([tree.state == TreeState.BURNING for tree in self.agents])
 
 
-def state_counter(state: TreeState) -> Callable[[Model], int]:
-    def inner(model: Model):
-        return len([tree for tree in model.agents if tree.state == state])
-
-    return inner
+def opposite_edge_hit(model: ForestFire) -> bool:
+    return any(tree.state != TreeState.FINE for tree in model.agents if tree.pos[0] == model.grid.width - 1)
