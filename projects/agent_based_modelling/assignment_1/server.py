@@ -24,9 +24,7 @@ def forest_fire_portrayal(tree: Tree):
     return portrayal
 
 
-canvas_element = CanvasGrid(forest_fire_portrayal, 100, 100, 500, 500)
-tree_chart = ChartModule([{"Label": state, "Color": state.color()} for state in [TreeState.FINE, TreeState.BURNING, TreeState.BURNED_DOWN]])
-pie_chart = PieChartModule([{"Label": state, "Color": state.color()} for state in [TreeState.FINE, TreeState.BURNING, TreeState.BURNED_DOWN]])
+canvas_element = CanvasGrid(forest_fire_portrayal, 100, 100, 700, 700)
 
 model_params = {
     "height": 100,
@@ -36,6 +34,6 @@ model_params = {
     "wind_y": Slider("Wind Y", 0, -2, 2, 1),
 }
 
-server = ModularServer(ForestFire, [canvas_element, tree_chart, pie_chart], "Forest Fire", model_params)
+server = ModularServer(ForestFire, [canvas_element], "Forest Fire", model_params)
 
 server.launch(open_browser=True)
