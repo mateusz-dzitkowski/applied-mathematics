@@ -1,13 +1,12 @@
 from enum import StrEnum, auto
 from itertools import product
-from typing import Any, Iterator
+from typing import Iterator
 
 from mesa import Agent, DataCollector, Model
-from mesa.space import Position, SingleGrid
 from mesa.batchrunner import batch_run
+from mesa.space import Position, SingleGrid
 from numpy import arange
 from pandas import DataFrame
-
 
 Wind = tuple[int, int]
 
