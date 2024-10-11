@@ -103,3 +103,103 @@ We say that a function $g$ is a **uniformly valid asymptotic approximation** to 
 Let $f(x; \varepsilon) = \exp(-\varepsilon x)$ for $x > 0$ and $0 < \varepsilon <\!\!< 1$ . The first terms of the Taylor expansion in powers of $\varepsilon$ provide an approximation $g(x; \varepsilon) = 1 - \varepsilon x + \frac{1}{2}x^2\varepsilon^2$
 
 I'm not writing all of that, just compute the error (it's not uniform, just pointwise).
+
+### Def 1.5 Asymptotic sequence
+A sequence of function $\{\phi_i\}$ is an asymptotic sequence as $\varepsilon \rightarrow \varepsilon_0$ and $x \in \mathbb{I}$ if
+$$
+\phi_{i+1}(x; \varepsilon) = o(\phi_i(x; \varepsilon)), \quad \text{ as } \varepsilon \rightarrow \varepsilon_0.
+$$
+
+### Def 1.6 Asymptotic expansion
+Given an asymptotic sequence $\{\phi_i\}$, we say that a function $f$ has an asymptotic expansion to $n$ terms with respect to the sequence $\{\phi_i\}$ if
+$$
+f(x; \varepsilon) = \sum_{i=1}^ka_i\phi_i(x; \varepsilon) + o(\phi_k(x; \varepsilon))
+$$
+for $k=1,\dots,n$, and $\varepsilon \rightarrow \varepsilon_0$, where the coefficients $a_i$ are independent on $\varepsilon$. In this case we write
+$$
+f(x; \varepsilon) \sim \sum_{i=1}^na_i\phi_i(x, \varepsilon).
+$$
+The functions $\phi_i$ are called scale or basis functions.
+
+#### Remark
+Frequently we use the power functions $\phi_i(\varepsilon) = \varepsilon^{\alpha i}$ where $\alpha_i < \alpha_{i+1}$, as basis functions. An asymptotic expansion using such functions is called Poincare expansion.
+
+#### Example
+$$
+\sin(\varepsilon) \sim \sum_{i=0}^na_i\varepsilon^{2i + 1}, \text{ with } a_i = \frac{(-1)^i}{(2i + 1)!}.
+$$
+#### Example
+Let's consider the error function
+$$
+erf(x) = \frac{2}{\sqrt{\pi}}\int_0^xe^{-t^2}dt.
+$$
+How do we approximate this function?
+
+The first idea is to expand the integrand into its Taylor series:
+$$
+e^{-t^2} = \sum_{k=0}^\infty\frac{(-t^2)^k}{k!},
+$$
+and then integrate:
+$$
+E_n(x) = \frac{2x}{\sqrt{\pi}}\sum_{k=0}^n\frac{-x^{2k}}{k!(2k+1)}.
+$$
+We may expand that $E_n(x) \rightarrow erf(x)$ as $n \rightarrow \infty$, but the convergence rate is shit.
+
+The second idea consists on constructing an asymptotic expansion for $x >\!\!>1$. To do so we write
+$$
+erf(x) = \frac{2}{\sqrt{\pi}}\int_0^xe^{-t^2}dt = \frac{2}{\sqrt{\pi}}\int_0^\infty e^{-t^2}dt - \frac{2}{\sqrt{\pi}}\int_x^\infty e^{-t^2}dt = 1 - \frac{2}{\sqrt{\pi}}\int_x^\infty e^{-t^2}dt.
+$$
+Then we integrate with $u = t^2 - x^2$
+$$
+\int_x^\infty e^{-t^2}dt = \int_0^\infty \frac{1}{2x}e^{-x^2}e^{-u}\left(1 + \frac{u}{x^2}\right)^{-\frac{1}{2}}du.
+$$
+Next we use the generalised binomial $(1+y)^\alpha = \sum_{k=0}^\infty {\alpha \choose k}y^k$, with $\alpha = -\frac{1}{2}$. We note that
+$$
+{-\frac{1}{2}\choose k} = \frac{(-1)^k}{\sqrt{\pi}k!}\Gamma\left(\frac{1}{2} + k\right),
+$$
+then we get
+$$
+\int_0^\infty\frac{e^{-x^2}}{2\sqrt{\pi}x}e^{-u}\sum_{k=0}^n\frac{1}{k!}\Gamma\left(\frac{1}{2} + k\right)\left(-\frac{u}{x^2}\right)^kdu = \frac{e^{-x^2}}{2\sqrt{\pi}x}\sum_{k=0}^n\Gamma\left(\frac{1}{2} + k\right)(-x)^{2k}\Gamma(k + 1).
+$$
+Then the second expansion of $erf$ is 
+$$
+E_n(x) = 1 - \frac{e^{-x^2}}{\pi x}\sum_{k=0}^n\Gamma\left(\frac{1}{2} + k\right)(-x)^{2k}k!.
+$$
+
+#### Remarks
+- Asymptotic expansions need not to be convergent with an increasing number of terms ($n \rightarrow \infty$).
+- Asymptotic expansions can be added and multiplied, if they are obtained in a special way.
+- In general, we can not differentiate asymptotic expansions, but if 
+  $$
+	f(x; \varepsilon) \sim \sum_{i=1}^n a_i\phi_i(x; \varepsilon),
+	$$
+	and 
+	$$
+	\frac{\partial f}{\partial x}(x; \varepsilon) \sim \sum_{i=1}^n b_i(x)\phi(x; \varepsilon)
+	$$
+	then $b_i = \frac{\partial}{\partial x}a_i$.
+- Asymptotic expansions can be integrated
+  $$
+  \int_a^bf(x; \varepsilon)dx \sim \sum_{i=1}^n\int_a^ba_i(x)\phi_i(x; \varepsilon).
+  $$
+# 2. Asymptotic solutions of algebraic equations
+#### Example
+Suppose we want to solve the following equation
+$$
+x^2 - 3.99x + 3.02 = 0.
+$$
+Then we may introduce $\varepsilon = 0.01$, and rewrite this equation to 
+$$
+x^2 + (\varepsilon - 4)x + (3 + 2\varepsilon) = 0.
+$$
+We want to find the asymptotic approximation of its solution.
+The unperturbed problem is
+$$
+x^2 - 4x + 3 = 0,
+$$
+and it has solutions $x_0 = 1$, and $x_0 = 3$.
+Using power functions as basis, we consider the following approximation
+$$
+x_\varepsilon \sim x_0 + a_1\varepsilon^{\alpha_1} + a_2\varepsilon^{\alpha_2}.
+$$
+I'm not writing all of that, insert $x_\varepsilon$ approximation above into the rewritten equation, should be $\sim$ to $0$

@@ -1,6 +1,8 @@
 - [ ] finish list 1 of agent-based modelling
 - [ ] finish list 4 of unstructured data
 - [ ] unstructured data mini projects prototypes
-- [ ] lecture notes from slides optimization theory
+- [x] lecture notes from slides optimization theory
 - [ ] lecture notes from slides agent-based modelling
-- [ ] perturbation methods all list 1 exercises
+- [x] perturbation methods all list 1 exercises
+- [ ] spanish homework
+- [ ] list 2 of machine learning
