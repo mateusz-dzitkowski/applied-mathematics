@@ -2,6 +2,7 @@ from mesa.visualization import (
     CanvasGrid,
     ModularServer,
     Slider,
+    ChartModule,
 )
 
 from projects.agent_based_modelling.assignment_1.forest_fire import (
@@ -28,6 +29,7 @@ def forest_fire_portrayal(tree: Tree | None) -> dict | None:
 
 
 canvas_element = CanvasGrid(forest_fire_portrayal, 100, 100, 700, 700)
+biggest_cluster = ChartModule(series=[{"Label": "biggest_burned_cluster", "Color": "#000000"}])
 
 model_params = {
     "height": 100,
@@ -37,6 +39,8 @@ model_params = {
     "wind_y": Slider("Wind Y", 0, -2, 2, 1),
 }
 
-server = ModularServer(ForestFire, [canvas_element], "Forest Fire", model_params)
+server = ModularServer(ForestFire, [canvas_element, biggest_cluster], "Forest Fire", model_params)
 
-server.launch(open_browser=True)
+
+if __name__ == "__main__":
+    server.launch(open_browser=True)

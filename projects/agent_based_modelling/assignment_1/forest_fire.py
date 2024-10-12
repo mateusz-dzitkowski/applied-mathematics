@@ -5,7 +5,8 @@ from typing import Iterator
 from mesa import Agent, DataCollector, Model
 from mesa.batchrunner import batch_run
 from mesa.space import Position, SingleGrid
-from numpy import arange
+import numpy as np
+from scipy.ndimage import measurements
 from pandas import DataFrame
 
 Wind = tuple[int, int]
@@ -60,35 +61,28 @@ class ForestFire(Model):
     grid: SingleGrid
     wind: Wind
 
-    def __init__(self, width: int, height: int, p: float, wind_x: int = 0, wind_y: int = 0):
+    def __init__(self, size: int, p: float, wind_x: int = 0, wind_y: int = 0):
         super().__init__()
-        self.grid = SingleGrid(width=width, height=height, torus=False)
+        self.grid = SingleGrid(width=size, height=size, torus=False)
         self.wind = wind_x, wind_y
         self._init_trees(p)
-
-        self.datacollector = DataCollector(
-            {
-                "opposite_edge_hit": opposite_edge_hit,
-            }
-        )
+        self.datacollector = DataCollector(model_reporters=model_reporters)
         self.running = True
 
     @classmethod
     def batch_run(
         cls,
-        width: int,
-        height: int,
-        wind_x: int,
-        wind_y: int,
-        iterations: int,
+        size: int | Iterator[int] = 100,
+        wind_x: int = 0,
+        wind_y: int = 0,
+        iterations: int = 1000,
     ) -> DataFrame:
         return DataFrame(
             data=batch_run(
                 model_cls=cls,
                 parameters=dict(
-                    width=width,
-                    height=height,
-                    p=arange(start=0, stop=1, step=0.01),
+                    size=size,
+                    p=np.arange(start=0, stop=1, step=0.01),
                     wind_x=wind_x,
                     wind_y=wind_y,
                 ),
@@ -119,3 +113,20 @@ class ForestFire(Model):
 
 def opposite_edge_hit(model: ForestFire) -> bool:
     return any(tree.state != TreeState.FINE for tree in model.agents if tree.pos[0] == model.grid.width - 1)
+
+
+def biggest_burned_cluster(model: ForestFire) -> int:
+    burned_down = np.zeros((model.grid.width, model.grid.height), dtype=np.integer)
+    for tree in model.agents:
+        if tree.state == TreeState.BURNED_DOWN:
+            burned_down[tree.pos[0], tree.pos[1]] = 1
+
+    labels, num = measurements.label(burned_down)
+    cluster_sizes = measurements.sum(burned_down, labels, index=range(num + 1))
+    return int(max(cluster_sizes))
+
+
+model_reporters = {
+    "opposite_edge_hit": opposite_edge_hit,
+    "biggest_burned_cluster": biggest_burned_cluster,
+}
