@@ -5,4 +5,4 @@
 - [x] lecture notes from slides agent-based modelling
 - [x] perturbation methods all list 1 exercises
 - [ ] spanish homework
-- [ ] list 2 of machine learning
+- [x] list 2 of machine learning
