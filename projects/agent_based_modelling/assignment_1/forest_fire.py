@@ -2,12 +2,12 @@ from enum import StrEnum, auto
 from itertools import product
 from typing import Iterator
 
+import numpy as np
 from mesa import Agent, DataCollector, Model
 from mesa.batchrunner import batch_run
 from mesa.space import Position, SingleGrid
-import numpy as np
-from scipy.ndimage import measurements
 from pandas import DataFrame
+from scipy.ndimage import measurements
 
 Wind = tuple[int, int]
 

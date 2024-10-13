@@ -1,8 +1,8 @@
 from mesa.visualization import (
     CanvasGrid,
+    ChartModule,
     ModularServer,
     Slider,
-    ChartModule,
 )
 
 from projects.agent_based_modelling.assignment_1.forest_fire import (

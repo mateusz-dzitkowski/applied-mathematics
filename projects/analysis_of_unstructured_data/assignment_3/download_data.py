@@ -1,9 +1,10 @@
+import os
 from datetime import datetime
 from functools import cached_property
+
 from pandas import DataFrame
-import os
-from youtube_api import YouTubeDataAPI
 from pydantic import BaseModel, PrivateAttr, RootModel
+from youtube_api import YouTubeDataAPI
 
 
 class ResponseChannelMetadata(BaseModel):
