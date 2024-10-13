@@ -53,7 +53,7 @@ def get_groups_of_coauthors(soup: BeautifulSoup) -> Iterator[list[str]]:
     for section in soup.find_all("ol", attrs={"type": "1", "start": "1"})[2:]:
         for paper in section.find_all("font", recursive=False):
             members = [member.text for member in paper.find_all("b")]
-            yield [unidecode(member.replace(". ", ".").replace(".", ". ")) for member in members]
+            yield [unidecode(member.replace(". ", ".").replace(".", ". ")).strip() for member in members]
 
 
 def main():
