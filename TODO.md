@@ -7,3 +7,4 @@
 - [x] spanish homework
 - [x] list 2 of machine learning
 - [ ] perturbation methods exercises
+- [ ] optimisation theory exercises
