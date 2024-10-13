@@ -26,6 +26,9 @@ youtube-data-api = "^0.0.21"
 pydantic = "^2.9.2"
 nltk = "^3.9.1"
 geopy = "^2.4.1"
+opencv-python = "^4.10.0.84"
+pytesseract = "^0.3.13"
+fire = "^0.7.0"
 
 
 [build-system]
