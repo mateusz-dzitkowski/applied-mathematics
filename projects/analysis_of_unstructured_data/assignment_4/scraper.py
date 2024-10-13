@@ -3,6 +3,7 @@ from typing import Iterator
 
 import httpx
 import networkx as nx
+import numpy as np
 from bs4 import BeautifulSoup
 from matplotlib import pyplot as plt
 from text_unidecode import unidecode
@@ -29,8 +30,17 @@ class CoauthorGraph(nx.Graph):
         plt.figure(figsize=(20, 20))
         node_sizes = [self.nodes[node][PAPERS] * 20 for node in self.nodes]
         edge_widths = [self[u][v][COPAPERS] for u, v in self.edges]
-        layout = nx.spring_layout(self, k=0.7, iterations=50)
-        nx.draw(self, layout, with_labels=True, node_size=node_sizes, width=edge_widths, edge_color="gray")
+        edge_colors = [plt.cm.Blues(np.linalg.norm(self[u][v][COPAPERS]) / 10) for u, v in self.edges]
+
+        layout = nx.spring_layout(self, k=2)
+        nx.draw_networkx_nodes(self, layout, node_size=node_sizes, edgecolors="black")
+        nx.draw_networkx_labels(self, layout, font_weight="bold")
+        nx.draw_networkx_edges(
+            self,
+            pos=layout,
+            edge_color=edge_colors,
+            width=edge_widths,
+        )
         plt.show()
 
 
@@ -40,11 +50,10 @@ def get_site() -> BeautifulSoup:
 
 
 def get_groups_of_coauthors(soup: BeautifulSoup) -> Iterator[list[str]]:
-    for section in soup.find_all("ol", attrs={"type": "1", "start": "1"}):
+    for section in soup.find_all("ol", attrs={"type": "1", "start": "1"})[2:]:
         for paper in section.find_all("font", recursive=False):
-            just_names: str = paper.text.split('"')[0].split("(")[0]
-            just_names_fixed = just_names.replace(". ", ".").replace(".", ". ")
-            yield [unidecode(item.strip()) for item in just_names_fixed.split(",") if item.strip() != ""]
+            members = [member.text for member in paper.find_all("b")]
+            yield [unidecode(member.replace(". ", ".").replace(".", ". ")) for member in members]
 
 
 def main():
