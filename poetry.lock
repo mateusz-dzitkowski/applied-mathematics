@@ -1317,6 +1317,22 @@ files = [
 ]
 
 [[package]]
+name = "kagglehub"
+version = "0.3.1"
+description = "Access Kaggle resources anywhere"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "kagglehub-0.3.1-py3-none-any.whl", hash = "sha256:69a5dddef127ae337c34af0aa6271eef6ddb8564ad12185222de90d33e3470c8"},
+    {file = "kagglehub-0.3.1.tar.gz", hash = "sha256:6ebd7765bdbd5d7e69ddd246319e6dea0078bba8ad255f34f44ba6fe5353a056"},
+]
+
+[package.dependencies]
+packaging = "*"
+requests = "*"
+tqdm = "*"
+
+[[package]]
 name = "kiwisolver"
 version = "1.4.5"
 description = "A fast implementation of the Cassowary constraint solver"
@@ -3597,4 +3613,4 @@ requests = ">=2.0.0,<3.0.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a46a752526648b174293e18f327899c0d9d4c96c29852709c77f099fec4833bd"
+content-hash = "624ef9122274847c531293e93765099569adb236d4e23ca6e6fbaab1bc90a48d"

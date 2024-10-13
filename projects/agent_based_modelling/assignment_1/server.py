@@ -32,8 +32,7 @@ canvas_element = CanvasGrid(forest_fire_portrayal, 100, 100, 700, 700)
 biggest_cluster = ChartModule(series=[{"Label": "biggest_burned_cluster", "Color": "#000000"}])
 
 model_params = {
-    "height": 100,
-    "width": 100,
+    "size": 100,
     "p": Slider("Tree density", 0.65, 0.01, 1.0, 0.01),
     "wind_x": Slider("Wind X", 0, 0, 2, 1),
     "wind_y": Slider("Wind Y", 0, -2, 2, 1),

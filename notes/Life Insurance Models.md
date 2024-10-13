@@ -47,7 +47,7 @@ Typical life insurance products:
 6) unit - united life insurance.
 We have:
 - $T = T(x)$ - insurances payable at the moment of death,
-- $K = K(x)$ - insurances payable at the end of year of death.
+- $K = K(x)$ - insurances payable at the end of year of death. 
 ### Def 1.7 (Net single premium)
 Let $A_x$, and $\overline{A}_x$ indicate the life insurance benefit of $1$ payable at the end of the year of death, and at the time of death, respectively. These two cases correspond to discrete, and continuous models. Let $b_t$ be the benefit function, $v_t$ be the discount function. Let $Z = Z_t = b_tv_t$.
 Then the net single premium is defined as

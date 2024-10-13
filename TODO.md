@@ -4,5 +4,6 @@
 - [x] lecture notes from slides optimization theory
 - [x] lecture notes from slides agent-based modelling
 - [x] perturbation methods all list 1 exercises
-- [ ] spanish homework
+- [x] spanish homework
 - [x] list 2 of machine learning
+- [ ] perturbation methods exercises
