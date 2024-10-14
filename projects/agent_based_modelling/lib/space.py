@@ -48,7 +48,3 @@ class Grid(Generic[T]):
 
     def out_of_bounds(self, pos: Pos) -> bool:
         return not (0 <= pos.x < self.width and 0 <= pos.y < self.height)
-
-    def plot(self, ax: Axes, color_func: Callable[[T], str]):
-        positions = [[*pos] for pos in self.grid.keys()]
-        print(positions)
