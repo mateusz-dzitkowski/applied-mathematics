@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import (
-    Callable,
-    Self,
-    Any,
-    Iterable,
     TYPE_CHECKING,
+    Any,
+    Callable,
+    Iterable,
+    Self,
 )
 
 from .space import Grid, Pos
+
 if TYPE_CHECKING:
     from .agent import Agent
 

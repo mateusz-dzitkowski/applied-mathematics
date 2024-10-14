@@ -1,22 +1,20 @@
 from functools import lru_cache
+
 import httpx
 from geopy import Location, Nominatim
-
 from nltk import (
     Tree,
-    word_tokenize,
-    pos_tag,
-    ne_chunk,
     download,
+    ne_chunk,
+    pos_tag,
+    word_tokenize,
 )
 
 
 def get_book() -> str:
     return (
-        httpx
-        .get("https://www.gutenberg.org/cache/epub/103/pg103.txt")
-        .text
-        .split("*** START OF THE PROJECT GUTENBERG EBOOK AROUND THE WORLD IN EIGHTY DAYS ***")[1]
+        httpx.get("https://www.gutenberg.org/cache/epub/103/pg103.txt")
+        .text.split("*** START OF THE PROJECT GUTENBERG EBOOK AROUND THE WORLD IN EIGHTY DAYS ***")[1]
         .split("*** END OF THE PROJECT GUTENBERG EBOOK AROUND THE WORLD IN EIGHTY DAYS ***")[0]
     )
 
@@ -30,11 +28,7 @@ def preprocess_text(text: str) -> Tree:
 
 
 def extract_locations(tree: Tree) -> list[str]:
-    return [
-        " ".join(token for token, pos in subtree.leaves())
-        for subtree in tree
-        if isinstance(subtree, Tree) and subtree.label() == "GPE"
-    ]
+    return [" ".join(token for token, pos in subtree.leaves()) for subtree in tree if isinstance(subtree, Tree) and subtree.label() == "GPE"]
 
 
 @lru_cache

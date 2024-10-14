@@ -1,11 +1,12 @@
-from typing import Any, Iterable
-from pandas import DataFrame
 from functools import partial
 from itertools import product
+from multiprocessing import Pool
+from typing import Any, Iterable
+
+from pandas import DataFrame
+from tqdm import tqdm
 
 from .model import Model
-from tqdm import tqdm
-from multiprocessing import Pool
 
 
 def batch_run(
@@ -33,12 +34,14 @@ def batch_run(
 def _process_func(cls: type[Model], run: tuple[int, int, dict[str, Any]]) -> list[dict[str, Any]]:
     run_id, iteration, kwargs = run
     model = cls(**kwargs)
-    return [{
-        "run_id": run_id,
-        "iteration": iteration,
-        **kwargs,
-        **model.run_and_collect(),
-    }]
+    return [
+        {
+            "run_id": run_id,
+            "iteration": iteration,
+            **kwargs,
+            **model.run_and_collect(),
+        }
+    ]
 
 
 def _make_model_kwargs(parameters: dict[str, Any | Iterable[Any]]) -> list[dict[str, Any]]:

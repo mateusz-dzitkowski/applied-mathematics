@@ -1,12 +1,12 @@
 from typing import (
-    NamedTuple,
-    Generic,
-    TypeVar,
-    Iterator,
     Callable,
+    Generic,
+    Iterator,
+    NamedTuple,
+    TypeVar,
 )
-from matplotlib.axes import Axes
 
+from matplotlib.axes import Axes
 
 T = TypeVar("T")
 

@@ -1,14 +1,13 @@
-from matplotlib import pyplot as plt, animation
+from tempfile import NamedTemporaryFile
+from typing import Callable, TypeVar
+
+from IPython.display import Image
+from matplotlib import animation
+from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from matplotlib.patches import Rectangle
-from IPython.display import Image
-from tempfile import NamedTemporaryFile
-
-from typing import TypeVar, Callable
 
 from .model import Model
-
 
 T = TypeVar("T")
 
@@ -67,7 +66,7 @@ def _scaling_factor(ax: Axes) -> float:
     trans = ax.transData.transform
     x0, _ = trans((0, 0))
     x1, _ = trans((1, 1))
-    return (x1 - x0)**2 / 2
+    return (x1 - x0) ** 2 / 2
 
 
 def _prepare_fig(model: Model) -> tuple[Figure, Axes]:

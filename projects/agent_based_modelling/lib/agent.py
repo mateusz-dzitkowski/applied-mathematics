@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from .space import Pos
+
 if TYPE_CHECKING:
     from .model import Model
 
