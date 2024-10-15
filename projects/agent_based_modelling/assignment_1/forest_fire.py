@@ -1,4 +1,3 @@
-from enum import StrEnum, auto
 from itertools import product
 from random import random
 from typing import Iterator
@@ -10,30 +9,21 @@ from projects.agent_based_modelling.lib import Agent, Grid, Model, Pos
 
 Wind = tuple[int, int]
 
-
-class TreeState(StrEnum):
-    FINE = auto()
-    BURNING = auto()
-    BURNED_DOWN = auto()
-
-    def color(self) -> str:
-        return {
-            TreeState.FINE: "green",
-            TreeState.BURNING: "red",
-            TreeState.BURNED_DOWN: "black",
-        }[self]
+FINE = "green"
+BURNING = "red"
+BURNED_DOWN = "black"
 
 
 class Tree(Agent):
-    state: TreeState
+    state: str
     model: "ForestFire"
 
     def __init__(self, model: "ForestFire"):
         super().__init__(model=model)
-        self.state = TreeState.FINE
+        self.state = FINE
 
     def step(self) -> None:
-        if self.state != TreeState.BURNING:
+        if self.state != BURNING:
             return
 
         for pos in self._custom_neighborhood_plus_wind():
@@ -41,10 +31,10 @@ class Tree(Agent):
                 continue
 
             if neighbor := self.model.grid.get(pos):
-                if neighbor.state == TreeState.FINE:
-                    neighbor.state = TreeState.BURNING
+                if neighbor.state == FINE:
+                    neighbor.state = BURNING
 
-        self.state = TreeState.BURNED_DOWN
+        self.state = BURNED_DOWN
 
     def _custom_neighborhood_plus_wind(self) -> Iterator[Pos]:
         base_x_shift = [-1, 0, 1]
@@ -71,7 +61,7 @@ class ForestFire(Model):
         self._init_trees(p)
 
     def step(self) -> None:
-        fires = [tree for tree in self.agents if tree.state == TreeState.BURNING]
+        fires = [tree for tree in self.agents if tree.state == BURNING]
         for fire in fires:
             fire.step()
 
@@ -83,23 +73,23 @@ class ForestFire(Model):
                 tree = Tree(model=self)
 
                 if pos.x == 0:
-                    tree.state = TreeState.BURNING
+                    tree.state = BURNING
 
                 self.grid.set(pos, tree)
 
     @property
     def _is_burning(self) -> bool:
-        return any([tree.state == TreeState.BURNING for tree in self.agents])
+        return any([tree.state == BURNING for tree in self.agents])
 
 
 def opposite_edge_hit(model: ForestFire) -> bool:
-    return any(tree.state != TreeState.FINE for tree in model.agents if tree.pos[0] == model.grid.width - 1)
+    return any(tree.state != FINE for tree in model.agents if tree.pos[0] == model.grid.width - 1)
 
 
 def biggest_burned_cluster(model: ForestFire) -> int:
     burned_down = np.zeros((model.grid.width, model.grid.height), dtype=np.integer)
     for tree in model.agents:
-        if tree.state == TreeState.BURNED_DOWN:
+        if tree.state == BURNED_DOWN:
             burned_down[tree.pos[0], tree.pos[1]] = 1
 
     labels, num = measurements.label(burned_down, structure=[[1] * 3] * 3)

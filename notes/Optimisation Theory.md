@@ -70,4 +70,19 @@ $$
 Suppose $f: \mathbb{R}^n -\mathbb{R}$ is coercive. Then it has a global minimum.
 
 #### Remark
-In practice, this means that for a coercive function one of the local minimizers is a global minimiser, so we only need to search through them and compare their values.
+In practice, this means that for a coercive function one of the local minimisers is a global minimiser, so we only need to search through them and compare their values.
+
+# 2. Line Search Algorithms
+
+### Theorem 2.1
+Suppose the function $f: \mathbb{R} \rightarrow \mathbb{R}$ is unimodal on interval $[a, b]$. Then the sequences of both ends of the search interval $\{x_L^k\}$ and $\{x_U^k\}$ converge to the global minimiser of $f$ on $[a, b]$. Moreover, $x^*$ given by the golden section search method after $n$ iterations differs by at most $\frac{1}{2}K^n(b-a)$ from the real minimiser.
+
+#### Remark
+If the function has a finite number of local minima on $[a, b]$ (including possibly the points $a$ and $b$), the method will converge to one of these local minima.
+Finding the global minimum will require partitioning of $[a, b]$ into subintervals where $f$ is unimodal.
+
+### Theorem 2.2
+Suppose that $f$ satisfies for some $a < b$ the condition that $f'(a) < 0$ and $f'(b) \ge 0$ or $f(b) \ge f(a)$, and that $f'$ is continuous on $[a, b]$. Then the sequence $x_k^*$  of approximations of line search based on cubic interpolation converges to some stationary point of $f$.
+
+Bro no way I'm writing down the algorithms.
+

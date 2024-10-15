@@ -22,11 +22,11 @@ def animate(model: Model, filename: str, agent_color_func: Callable[[T], str]):
         color=c,
         marker="s",
         s=_scaling_factor(ax),
-        edgecolors="black",
     )
 
     def update(_model: Model):
         scatter.set_facecolor([agent_color_func(agent) for agent in _model.agents])
+        scatter.set_edgecolor([agent_color_func(agent) for agent in _model.agents])
 
     def frames():
         while model.running:

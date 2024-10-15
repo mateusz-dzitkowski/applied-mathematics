@@ -1,12 +1,9 @@
 from typing import (
-    Callable,
     Generic,
     Iterator,
     NamedTuple,
     TypeVar,
 )
-
-from matplotlib.axes import Axes
 
 T = TypeVar("T")
 
@@ -29,8 +26,6 @@ class Grid(Generic[T]):
         self.reverse_lookup = {}
 
     def get(self, pos: Pos) -> T | None:
-        if self.out_of_bounds(pos):
-            return None
         return self.grid.get(pos)
 
     def set(self, pos: Pos, val: T):

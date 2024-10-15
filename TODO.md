@@ -8,3 +8,5 @@
 - [x] list 2 of machine learning
 - [ ] perturbation methods exercises
 - [ ] optimisation theory exercises
+- [x] spanish homework
+- [x] optimisation theory lecture notes 2
