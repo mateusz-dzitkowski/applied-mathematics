@@ -6,6 +6,7 @@ import numpy as np
 from scipy.ndimage import measurements
 
 from projects.agent_based_modelling.lib import Agent, Grid, Model, Pos
+from projects.agent_based_modelling.assignment_1.hoshen_kopelman import HoshenKopelman
 
 Wind = tuple[int, int]
 
@@ -87,11 +88,4 @@ def opposite_edge_hit(model: ForestFire) -> bool:
 
 
 def biggest_burned_cluster(model: ForestFire) -> int:
-    burned_down = np.zeros((model.grid.width, model.grid.height), dtype=np.integer)
-    for tree in model.agents:
-        if tree.state == BURNED_DOWN:
-            burned_down[tree.pos[0], tree.pos[1]] = 1
-
-    labels, num = measurements.label(burned_down, structure=[[1] * 3] * 3)
-    cluster_sizes = measurements.sum(burned_down, labels, index=range(num + 1))
-    return int(max(cluster_sizes))
+    return HoshenKopelman(grid=model.grid).biggest_cluster_size()

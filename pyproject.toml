@@ -29,6 +29,8 @@ opencv-python = "^4.10.0.84"
 pytesseract = "^0.3.13"
 fire = "^0.7.0"
 tqdm = "^4.66.5"
+pytest = "^8.3.3"
+hypothesis = {extras = ["numpy"], version = "^6.115.2"}
 
 
 [build-system]

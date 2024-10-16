@@ -25,6 +25,10 @@ class Grid(Generic[T]):
         self.grid = {}
         self.reverse_lookup = {}
 
+    @property
+    def size(self) -> int:
+        return self.width * self.height
+
     def get(self, pos: Pos) -> T | None:
         return self.grid.get(pos)
 
