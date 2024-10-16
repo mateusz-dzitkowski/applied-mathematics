@@ -1,14 +1,12 @@
 from types import SimpleNamespace
 
 import numpy as np
-
-from projects.agent_based_modelling.assignment_1.hoshen_kopelman import HoshenKopelman, Grid
-from projects.agent_based_modelling.assignment_1.forest_fire import Pos, BURNED_DOWN
-
-from hypothesis import given, strategies, settings
-from hypothesis.extra.numpy import arrays, array_shapes
+from hypothesis import given, settings, strategies
+from hypothesis.extra.numpy import array_shapes, arrays
 from scipy.ndimage import measurements
 
+from projects.agent_based_modelling.assignment_1.forest_fire import BURNED_DOWN, Pos
+from projects.agent_based_modelling.assignment_1.hoshen_kopelman import Grid, HoshenKopelman
 
 TREE = SimpleNamespace(state=BURNED_DOWN)
 

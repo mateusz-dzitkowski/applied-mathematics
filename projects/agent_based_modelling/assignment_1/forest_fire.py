@@ -2,11 +2,8 @@ from itertools import product
 from random import random
 from typing import Iterator
 
-import numpy as np
-from scipy.ndimage import measurements
-
-from projects.agent_based_modelling.lib import Agent, Grid, Model, Pos
 from projects.agent_based_modelling.assignment_1.hoshen_kopelman import HoshenKopelman
+from projects.agent_based_modelling.lib import Agent, Grid, Model, Pos
 
 Wind = tuple[int, int]
 

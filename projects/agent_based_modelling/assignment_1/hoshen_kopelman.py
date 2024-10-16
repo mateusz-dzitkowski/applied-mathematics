@@ -1,8 +1,10 @@
-from typing import Protocol
-from itertools import product
-from projects.agent_based_modelling.lib import Pos, Grid
-import numpy as np
 from collections import Counter
+from itertools import product
+from typing import Protocol
+
+import numpy as np
+
+from projects.agent_based_modelling.lib import Grid, Pos
 
 
 class _Tree(Protocol):
