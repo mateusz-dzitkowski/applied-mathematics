@@ -10,3 +10,6 @@
 - [ ] optimisation theory exercises
 - [x] spanish homework
 - [x] optimisation theory lecture notes 2
+- [ ] spanish homework
+- [ ] machine learning list 3
+- [ ] send the agent-based list to eportal

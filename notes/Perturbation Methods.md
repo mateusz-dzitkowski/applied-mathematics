@@ -202,4 +202,96 @@ Using power functions as basis, we consider the following approximation
 $$
 x_\varepsilon \sim x_0 + a_1\varepsilon^{\alpha_1} + a_2\varepsilon^{\alpha_2}.
 $$
-I'm not writing all of that, insert $x_\varepsilon$ approximation above into the rewritten equation, should be $\sim$ to $0$
+I'm not writing all of that, insert $x_\varepsilon$ approximation above into the rewritten equation, should be $\sim$ to $0$. We should get $\alpha_1 = 1, \alpha_2 = 2, a_1 = -\frac{5}{2}, a_2 = -\frac{15}{8}$.
+
+#### Example
+Consider the quadratic equation
+$$
+(1-\varepsilon)x^2 - 2x + 1 = 0.
+$$
+Setting $\varepsilon = 0$ we get the unperturbed problem
+$$
+x^2 - 2x + 1 = (x - 1)^2 = 0
+$$
+with a double root $x = 1$. Assume that the asymptotic expansion takes the form
+$$
+x(\varepsilon) \sim 1 + \varepsilon a_1 + \varepsilon^2 a_2.
+$$
+Substituting $x(\varepsilon)$ back to the quadratic equation we get something nasty again. Comparing the coefficients at $\varepsilon^n$ we find a contradiction in $\varepsilon^1$ case. So $x(\varepsilon)$ can't be the asymptotic expansion.
+
+Looking for an exact solution of the quadratic we get
+$$
+x_1 = \frac{1 + \sqrt{\varepsilon}}{1 - \varepsilon}, \quad x_2 = \frac{1 - \sqrt{\varepsilon}}{1 - \varepsilon},
+$$
+which is kinda sus, and the expansion with integer powers is like a five block jump, impossible.
+
+Now let 
+$$
+x(\varepsilon) \sim 1 + \varepsilon^\frac{1}{2} a_1 + \varepsilon a_2 + \varepsilon^\frac{3}{2} a_3.
+$$
+Substitute this back into quadratic again, and get a horrible atrocity that should not be seen by any mortal man.
+
+#### Example
+Consider the equation
+$$
+\varepsilon x^3 - x + 1 = 0. 
+$$
+We seek the asymptotic expansion:
+$$
+x(\varepsilon) \sim a_0 + \varepsilon a_1 + \varepsilon^2 a_2.
+$$
+Inserting this into the original equation and equating the coefficients of $\varepsilon^n$ we get:
+$$
+a_1 + 1 = 0, \quad a_1 + a_0^3 = 0, \quad a_2 + 3a_0^2a_1 = 0,
+$$
+so
+$$
+x(\varepsilon) = 1 + \varepsilon + 3\varepsilon^2 + O(\varepsilon^3).
+$$
+To find the remaining roots of the original equation we introduce
+$$
+x(\varepsilon) = \frac{y(\varepsilon)}{\delta(\varepsilon)}
+$$
+and substitute it into the original equation.
+$$
+\varepsilon \frac{y^3}{\delta^3} - \frac{y}{\delta} + 1 = 0.
+$$
+We need to find $\delta(\varepsilon)$ such that
+$$
+\frac{\varepsilon}{\delta^3(\varepsilon)} \sim \frac{1}{\delta(\varepsilon)}
+$$
+and $1$ should be small compared to $\frac{\varepsilon}{\delta^3(\varepsilon)}$ and $\frac{\varepsilon}{\delta(\varepsilon)}$. Then we get $\delta^2(\varepsilon) \sim \varepsilon$ which implies that $\delta(\varepsilon) \sim \sqrt{\varepsilon}$. Taking this into account in the equation for $y$, we get
+$$
+y^3 - y + \sqrt{\varepsilon} = 0.
+$$
+Now we want to find the asymptotic expansions for the roots of the above equation. We assume
+$$
+y(\varepsilon) \sim b_0 + b_1 \varepsilon^\frac{1}{2}.
+$$
+Then something happens, and we get
+$$
+x(\varepsilon) = \pm \varepsilon^{-\frac{1}{2}} + \frac{1}{4} + O(\varepsilon^\frac{1}{2}).
+$$
+
+#### Example
+Consider the algebraic equation $g(x; \varepsilon) = 0$, where $g$ is a function having derivatives of all orders. Assuming $g(x_0; 0) = 0$ is solvable for $x_0$, show how to find a three term asymptotic expansion of the form $x = x_0 + \varepsilon x_1 + \varepsilon^2 x_2$.
+
+We introduce the function $h(\varepsilon) = g(x(\varepsilon), \varepsilon) = 0$, and expand it into the Taylor series
+$$
+h(\varepsilon) = \sum_{n=0}^\infty \frac{h^{(n)}(0)}{n!}\varepsilon^n = 0.
+$$
+Using the chain rule 
+$$
+\begin{aligned}
+h'(\varepsilon) &= \frac{\partial g}{\partial x}(x(\varepsilon), \varepsilon)x'(\varepsilon) + \frac{\partial g}{\partial\varepsilon}(x(\varepsilon), \varepsilon) \\
+h''(\varepsilon) &= \frac{\partial^2g}{\partial \varepsilon^2}(x(\varepsilon), \varepsilon) = \text{even worse mess}.
+\end{aligned}
+$$
+
+Finally we get
+$$
+\begin{aligned}
+h(0) = 0 &\implies g(x_0, 0) = 0, \\
+h'(0) = 0 &\implies \frac{\partial g}{\partial x}(x_0, 0)x_1 + \frac{\partial g}{\partial \varepsilon}(x_0, 0) = 0,
+\end{aligned}
+$$
