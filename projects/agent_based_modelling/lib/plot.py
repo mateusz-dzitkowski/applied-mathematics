@@ -1,4 +1,3 @@
-from tempfile import NamedTemporaryFile
 from typing import Callable, TypeVar
 
 from IPython.display import Image
@@ -45,8 +44,7 @@ def animate(model: Model, filename: str, agent_color_func: Callable[[T], str]):
     plt.close()
 
 
-def animate_show(model: Model, agent_color_func: Callable[[T], str]) -> Image:
-    filename = f"{NamedTemporaryFile().name}.gif"
+def animate_show(model: Model, filename: str, agent_color_func: Callable[[T], str]) -> Image:
     animate(model, filename, agent_color_func)
     return Image(filename)
 
