@@ -6,10 +6,15 @@
 - [x] perturbation methods all list 1 exercises
 - [x] spanish homework
 - [x] list 2 of machine learning
-- [ ] perturbation methods exercises
+- [x] perturbation methods exercises
 - [ ] optimisation theory exercises
 - [x] spanish homework
 - [x] optimisation theory lecture notes 2
-- [ ] spanish homework
-- [ ] machine learning list 3
-- [ ] send the agent-based list to eportal
+- [x] spanish homework
+- [x] machine learning list 3
+- [x] send the agent-based list to eportal
+- [ ] machine learning list 3 pretty jupyter report
+- [ ] spanish exercise
+- [ ] agent-based modelling list 2
+- [ ] agent-based modelling list 3
+- [ ] agent-based modelling list 4
