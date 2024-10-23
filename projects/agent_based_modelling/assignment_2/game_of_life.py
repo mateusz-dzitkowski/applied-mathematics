@@ -15,14 +15,6 @@ class GameOfLife(np.matrix):
     def from_path(cls, path: Path) -> Self:
         return cls(path.read_text(encoding="utf-8").replace(".", "0").replace("", " ").replace("\n", ";")).astype(bool)
 
-    @classmethod
-    def empty(cls, shape: tuple[int, int]) -> Self:
-        return cls(np.zeros(shape))
-
-    @classmethod
-    def random(cls, shape: tuple[int, int], p: float = 0.2) -> Self:
-        return cls((np.random.uniform(size=shape) < p).astype(bool))  # type: ignore
-
     def step(self, boundary: Boundary = "wrap"):
         kernel = np.matrix("1 1 1; 1 0 1; 1 1 1")
         neighbours = convolve2d(self, kernel, mode="same", boundary=boundary)
@@ -69,6 +61,18 @@ class GameOfLife(np.matrix):
 
 
 class GameOfLifeFactory:
+    @staticmethod
+    def empty(shape: tuple[int, int]) -> GameOfLife:
+        return GameOfLife(np.zeros(shape))
+
+    @staticmethod
+    def random(shape: tuple[int, int], p: float = 0.2) -> GameOfLife:
+        return GameOfLife((np.random.uniform(size=shape) < p).astype(bool))  # type: ignore
+
+    @staticmethod
+    def from_schematic(schematic: str) -> GameOfLife:
+        return GameOfLife.from_path(Path(__file__).parent / "schematics" / schematic)
+
     @classmethod
     def block(cls) -> GameOfLife:
         return cls.from_schematic("block")
@@ -121,16 +125,13 @@ class GameOfLifeFactory:
     def glider_gun(cls) -> GameOfLife:
         return cls.from_schematic("glider_gun")
 
-    @staticmethod
-    def from_schematic(schematic: str) -> GameOfLife:
-        return GameOfLife.from_path(Path(__file__).parent / "schematics" / schematic)
-
 
 if __name__ == "__main__":
     game = (
-        GameOfLife.random((50, 50), 0.01)
+        GameOfLifeFactory.empty((50, 50))
         .embed(GameOfLifeFactory.glider(), (0, 0))
         .embed(GameOfLifeFactory.lightweight_spaceship(), (10, 0))
         .embed(GameOfLifeFactory.loaf(), (20, 0))
+        .embed(GameOfLifeFactory.pentadecathlon(), (20, 20))
     )
     game.animate_show("test.gif")
