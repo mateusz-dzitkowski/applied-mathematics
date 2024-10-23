@@ -1,5 +1,6 @@
+from io import StringIO
 from pathlib import Path
-from typing import Literal, Self
+from typing import Self
 
 import numpy as np
 from IPython.display import Image
@@ -7,30 +8,36 @@ from matplotlib import animation
 from matplotlib import pyplot as plt
 from scipy.signal import convolve2d
 
-Boundary = Literal["fill", "wrap", "symm"]
+TXT_ZERO = "."
+TXT_ONE = "1"
 
 
 class GameOfLife(np.matrix):
+    death_edges: bool = False
+
     @classmethod
     def from_path(cls, path: Path) -> Self:
-        return cls(path.read_text(encoding="utf-8").replace(".", "0").replace("", " ").replace("\n", ";")).astype(bool)
+        return cls(path.read_text(encoding="utf-8").replace(TXT_ZERO, "0").replace(TXT_ONE, "1").replace("", " ").replace("\n", ";")).astype(bool)
 
-    def step(self, boundary: Boundary = "wrap"):
+    def step(self):
         kernel = np.matrix("1 1 1; 1 0 1; 1 1 1")
-        neighbours = convolve2d(self, kernel, mode="same", boundary=boundary)
+        neighbours = convolve2d(self, kernel, mode="same", boundary="wrap")
         self[:, :] = np.logical_or(
             np.logical_and(self, np.logical_or(neighbours == 2, neighbours == 3)),
             np.logical_and(~self, neighbours == 3),
         )
+        if self.death_edges:
+            self[[0, -1], :] = self[:, [0, -1]] = 0
 
-    def animate_show(self, filename: str, boundary: Boundary = "wrap", steps: int = 500, fps: int = 20) -> Image:
-        fig, ax = plt.subplots(figsize=(10, 10))
+    def animate(self, filename: str, steps: int = 500, fps: int = 20) -> Image:
+        fig, ax = plt.subplots(figsize=(8, 8), constrained_layout=True)
         ax.set_aspect("equal")
+        ax.axis("off")
 
-        img = ax.imshow(self, cmap=plt.cm.gray_r)
+        img = ax.imshow(self, cmap=plt.cm.gray_r)  # type: ignore
 
         def update(_: int):
-            self.step(boundary=boundary)
+            self.step()
             img.set_data(self)
 
         def init():
@@ -50,7 +57,7 @@ class GameOfLife(np.matrix):
         return Image(filename)
 
     def show(self):
-        plt.imshow(self, cmap=plt.cm.gray_r)
+        plt.imshow(self, cmap=plt.cm.gray_r)  # type: ignore
         plt.show()
 
     def embed(self, other: Self, at: tuple[int, int] = (0, 0)) -> Self:
@@ -58,6 +65,11 @@ class GameOfLife(np.matrix):
         dx, dy = other.shape
         self[x : x + dx, y : y + dy] = other
         return self.astype(bool)
+
+    def save(self, path: Path):
+        str_io = StringIO()
+        np.savetxt(str_io, self, fmt="%d", delimiter="")
+        path.write_text(str_io.getvalue().replace("0", TXT_ZERO).replace("1", TXT_ONE).rstrip("\n"))
 
 
 class GameOfLifeFactory:
@@ -134,4 +146,4 @@ if __name__ == "__main__":
         .embed(GameOfLifeFactory.loaf(), (20, 0))
         .embed(GameOfLifeFactory.pentadecathlon(), (20, 20))
     )
-    game.animate_show("test.gif")
+    game.save(Path(__file__).parent / "out")
