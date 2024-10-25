@@ -71,6 +71,12 @@ class GameOfLife(np.matrix):
         np.savetxt(str_io, self, fmt="%d", delimiter="")
         path.write_text(str_io.getvalue().replace("0", TXT_ZERO).replace("1", TXT_ONE).rstrip("\n"))
 
+    def flip_horizontal(self) -> Self:
+        return GameOfLife(np.flip(self, axis=0))
+
+    def flip_vertical(self) -> Self:
+        return GameOfLife(np.flip(self, axis=1))
+
 
 class GameOfLifeFactory:
     @staticmethod
@@ -140,10 +146,8 @@ class GameOfLifeFactory:
 
 if __name__ == "__main__":
     game = (
-        GameOfLifeFactory.empty((50, 50))
-        .embed(GameOfLifeFactory.glider(), (0, 0))
-        .embed(GameOfLifeFactory.lightweight_spaceship(), (10, 0))
-        .embed(GameOfLifeFactory.loaf(), (20, 0))
-        .embed(GameOfLifeFactory.pentadecathlon(), (20, 20))
+        GameOfLifeFactory.empty((100, 100))
+        .embed(GameOfLifeFactory.glider_gun(), (5, 5))
+        .embed(GameOfLifeFactory.glider_gun().flip_vertical(), (5, 61))
     )
-    game.save(Path(__file__).parent / "out")
+    game.animate("test.gif", 500)
