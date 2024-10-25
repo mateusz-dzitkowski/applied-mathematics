@@ -295,3 +295,91 @@ h(0) = 0 &\implies g(x_0, 0) = 0, \\
 h'(0) = 0 &\implies \frac{\partial g}{\partial x}(x_0, 0)x_1 + \frac{\partial g}{\partial \varepsilon}(x_0, 0) = 0,
 \end{aligned}
 $$
+# 3. Regular perturbations of ODEs
+
+#### Example
+Consider the ODE:
+$$
+\begin{aligned}
+y' &= -y + \varepsilon y^2, \quad t > 0, \\
+y(0) &= 1.
+\end{aligned}
+$$
+It's the Bernoulli equation, and it can be solved analytically by substitution $u = y^{-1}$.
+We get the solution:
+$$
+y(t) = \frac{1}{\varepsilon + (1-\varepsilon)e^t}.
+$$
+The exact solution can be expanded in a Taylor series in powers of $\varepsilon$:
+$$
+y(t) = e^{-t} + \varepsilon(e^{-t} - e^{-2t}) + e^2(e^{-t} - e^{-2t} + e^{-3t}) + \cdots.
+$$
+Now, let's try to apply the regular perturbation method to obtain an asymptotic approximation of $y$. To do so, we assume that
+$$
+y(t) = y_0(t) + \varepsilon y_1(t) + \varepsilon^2 y_2(t) + \cdots.
+$$
+The functions $y_0, y_1, y_2$ can be determined by substituting the above into the original equation and then equating coefficients of equal powers of $\varepsilon$:
+$$
+y_0' + \varepsilon y_1' + \varepsilon^2 y_2' + y_0 + \varepsilon y_1 + \varepsilon^2 y_2 - \varepsilon (y_0 + \varepsilon y_1 \varepsilon^2 y_2)^2 = 0.
+$$
+Collecting the coefficients we obtain the sequence of linear equations
+$$
+\begin{aligned}
+y_0' + y_0 = 0, &\quad y_0(0) = 1, \\
+y_1' + y_1 = y_0^2, &\quad y_1(0) = 0, \\
+y_2' + y_2 = 2y_0y_1, &\quad y_2(0) = 0.
+\end{aligned}
+$$
+Solving these we obtain
+$$
+y_0(t) = e^{-t}, \quad y_1(t) = e^{-t} - e^{-2t}, \quad y_2(t) = e^{-t} - 2e^{-2t} + e^{-3t}.
+$$
+We can see that we got the first three terms in the Taylor expansion of $y$.
+
+#### Example
+Consider the nearly linear system of ODEs
+$$
+u' = Au + \varepsilon f(t, u, \varepsilon), \quad u(0) = \alpha.
+$$
+where $0 < \varepsilon <\!< 1, u:[0,T]\rightarrow\mathbb{R}^n, A\in\mathbb{R}^{n \times m}, \alpha\in\mathbb{R}^n$, and $f$ is Lipschitz w.r.t $u$.
+We seek an asymptotic expansion of the form $u(t) \sim u_0(t) + \varepsilon u_1(t)$. Then the correctors satisfy
+$$
+u_0' = Au_0, \quad u_0(0) = \alpha,
+$$
+so $u_0(t) = \alpha e^{At}$, and
+$$
+u_1' = Au_1 + f(t, u_0, \varepsilon), \quad u_1(0) = 0,
+$$
+so $u_1(t) = \int_0^te^{A(t-s)}f(s, \alpha e^{As}, \varepsilon)ds$.
+Now, we seek an estimate for the error
+$$
+R(t, \varepsilon) = u(t) - (u_0(t) + \varepsilon u_1(t)).
+$$
+To do this, we will need the two following lemmas.
+
+### Lemma 3.1
+Let $r \in C^1(\mathbb{R}, \mathbb{R}^n)$. Then $||r||^2 = r_1^2(t) + \cdots + r_n^2(t)$, $||r||$ is right-differentiable for all $t$, i.e
+$$
+\lim\limits_{\tau \rightarrow 0^+}\frac{||r(t + \tau) - ||r(t)||}{\tau}
+$$
+is finite, and differentiable for all $t$ where $r(t) \ne 0$. Moreover, the following inequality holds for all $t$
+$$
+\frac{d}{dt}||r(t)|| \le ||r'(t)||.
+$$
+
+### Lemma 3.2 (Gronwell inequality)
+If $\varphi' \le \alpha \varphi + \beta$ and $\varphi(0) = \varphi_0$, then 
+$$
+\varphi(t) \le \varphi_0 e^{\alpha t} + \frac{\beta}{\alpha}(e^{\alpha t} - 1).
+$$
+
+### Theorem 3.3
+Consider 
+$$
+u' = Au + \varepsilon f(t, u, \varepsilon), \quad u(0) = \alpha.
+$$
+Then 
+$$
+||R(t, \varepsilon)|| \le \varepsilon^2\frac{LM}{||A|| + \varepsilon L}\left(e^{t(||A|| + \varepsilon L)} - 1\right),
+$$
+where $L$ is the Lipschitz constant of $f$ and $M = \max\limits_{t\in[0, T]} ||u_1(t)||$.
