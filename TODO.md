@@ -13,8 +13,10 @@
 - [x] spanish homework
 - [x] machine learning list 3
 - [x] send the agent-based list to eportal
-- [ ] machine learning list 3 pretty jupyter report
-- [ ] spanish exercise
-- [ ] agent-based modelling list 2
+- [x] machine learning list 3 pretty jupyter report
+- [x] spanish exercise
+- [x] agent-based modelling list 2
 - [ ] agent-based modelling list 3
 - [ ] agent-based modelling list 4
+- [ ] spanish homework
+- [ ] prepare presentations for unstructured data list 3 and 4
