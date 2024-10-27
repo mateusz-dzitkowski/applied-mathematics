@@ -18,5 +18,5 @@
 - [x] agent-based modelling list 2
 - [ ] agent-based modelling list 3
 - [ ] agent-based modelling list 4
-- [ ] spanish homework
+- [x] spanish homework
 - [ ] prepare presentations for unstructured data list 3 and 4
