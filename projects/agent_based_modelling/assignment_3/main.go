@@ -1,6 +1,9 @@
 package main
 
-import "main/tree"
+import (
+	"fmt"
+	"main/tree"
+)
 
 const (
 	BLUE = "blue"
@@ -14,13 +17,16 @@ type Agent struct {
 func main() {
 	t := tree.New[Agent]()
 	agents := []tree.Object[Agent]{
-		{1, 2, Agent{color: RED}},
-		{1, 3, Agent{color: BLUE}},
-		{2, 2, Agent{color: RED}},
-		{3, 0, Agent{color: BLUE}},
-		{3, 1, Agent{color: RED}},
+		{Pos: tree.Position{X: 3, Y: 3}, Props: Agent{color: RED}},
+		{Pos: tree.Position{X: 2, Y: 4}, Props: Agent{color: BLUE}},
+		{Pos: tree.Position{X: 3, Y: 5}, Props: Agent{color: RED}},
+		{Pos: tree.Position{X: 1, Y: 2}, Props: Agent{color: BLUE}},
+		{Pos: tree.Position{X: 3, Y: 1}, Props: Agent{color: RED}},
+		{Pos: tree.Position{X: 4, Y: 3}, Props: Agent{color: RED}},
+		{Pos: tree.Position{X: 5, Y: 1}, Props: Agent{color: RED}},
 	}
 	for _, agent := range agents {
 		t.Insert(agent)
 	}
+	fmt.Println(t.FindKNearestNeighbours(tree.Position{X: 3, Y: 4}, 9))
 }

@@ -1,6 +1,9 @@
 package tree
 
-import "math"
+import (
+	"math"
+	"sort"
+)
 
 type Position struct {
 	X, Y int
@@ -40,33 +43,33 @@ func (t *Tree[T]) Insert(object Object[T]) {
 	t.root = insert(t.root, object, 0)
 }
 
-func (t *Tree[T]) FindNearestNeighbours(node *Node[T], k int) []*Node[T] {
-	return []*Node[T]{} // TODO
-}
+func (t *Tree[T]) FindKNearestNeighbours(pos Position, k int) []Object[T] {
+	result := make([]Object[T], 0)
+	closestNodes := make([]Node[T], 0)
+	closestDist := math.MaxInt
 
-func insert[T any](node *Node[T], object Object[T], depth int) *Node[T] {
-	if node == nil {
-		return &Node[T]{object: object}
+	findKNearestNeighbours(t.root, pos, k, 0, &closestNodes, &closestDist)
+	for _, node := range closestNodes {
+		result = append(result, node.object)
 	}
 
-	axis := depth % 2
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Pos.distanceSq(pos) < result[j].Pos.distanceSq(pos)
+	})
 
-	if goLeft(axis, node, object) {
-		node.left = insert(node.left, object, depth+1)
-	} else {
-		node.right = insert(node.right, object, depth+1)
-	}
-
-	return node
+	return result
 }
 
-func findNearestNeighbours[T any](node *Node[T], target Object[T], k, depth int, objects *[]Object[T], distances *[]int) {
+func findKNearestNeighbours[T any](node *Node[T], target Position, k int, depth int, closestNodes *[]Node[T], closestDist *int) {
 	if node == nil {
 		return
 	}
 
-	dist := node.object.Pos.distanceSq(target.Pos)
+	*closestDist = min(node.object.Pos.distanceSq(target), *closestDist)
+	*closestNodes = append(*closestNodes, *node)
+
 	axis := depth % 2
+
 	var next, other *Node[T]
 
 	if goLeft(axis, node, target) {
@@ -77,13 +80,31 @@ func findNearestNeighbours[T any](node *Node[T], target Object[T], k, depth int,
 		other = node.left
 	}
 
-	findNearestNeighbours[T](next, target, k, depth+1, objects, distances)
+	findKNearestNeighbours[T](next, target, k, depth+1, closestNodes, closestDist)
 
-	if len(*objects) < k || math.Abs(target.Pos.getCoord(axis)-node.object.Pos.getCoord(axis)) < (*distances)[len(*distances)-1] {
-
+	delta := target.getCoord(axis) - node.object.Pos.getCoord(axis)
+	delta2 := delta * delta
+	if len(*closestNodes) < k || delta2 < *closestDist {
+		findKNearestNeighbours[T](other, target, k, depth+1, closestNodes, closestDist)
 	}
 }
 
-func goLeft[T any](axis int, node *Node[T], object Object[T]) bool {
-	return (axis == 0 && object.Pos.X < node.object.Pos.X) || (axis == 1 && object.Pos.Y < node.object.Pos.Y)
+func insert[T any](node *Node[T], object Object[T], depth int) *Node[T] {
+	if node == nil {
+		return &Node[T]{object: object}
+	}
+
+	axis := depth % 2
+
+	if goLeft(axis, node, object.Pos) {
+		node.left = insert(node.left, object, depth+1)
+	} else {
+		node.right = insert(node.right, object, depth+1)
+	}
+
+	return node
+}
+
+func goLeft[T any](axis int, node *Node[T], pos Position) bool {
+	return (axis == 0 && pos.X < node.object.Pos.X) || (axis == 1 && pos.Y < node.object.Pos.Y)
 }
