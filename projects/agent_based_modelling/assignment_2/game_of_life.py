@@ -3,9 +3,6 @@ from pathlib import Path
 from typing import Self
 
 import numpy as np
-from IPython.display import Image
-from matplotlib import animation
-from matplotlib import pyplot as plt
 from scipy.signal import convolve2d
 
 TXT_ZERO = "."
@@ -14,51 +11,20 @@ TXT_ONE = "1"
 
 class GameOfLife(np.matrix):
     death_edges: bool = False
+    kernel: np.matrix = np.matrix("1 1 1; 1 0 1; 1 1 1")
 
     @classmethod
     def from_path(cls, path: Path) -> Self:
         return cls(path.read_text(encoding="utf-8").replace(TXT_ZERO, "0").replace(TXT_ONE, "1").replace("", " ").replace("\n", ";")).astype(bool)
 
     def step(self):
-        kernel = np.matrix("1 1 1; 1 0 1; 1 1 1")
-        neighbours = convolve2d(self, kernel, mode="same", boundary="wrap")
+        neighbours = convolve2d(self, self.kernel, mode="same", boundary="wrap")
         self[:, :] = np.logical_or(
             np.logical_and(self, np.logical_or(neighbours == 2, neighbours == 3)),
             np.logical_and(~self, neighbours == 3),
         )
         if self.death_edges:
             self[[0, -1], :] = self[:, [0, -1]] = 0
-
-    def animate(self, filename: str, steps: int = 500, fps: int = 20) -> Image:
-        fig, ax = plt.subplots(figsize=(8, 8), constrained_layout=True)
-        ax.set_aspect("equal")
-        ax.axis("off")
-
-        img = ax.imshow(self, cmap=plt.cm.gray_r)  # type: ignore
-
-        def update(_: int):
-            self.step()
-            img.set_data(self)
-
-        def init():
-            img.set_data(self)
-
-        animation.FuncAnimation(
-            fig=fig,
-            func=update,  # type: ignore
-            init_func=init,  # type: ignore
-            frames=steps,
-            cache_frame_data=False,
-        ).save(
-            filename=filename,
-            writer=animation.PillowWriter(fps=fps),
-        )
-        plt.close()
-        return Image(filename)
-
-    def show(self):
-        plt.imshow(self, cmap=plt.cm.gray_r)  # type: ignore
-        plt.show()
 
     def embed(self, other: Self, at: tuple[int, int] = (0, 0)) -> Self:
         x, y = at
@@ -71,16 +37,30 @@ class GameOfLife(np.matrix):
         np.savetxt(str_io, self, fmt="%d", delimiter="")
         path.write_text(str_io.getvalue().replace("0", TXT_ZERO).replace("1", TXT_ONE).rstrip("\n"))
 
-    def flip_horizontal(self) -> Self:
+    @property
+    def flipped_horizontal(self) -> Self:
+        return GameOfLife(np.flip(self, axis=1))
+
+    @property
+    def flipped_vertical(self) -> Self:
         return GameOfLife(np.flip(self, axis=0))
 
-    def flip_vertical(self) -> Self:
-        return GameOfLife(np.flip(self, axis=1))
+    @property
+    def rotated(self) -> Self:
+        return GameOfLife(np.rot90(self))
+
+    @property
+    def width(self) -> int:
+        return self.shape[1]
+
+    @property
+    def height(self) -> int:
+        return self.shape[0]
 
 
 class GameOfLifeFactory:
     @staticmethod
-    def empty(shape: tuple[int, int]) -> GameOfLife:
+    def empty(shape: tuple[int, int] = (100, 100)) -> GameOfLife:
         return GameOfLife(np.zeros(shape))
 
     @staticmethod
@@ -143,11 +123,6 @@ class GameOfLifeFactory:
     def glider_gun(cls) -> GameOfLife:
         return cls.from_schematic("glider_gun")
 
-
-if __name__ == "__main__":
-    game = (
-        GameOfLifeFactory.empty((100, 100))
-        .embed(GameOfLifeFactory.glider_gun(), (5, 5))
-        .embed(GameOfLifeFactory.glider_gun().flip_vertical(), (5, 61))
-    )
-    game.animate("test.gif", 500)
+    @classmethod
+    def eater(cls) -> GameOfLife:
+        return cls.from_schematic("eater")
