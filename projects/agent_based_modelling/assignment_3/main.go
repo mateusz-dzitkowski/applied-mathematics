@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
-	"main/model"
+	"main/model/grid"
 )
 
 func main() {
-	m := model.New(model.Params{Size: 100, Blues: 250, Reds: 250})
-	fmt.Println(m.Tree.Points())
+	g := grid.New[string](5)
+	g.Set(grid.Pos{X: 1, Y: 2}, "a")
+	g.Set(grid.Pos{X: 3, Y: 4}, "a")
+	g.Set(grid.Pos{X: 4, Y: 4}, "a")
+	fmt.Println(g.GetClosestNeighbours(grid.Pos{X: 1, Y: 1}, 2))
 }
