@@ -196,3 +196,16 @@ func TestClosestNeighbours(t *testing.T) {
 		})
 	}
 }
+
+func TestRandomUnoccupiedPos(t *testing.T) {
+	setup := make(map[Pos]string)
+	for x := range 5 {
+		for y := range 5 {
+			setup[Pos{X: x, Y: y}] = Test
+		}
+	}
+	g := makeGrid(setup)
+	g.Delete(Pos{X: 0, Y: 0})
+
+	assert.Equal(t, Pos{X: 0, Y: 0}, g.RandomUnoccupiedPos())
+}

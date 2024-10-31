@@ -2,13 +2,22 @@ package main
 
 import (
 	"fmt"
-	"main/model/grid"
+	"main/model"
 )
 
 func main() {
-	g := grid.New[string](5)
-	g.Set(grid.Pos{X: 1, Y: 2}, "a")
-	g.Set(grid.Pos{X: 3, Y: 4}, "a")
-	g.Set(grid.Pos{X: 4, Y: 4}, "a")
-	fmt.Println(g.GetClosestNeighbours(grid.Pos{X: 1, Y: 1}, 2))
+	params := model.Params{
+		Size:  100,
+		Blues: 4999,
+		Reds:  4999,
+		JBlue: 4,
+		JRed:  4,
+		MBlue: 8,
+		MRed:  8,
+	}
+	m := model.New(params)
+
+	fmt.Println(m)
+	_ = m.Run(100)
+	fmt.Println(m)
 }

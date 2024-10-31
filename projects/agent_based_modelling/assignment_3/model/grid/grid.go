@@ -1,5 +1,7 @@
 package grid
 
+import "math/rand"
+
 type Pos struct{ X, Y int }
 
 func (p Pos) add(other Pos) Pos {
@@ -75,7 +77,20 @@ func (g *Grid[T]) GetClosestNeighbours(p Pos, k int) []Pos {
 	return output
 }
 
-func (g *Grid[T]) positions() []Pos {
+func (g *Grid[T]) RandomUnoccupiedPos() Pos {
+	for {
+		p := Pos{
+			X: rand.Intn(g.size),
+			Y: rand.Intn(g.size),
+		}
+		_, occupied := g.Get(p)
+		if !occupied {
+			return p
+		}
+	}
+}
+
+func (g *Grid[T]) OccupiedPositions() []Pos {
 	positions := make([]Pos, 0, len(g.grid))
 	for gridPos := range g.grid {
 		positions = append(positions, gridPos)
