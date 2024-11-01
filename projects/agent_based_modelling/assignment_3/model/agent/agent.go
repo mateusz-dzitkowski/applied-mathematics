@@ -1,13 +1,13 @@
 package agent
 
-import "github.com/fatih/color"
+import "image/color"
 
 var (
-	ColorRed  = color.New(color.FgRed).SprintFunc()("█")
-	ColorBlue = color.New(color.FgBlue).SprintFunc()("█")
+	ColorRed  = color.RGBA{R: 255, A: 255}
+	ColorBlue = color.RGBA{B: 255, A: 255}
 )
 
-type Agent = string
+type Agent = color.RGBA
 
 func Red() Agent {
 	return ColorRed

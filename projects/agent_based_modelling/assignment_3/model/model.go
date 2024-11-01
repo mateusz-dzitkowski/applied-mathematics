@@ -1,7 +1,6 @@
 package model
 
 import (
-	"bytes"
 	"errors"
 	"main/model/agent"
 	"main/model/grid"
@@ -31,25 +30,6 @@ func New(params Params) *Model {
 	}
 
 	return &model
-}
-
-func (m *Model) Run(maxSteps int) error {
-	for range maxSteps {
-		anyoneMoved, err := m.step()
-		if err != nil {
-			return err
-		}
-		if !anyoneMoved {
-			anyoneMoved, err = m.step() // check once more if no one truly wants to move
-			if err != nil {
-				return err
-			}
-			if !anyoneMoved {
-				return nil
-			}
-		}
-	}
-	return nil
 }
 
 func (m *Model) step() (bool, error) {
@@ -90,21 +70,4 @@ func (m *Model) step() (bool, error) {
 		}
 	}
 	return anyoneMoved, nil
-}
-
-func (m *Model) String() string {
-	var sb bytes.Buffer
-	for x := range m.params.Size {
-		for y := range m.params.Size {
-			p := grid.Pos{X: x, Y: y}
-			a, ok := m.grid.Get(p)
-			if ok {
-				sb.WriteString(a)
-			} else {
-				sb.WriteString(" ")
-			}
-		}
-		sb.WriteString("\n")
-	}
-	return sb.String()
 }

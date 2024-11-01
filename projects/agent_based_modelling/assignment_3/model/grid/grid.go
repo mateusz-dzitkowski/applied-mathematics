@@ -20,27 +20,27 @@ func (p Pos) times(a int) Pos {
 
 type Grid[T any] struct {
 	size int
-	grid map[Pos]T
+	Grid map[Pos]T
 }
 
 func New[T any](size int) *Grid[T] {
 	return &Grid[T]{
 		size: size,
-		grid: make(map[Pos]T),
+		Grid: make(map[Pos]T),
 	}
 }
 
 func (g *Grid[T]) Get(p Pos) (T, bool) {
-	val, ok := g.grid[g.translatePos(p)]
+	val, ok := g.Grid[g.translatePos(p)]
 	return val, ok
 }
 
 func (g *Grid[T]) Set(p Pos, val T) {
-	g.grid[g.translatePos(p)] = val
+	g.Grid[g.translatePos(p)] = val
 }
 
 func (g *Grid[T]) Delete(p Pos) {
-	delete(g.grid, p)
+	delete(g.Grid, p)
 }
 
 func (g *Grid[T]) GetClosestNeighbours(p Pos, k int) []Pos {
@@ -91,8 +91,8 @@ func (g *Grid[T]) RandomUnoccupiedPos() Pos {
 }
 
 func (g *Grid[T]) OccupiedPositions() []Pos {
-	positions := make([]Pos, 0, len(g.grid))
-	for gridPos := range g.grid {
+	positions := make([]Pos, 0, len(g.Grid))
+	for gridPos := range g.Grid {
 		positions = append(positions, gridPos)
 	}
 	return positions

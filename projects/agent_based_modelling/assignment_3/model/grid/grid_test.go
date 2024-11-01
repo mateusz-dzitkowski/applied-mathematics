@@ -14,7 +14,7 @@ const (
 func makeGrid(vals map[Pos]string) *Grid[string] {
 	g := New[string](Size)
 	for k, v := range vals {
-		g.grid[k] = v
+		g.Grid[k] = v
 	}
 	return g
 }
@@ -25,7 +25,7 @@ func TestSet(t *testing.T) {
 
 	g.Set(p, Test)
 
-	val, ok := g.grid[p]
+	val, ok := g.Grid[p]
 	assert.Equal(t, true, ok)
 	assert.Equal(t, Test, val)
 }
@@ -75,9 +75,9 @@ func TestDelete(t *testing.T) {
 func TestDeleteNonExistingPosDoesNothing(t *testing.T) {
 	g := makeGrid(map[Pos]string{})
 
-	assert.Equal(t, len(g.grid), 0)
+	assert.Equal(t, len(g.Grid), 0)
 	g.Delete(Pos{X: 0, Y: 0})
-	assert.Equal(t, len(g.grid), 0)
+	assert.Equal(t, len(g.Grid), 0)
 }
 
 func TestClosestNeighbours(t *testing.T) {
