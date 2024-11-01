@@ -11,8 +11,9 @@ type Params struct {
 }
 
 type Model struct {
-	params Params
-	grid   *grid.Grid[agent.Agent]
+	params  Params
+	grid    *grid.Grid[agent.Agent]
+	StepNum int
 }
 
 func New(params Params) *Model {
@@ -30,6 +31,19 @@ func New(params Params) *Model {
 	}
 
 	return &model
+}
+
+func (m *Model) Run(maxSteps int) error {
+	for range maxSteps {
+		anyoneMoved, err := m.step()
+		if err != nil {
+			return err
+		}
+		if !anyoneMoved {
+			return nil
+		}
+	}
+	return nil
 }
 
 func (m *Model) step() (bool, error) {
@@ -69,5 +83,6 @@ func (m *Model) step() (bool, error) {
 			anyoneMoved = true
 		}
 	}
+	m.StepNum += 1
 	return anyoneMoved, nil
 }
