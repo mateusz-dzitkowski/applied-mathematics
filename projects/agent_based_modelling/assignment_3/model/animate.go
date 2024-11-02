@@ -10,7 +10,6 @@ import (
 )
 
 type AnimateParams struct {
-	FileName string
 	CellSize,
 	Delay,
 	MaxSteps,
@@ -44,7 +43,8 @@ func (m *Model) Animate(params AnimateParams) error {
 		delays = append(delays, params.Delay)
 	}
 
-	f, err := os.Create(params.FileName)
+	fileName := fmt.Sprintf("%s.gif", m.params)
+	f, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (m *Model) Animate(params AnimateParams) error {
 		},
 	)
 	if err != nil {
-		err = os.Remove(params.FileName)
+		err = os.Remove(fileName)
 		if err != nil {
 			return err
 		}

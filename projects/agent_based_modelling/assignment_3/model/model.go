@@ -2,12 +2,20 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"main/model/agent"
 	"main/model/grid"
 )
 
 type Params struct {
 	Size, Blues, Reds, JBlue, JRed, MBlue, MRed int
+}
+
+func (p Params) String() string {
+	return fmt.Sprintf(
+		"size=%d_blues=%d_reds=%d_jblue=%d_jred=%d_mblue=%d_mred=%d",
+		p.Size, p.Blues, p.Reds, p.JBlue, p.JRed, p.MBlue, p.MRed,
+	)
 }
 
 type Model struct {

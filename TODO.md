@@ -16,7 +16,8 @@
 - [x] machine learning list 3 pretty jupyter report
 - [x] spanish exercise
 - [x] agent-based modelling list 2
-- [ ] agent-based modelling list 3
+- [x] agent-based modelling list 3
 - [ ] agent-based modelling list 4
 - [x] spanish homework
 - [ ] prepare presentations for unstructured data list 3 and 4
+- [x] spanish homework
