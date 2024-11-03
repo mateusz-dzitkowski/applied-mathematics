@@ -24,6 +24,7 @@ func PlotMeanVelocities() {
 	p.X.Label.Text = "Car density"
 	p.Y.Label.Text = "Mean velocity"
 	p.Legend.Top = true
+	p.Y.Max = MaxVelocity
 
 	if err := plotutil.AddScatters(
 		p,
