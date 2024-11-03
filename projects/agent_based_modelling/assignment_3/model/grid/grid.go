@@ -1,6 +1,9 @@
 package grid
 
-import "math/rand"
+import (
+	"math"
+	"math/rand"
+)
 
 type Pos struct{ X, Y int }
 
@@ -44,30 +47,32 @@ func (g *Grid[T]) Delete(p Pos) {
 }
 
 func (g *Grid[T]) GetClosestNeighbours(p Pos, k int) []Pos {
-	// naive as hell but oh well, it gets the job done
+	visited := make(map[Pos]struct{})
 	var output []Pos
-	for layer := range g.size / 2 {
-		layer += 1
-		for a := range layer + 1 {
-			for _, d := range []struct {
-				outward Pos
-				side    Pos
-			}{
-				{Pos{X: 1, Y: 0}, Pos{X: 0, Y: 1}},
-				{Pos{X: 0, Y: 1}, Pos{X: 1, Y: 0}},
-				{Pos{X: -1, Y: 0}, Pos{X: 0, Y: 1}},
-				{Pos{X: 0, Y: -1}, Pos{X: 1, Y: 0}},
-			} {
-				for _, sign := range []int{-1, 1} {
-					check := p.add(d.outward.times(layer)).add(d.side.times(a).times(sign)) // p + layer*outward +- a*side
-					if a == layer && (d.side == Pos{X: 0, Y: 1}) || a == 0 && sign == -1 {
-						continue // don't check the corners twice, don't check the vertical/horizontal twice
+
+	for distSquared := range g.size * g.size {
+		distSquared += 1
+		for x := range int(math.Sqrt(float64(distSquared))) + 1 {
+			ySquared := distSquared - x*x
+			y := int(math.Sqrt(float64(ySquared)))
+			if y*y != ySquared {
+				continue
+			}
+			for _, dx := range []int{-x, x} {
+				for _, dy := range []int{-y, y} {
+					check := g.translatePos(p.add(Pos{X: dx, Y: dy}))
+					_, wasVisited := visited[check]
+					if wasVisited {
+						continue
 					}
+					visited[check] = struct{}{}
 					_, ok := g.Get(check)
-					if ok {
-						output = append(output, g.translatePos(check))
+
+					if !ok {
+						continue
 					}
-					if len(output) == k {
+					output = append(output, check)
+					if len(output) >= k {
 						return output
 					}
 				}

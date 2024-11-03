@@ -160,11 +160,11 @@ func TestClosestNeighbours(t *testing.T) {
 			k: 2,
 			expected: []Pos{
 				{
-					X: 2,
-					Y: 2,
+					X: 3,
+					Y: 3,
 				},
 				{
-					X: 3,
+					X: 2,
 					Y: 3,
 				},
 			},
@@ -199,8 +199,8 @@ func TestClosestNeighbours(t *testing.T) {
 
 func TestRandomUnoccupiedPos(t *testing.T) {
 	setup := make(map[Pos]string)
-	for x := range 5 {
-		for y := range 5 {
+	for x := range Size {
+		for y := range Size {
 			setup[Pos{X: x, Y: y}] = Test
 		}
 	}
@@ -208,4 +208,12 @@ func TestRandomUnoccupiedPos(t *testing.T) {
 	g.Delete(Pos{X: 0, Y: 0})
 
 	assert.Equal(t, Pos{X: 0, Y: 0}, g.RandomUnoccupiedPos())
+}
+
+func TestIsActuallyTheSmallestDistance(t *testing.T) {
+	g := New[string](100)
+	g.Set(Pos{X: 0, Y: 10}, Test)
+	g.Set(Pos{X: 9, Y: 9}, Test)
+
+	assert.Equal(t, []Pos{{X: 0, Y: 10}}, g.GetClosestNeighbours(Pos{X: 0, Y: 0}, 1))
 }
