@@ -6,18 +6,18 @@ import (
 
 func main() {
 	params := model.Params{
-		Size:  1000,
-		Blues: 400000,
-		Reds:  400000,
-		JBlue: 30,
+		Size:  300,
+		Blues: 40000,
+		Reds:  40000,
+		JBlue: 15,
 		JRed:  30,
-		MBlue: 50,
-		MRed:  50,
+		MBlue: 40,
+		MRed:  40,
 	}
 	animateParams := model.AnimateParams{
-		CellSize:             1,
+		CellSize:             3,
 		Delay:                5,
-		MaxSteps:             100,
+		MaxSteps:             300,
 		FramesWithFinalState: 10,
 	}
 	if err := model.New(params).Animate(animateParams); err != nil {
