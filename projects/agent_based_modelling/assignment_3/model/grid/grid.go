@@ -1,7 +1,6 @@
 package grid
 
 import (
-	"math"
 	"math/rand"
 )
 
@@ -11,13 +10,6 @@ func (p Pos) add(other Pos) Pos {
 	return Pos{
 		X: p.X + other.X,
 		Y: p.Y + other.Y,
-	}
-}
-
-func (p Pos) times(a int) Pos {
-	return Pos{
-		X: p.X * a,
-		Y: p.Y * a,
 	}
 }
 
@@ -47,35 +39,16 @@ func (g *Grid[T]) Delete(p Pos) {
 }
 
 func (g *Grid[T]) GetClosestNeighbours(p Pos, k int) []Pos {
-	visited := make(map[Pos]struct{})
 	var output []Pos
-
-	for distSquared := range g.size * g.size {
-		distSquared += 1
-		for x := range int(math.Sqrt(float64(distSquared))) + 1 {
-			ySquared := distSquared - x*x
-			y := int(math.Sqrt(float64(ySquared)))
-			if y*y != ySquared {
+	for x := range 2*k + 1 {
+		for y := range 2*k + 1 {
+			check := p.add(Pos{X: -k + x, Y: -k + y})
+			if check == p {
 				continue
 			}
-			for _, dx := range []int{-x, x} {
-				for _, dy := range []int{-y, y} {
-					check := g.translatePos(p.add(Pos{X: dx, Y: dy}))
-					_, wasVisited := visited[check]
-					if wasVisited {
-						continue
-					}
-					visited[check] = struct{}{}
-					_, ok := g.Get(check)
-
-					if !ok {
-						continue
-					}
-					output = append(output, check)
-					if len(output) >= k {
-						return output
-					}
-				}
+			_, ok := g.Get(check)
+			if ok {
+				output = append(output, g.translatePos(check))
 			}
 		}
 	}

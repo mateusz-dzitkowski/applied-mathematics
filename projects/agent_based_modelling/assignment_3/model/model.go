@@ -8,34 +8,35 @@ import (
 )
 
 type Params struct {
-	Size, Blues, Reds, JBlue, JRed, MBlue, MRed int
+	Size, Blues, Reds, MBlue, MRed int
+	JRed, JBlue                    float64
 }
 
 func (p Params) String() string {
 	return fmt.Sprintf(
-		"size=%d_blues=%d_reds=%d_jblue=%d_jred=%d_mblue=%d_mred=%d",
+		"size=%d_blues=%d_reds=%d_jblue=%f_jred=%f_mblue=%d_mred=%d",
 		p.Size, p.Blues, p.Reds, p.JBlue, p.JRed, p.MBlue, p.MRed,
 	)
 }
 
 type Model struct {
 	params  Params
-	grid    *grid.Grid[agent.Agent]
+	Grid    *grid.Grid[agent.Agent]
 	StepNum int
 }
 
 func New(params Params) *Model {
 	model := Model{
 		params: params,
-		grid:   grid.New[agent.Agent](params.Size),
+		Grid:   grid.New[agent.Agent](params.Size),
 	}
 
 	for range params.Blues {
-		model.grid.Set(model.grid.RandomUnoccupiedPos(), agent.Blue())
+		model.Grid.Set(model.Grid.RandomUnoccupiedPos(), agent.Blue())
 	}
 
 	for range params.Reds {
-		model.grid.Set(model.grid.RandomUnoccupiedPos(), agent.Red())
+		model.Grid.Set(model.Grid.RandomUnoccupiedPos(), agent.Red())
 	}
 
 	return &model
@@ -54,43 +55,80 @@ func (m *Model) Run(maxSteps int) error {
 	return nil
 }
 
+func (m *Model) MeanSegIndex() (float64, error) {
+	meanSegIndex := 0.0
+
+	agentsPos := m.Grid.OccupiedPositions()
+	for _, pos := range agentsPos {
+		segIndex, err := m.segIndex(pos)
+		if err != nil {
+			return 0, err
+		}
+		meanSegIndex += segIndex / float64(len(agentsPos))
+	}
+
+	return meanSegIndex, nil
+}
+
 func (m *Model) step() (bool, error) {
 	anyoneMoved := false
-	for _, pos := range m.grid.OccupiedPositions() {
-		a, ok := m.grid.Get(pos)
+	for _, pos := range m.Grid.OccupiedPositions() {
+		a, ok := m.Grid.Get(pos)
 		if !ok {
 			return false, errors.New("cant find the agent")
 		}
-		var sameNeighbours int
-		var mColor int
-		var jColor int
 
+		var jColor float64
 		switch a {
 		case agent.ColorBlue:
-			mColor = m.params.MBlue
 			jColor = m.params.JBlue
 		case agent.ColorRed:
-			mColor = m.params.MRed
 			jColor = m.params.JRed
 		}
 
-		neighbours := m.grid.GetClosestNeighbours(pos, mColor)
-		for _, neighbourPos := range neighbours {
-			neighbour, ok := m.grid.Get(neighbourPos)
-			if !ok {
-				return false, errors.New("cant find the agent")
-			}
-			if neighbour == a {
-				sameNeighbours += 1
-			}
+		segIndex, err := m.segIndex(pos)
+		if err != nil {
+			return false, err
 		}
 
-		if sameNeighbours < jColor {
-			m.grid.Set(m.grid.RandomUnoccupiedPos(), a)
-			m.grid.Delete(pos)
+		if segIndex < jColor {
+			m.Grid.Set(m.Grid.RandomUnoccupiedPos(), a)
+			m.Grid.Delete(pos)
 			anyoneMoved = true
 		}
 	}
 	m.StepNum += 1
 	return anyoneMoved, nil
+}
+
+func (m *Model) segIndex(p grid.Pos) (float64, error) {
+	a, ok := m.Grid.Get(p)
+	if !ok {
+		return 0, errors.New("cant find the agent")
+	}
+
+	var mColor int
+	if a == agent.ColorBlue {
+		mColor = m.params.MBlue
+	} else {
+		mColor = m.params.MRed
+	}
+
+	neighbours := m.Grid.GetClosestNeighbours(p, mColor)
+	if len(neighbours) == 0 {
+		return 0, nil
+	}
+
+	sameNeighbours := 0
+	for _, nPos := range neighbours {
+		val, ok := m.Grid.Get(nPos)
+		if !ok {
+			return 0, errors.New("cant find the agent")
+		}
+		if val == a {
+			sameNeighbours += 1
+		}
+	}
+
+	return float64(sameNeighbours) / float64(len(neighbours)), nil
 }

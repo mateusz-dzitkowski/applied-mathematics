@@ -73,7 +73,7 @@ func (m *Model) renderFrame(cellSize int) *image.Paletted {
 		color.Palette{color.White, agent.ColorBlue, agent.ColorRed},
 	)
 
-	for pos, c := range m.grid.Grid {
+	for pos, c := range m.Grid.Grid {
 		startX := pos.X * cellSize
 		startY := pos.Y * cellSize
 

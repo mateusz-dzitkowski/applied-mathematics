@@ -4,26 +4,51 @@ import (
 	"fmt"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
 	"main/model"
 	"sync"
 )
 
 const (
-	BasePop      = 250
 	BaseSize     = 100
-	BaseM        = 8
-	BaseJ        = 4
-	BaseMaxSteps = 1000
+	BaseJ        = 0.5
+	BaseMaxSteps = 100
+	BaseRuns     = 10
 )
 
-func NumOfIterationsPerPopulationSize(popMin, popMax, runs int) {
+func PlotNumOfIterationsPerPopulationSize() {
+	p := plot.New()
+	p.Title.Text = fmt.Sprintf("Number of iteration as a function of population size, averaged over %d runs", BaseRuns)
+	p.X.Label.Text = "Population size"
+	p.Y.Label.Text = "Number of iterations"
+
+	if err := plotutil.AddScatters(
+		p,
+		"M=1", numOfIterationsPerPopulationSize(1),
+		"M=2", numOfIterationsPerPopulationSize(2),
+		"M=3", numOfIterationsPerPopulationSize(3),
+	); err != nil {
+		panic(err)
+	}
+
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, "iteration_per_pop_size.png"); err != nil {
+		panic(err)
+	}
+}
+
+func numOfIterationsPerPopulationSize(mVal int) plotter.XYs {
+	popMin := 250
+	popMax := 4750
+	step := 10
+
 	mu := sync.Mutex{}
-	amount := popMax + 1 - popMin
+	amount := (popMax - popMin) / step
+	todo := amount * BaseRuns
 	xys := make(plotter.XYs, amount)
-	functions := make([]func(), amount*runs)
+	functions := make([]func(), amount*BaseRuns)
 	for i := range amount {
-		pop := popMin + i
+		pop := popMin + i*step
 		xys[i].X = float64(pop)
 		params := model.Params{
 			Size:  BaseSize,
@@ -31,18 +56,22 @@ func NumOfIterationsPerPopulationSize(popMin, popMax, runs int) {
 			Reds:  pop,
 			JBlue: BaseJ,
 			JRed:  BaseJ,
-			MBlue: BaseM,
-			MRed:  BaseM,
+			MBlue: mVal,
+			MRed:  mVal,
 		}
-		for j := range runs {
-			functions[runs*i+j] = func() {
+		for j := range BaseRuns {
+			functions[BaseRuns*i+j] = func() {
 				m := model.New(params)
 				err := m.Run(BaseMaxSteps)
 				if err != nil {
 					panic(err)
 				}
 				mu.Lock()
-				xys[i].Y += float64(m.StepNum) / float64(runs)
+				xys[i].Y += float64(m.StepNum) / float64(BaseRuns)
+				todo -= 1
+				if todo%10 == 0 {
+					fmt.Println(todo)
+				}
 				mu.Unlock()
 			}
 		}
@@ -50,51 +79,66 @@ func NumOfIterationsPerPopulationSize(popMin, popMax, runs int) {
 
 	parallelize(functions)
 
-	p := plot.New()
-	p.Title.Text = fmt.Sprintf("Number of iterations wrt population size, with, j=0.5, m=8, averaged over %d runs", runs)
-	p.X.Label.Text = "Population size"
-	p.Y.Label.Text = "Number of iterations"
+	return xys
+}
 
-	scatter, err := plotter.NewScatter(xys)
-	if err != nil {
+func PlotSegIndexPerM() {
+	p := plot.New()
+	p.Title.Text = fmt.Sprintf("Segregation index as a function of M, averaged over %d runs", BaseRuns)
+	p.X.Label.Text = "M"
+	p.Y.Label.Text = "Segregation index"
+	p.Legend.Top = true
+	p.Y.Max = 1
+
+	if err := plotutil.AddScatters(
+		p,
+		"N=250", segIndexPerM(BaseJ, 250),
+		"N=1500", segIndexPerM(BaseJ, 1500),
+		"N=2500", segIndexPerM(BaseJ, 2500),
+		"N=4000", segIndexPerM(BaseJ, 4000),
+	); err != nil {
 		panic(err)
 	}
-	p.Add(scatter)
-	if err = p.Save(10*vg.Inch, 10*vg.Inch, "iterations_per_population_size.png"); err != nil {
+
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, "seg_index_per_m.png"); err != nil {
 		panic(err)
 	}
 }
 
-func SegIndexPerM(minM, maxM, runs int) {
+func segIndexPerM(jVal float64, popVal int) plotter.XYs {
+	minM := 1
+	maxM := 6
 	mu := sync.Mutex{}
 	amount := maxM + 1 - minM
 	xys := make(plotter.XYs, amount)
-	functions := make([]func(), amount*runs)
+	functions := make([]func(), amount*BaseRuns)
 	for i := range amount {
 		currentM := minM + i
 		xys[i].X = float64(currentM)
 		params := model.Params{
 			Size:  BaseSize,
-			Blues: BasePop,
-			Reds:  BasePop,
-			JBlue: currentM / 2,
-			JRed:  currentM / 2,
+			Blues: popVal,
+			Reds:  popVal,
+			JBlue: jVal,
+			JRed:  jVal,
 			MBlue: currentM,
 			MRed:  currentM,
 		}
-		for j := range runs {
-			functions[runs*i+j] = func() {
+		for j := range BaseRuns {
+			functions[BaseRuns*i+j] = func() {
 				m := model.New(params)
 				err := m.Run(BaseMaxSteps)
 				if err != nil {
 					panic(err)
 				}
-				segIndex, err := m.SegIndex()
+
+				meanSegIndex, err := m.MeanSegIndex()
 				if err != nil {
 					panic(err)
 				}
+
 				mu.Lock()
-				xys[i].Y += segIndex / float64(runs)
+				xys[i].Y += meanSegIndex / float64(BaseRuns)
 				mu.Unlock()
 			}
 		}
@@ -102,52 +146,67 @@ func SegIndexPerM(minM, maxM, runs int) {
 
 	parallelize(functions)
 
-	p := plot.New()
-	p.Title.Text = fmt.Sprintf("Segregation index wrt m, with j=0.5, averaged over %d runs", runs)
-	p.X.Label.Text = "m"
-	p.Y.Label.Text = "Segregation index"
+	return xys
+}
 
-	scatter, err := plotter.NewScatter(xys)
-	if err != nil {
+func PlotSegIndexPerJ() {
+	p := plot.New()
+	p.Title.Text = fmt.Sprintf("Segregation index as a function of J, averaged over %d runs", BaseRuns)
+	p.X.Label.Text = "J"
+	p.Y.Label.Text = "Segregation index"
+	p.Y.Max = 1
+
+	if err := plotutil.AddScatters(
+		p,
+		"M=1, N=250", segIndexPerJ(1, 250),
+		"M=1, N=2500", segIndexPerJ(1, 2500),
+		"M=1, N=4000", segIndexPerJ(1, 4000),
+		"M=3, N=250", segIndexPerJ(3, 250),
+		"M=3, N=2500", segIndexPerJ(3, 2500),
+		"M=3, N=4000", segIndexPerJ(3, 4000),
+	); err != nil {
 		panic(err)
 	}
-	p.Add(scatter)
-	if err = p.Save(10*vg.Inch, 10*vg.Inch, "seg_index_per_m.png"); err != nil {
+
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, "seg_index_per_j.png"); err != nil {
 		panic(err)
 	}
 }
 
-func SegIndexPerJFrac(minJFrac, maxJFrac float64, paramM, runs int) {
+func segIndexPerJ(mVal, popVal int) plotter.XYs {
+	minJ := 0.1
+	maxJ := 0.9
+	step := 0.01
 	mu := sync.Mutex{}
-	minJ := int(float64(paramM) * minJFrac)
-	maxJ := int(float64(paramM) * maxJFrac)
-	amount := maxJ + 1 - minJ
+	amount := int((maxJ - minJ) / step)
 	xys := make(plotter.XYs, amount)
-	functions := make([]func(), amount*runs)
+	functions := make([]func(), amount*BaseRuns)
 	for i := range amount {
-		xys[i].X = minJFrac + float64(i)*(maxJFrac-minJFrac)/float64(amount)
+		xys[i].X = minJ + float64(i)*(maxJ-minJ)/float64(amount)
 		params := model.Params{
 			Size:  BaseSize,
-			Blues: BasePop,
-			Reds:  BasePop,
-			JBlue: minJ + i,
-			JRed:  minJ + i,
-			MBlue: paramM,
-			MRed:  paramM,
+			Blues: popVal,
+			Reds:  popVal,
+			JBlue: xys[i].X,
+			JRed:  xys[i].X,
+			MBlue: mVal,
+			MRed:  mVal,
 		}
-		for j := range runs {
-			functions[runs*i+j] = func() {
+		for j := range BaseRuns {
+			functions[BaseRuns*i+j] = func() {
 				m := model.New(params)
 				err := m.Run(BaseMaxSteps)
 				if err != nil {
 					panic(err)
 				}
-				segIndex, err := m.SegIndex()
+
+				meanSegIndex, err := m.MeanSegIndex()
 				if err != nil {
 					panic(err)
 				}
+
 				mu.Lock()
-				xys[i].Y += segIndex / float64(runs)
+				xys[i].Y += meanSegIndex / float64(BaseRuns)
 				mu.Unlock()
 			}
 		}
@@ -155,19 +214,7 @@ func SegIndexPerJFrac(minJFrac, maxJFrac float64, paramM, runs int) {
 
 	parallelize(functions)
 
-	p := plot.New()
-	p.Title.Text = fmt.Sprintf("Segregation index wrt j, with m=%d, averaged over %d runs", paramM, runs)
-	p.X.Label.Text = "j"
-	p.Y.Label.Text = "Segregation index"
-
-	scatter, err := plotter.NewScatter(xys)
-	if err != nil {
-		panic(err)
-	}
-	p.Add(scatter)
-	if err = p.Save(10*vg.Inch, 10*vg.Inch, "seg_index_per_j.png"); err != nil {
-		panic(err)
-	}
+	return xys
 }
 
 func parallelize(functions []func()) {

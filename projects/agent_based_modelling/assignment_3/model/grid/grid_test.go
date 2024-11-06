@@ -104,7 +104,6 @@ func TestClosestNeighbours(t *testing.T) {
 			setup: map[Pos]string{
 				Pos{X: 1, Y: 1}: Test,
 				Pos{X: 1, Y: 2}: Test,
-				Pos{X: 3, Y: 1}: Test,
 			},
 			p: Pos{X: 0, Y: 0},
 			k: 2,
@@ -135,7 +134,6 @@ func TestClosestNeighbours(t *testing.T) {
 			setup: map[Pos]string{
 				Pos{X: 4, Y: 4}: Test,
 				Pos{X: 3, Y: 4}: Test,
-				Pos{X: 3, Y: 3}: Test,
 			},
 			p: Pos{X: 0, Y: 0},
 			k: 2,
@@ -152,47 +150,47 @@ func TestClosestNeighbours(t *testing.T) {
 		},
 		{
 			setup: map[Pos]string{
-				Pos{X: 2, Y: 2}: Test,
-				Pos{X: 2, Y: 3}: Test,
-				Pos{X: 3, Y: 3}: Test,
+				Pos{X: 1, Y: 2}: Test,
 			},
-			p: Pos{X: 0, Y: 0},
-			k: 2,
+			p: Pos{X: 1, Y: 1},
+			k: 1,
 			expected: []Pos{
 				{
-					X: 3,
-					Y: 3,
-				},
-				{
-					X: 2,
-					Y: 3,
+					X: 1,
+					Y: 2,
 				},
 			},
 		},
 		{
 			setup: map[Pos]string{
 				Pos{X: 1, Y: 2}: Test,
-				Pos{X: 2, Y: 4}: Test,
-				Pos{X: 3, Y: 4}: Test,
+				Pos{X: 1, Y: 0}: Test,
+				Pos{X: 2, Y: 1}: Test,
+				Pos{X: 0, Y: 1}: Test,
+				Pos{X: 2, Y: 2}: Test,
+				Pos{X: 0, Y: 0}: Test,
+				Pos{X: 0, Y: 2}: Test,
+				Pos{X: 2, Y: 0}: Test,
+				Pos{X: 3, Y: 3}: Test,
 			},
 			p: Pos{X: 1, Y: 1},
-			k: 2,
+			k: 1,
 			expected: []Pos{
-				{
-					X: 1,
-					Y: 2,
-				},
-				{
-					X: 2,
-					Y: 4,
-				},
+				{X: 1, Y: 2},
+				{X: 1, Y: 0},
+				{X: 2, Y: 1},
+				{X: 0, Y: 1},
+				{X: 2, Y: 2},
+				{X: 0, Y: 0},
+				{X: 0, Y: 2},
+				{X: 2, Y: 0},
 			},
 		},
 	}
 	for n, tt := range tests {
 		t.Run(fmt.Sprintf("%d", n), func(t *testing.T) {
 			g := makeGrid(tt.setup)
-			assert.Equal(t, tt.expected, g.GetClosestNeighbours(tt.p, tt.k))
+			assert.ElementsMatch(t, tt.expected, g.GetClosestNeighbours(tt.p, tt.k))
 		})
 	}
 }
@@ -207,13 +205,5 @@ func TestRandomUnoccupiedPos(t *testing.T) {
 	g := makeGrid(setup)
 	g.Delete(Pos{X: 0, Y: 0})
 
-	assert.Equal(t, Pos{X: 0, Y: 0}, g.RandomUnoccupiedPos())
-}
-
-func TestIsActuallyTheSmallestDistance(t *testing.T) {
-	g := New[string](100)
-	g.Set(Pos{X: 0, Y: 10}, Test)
-	g.Set(Pos{X: 9, Y: 9}, Test)
-
-	assert.Equal(t, []Pos{{X: 0, Y: 10}}, g.GetClosestNeighbours(Pos{X: 0, Y: 0}, 1))
+	assert.ElementsMatch(t, Pos{X: 0, Y: 0}, g.RandomUnoccupiedPos())
 }
