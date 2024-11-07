@@ -155,8 +155,8 @@ func segIndexPerM(jVal float64, popVal int) plotter.XYs {
 				Reds:  popVal,
 				MBlue: currentM,
 				MRed:  currentM,
-				JBlue: BaseJ,
-				JRed:  BaseJ,
+				JBlue: jVal,
+				JRed:  jVal,
 			},
 		}
 		for j := range BaseRuns {
