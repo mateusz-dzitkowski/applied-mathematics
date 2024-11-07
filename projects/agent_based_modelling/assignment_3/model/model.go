@@ -3,40 +3,46 @@ package model
 import (
 	"errors"
 	"fmt"
-	"main/model/agent"
+	"image/color"
 	"main/model/grid"
 )
 
+type ColorParams struct {
+	Population int
+	M          int
+	J          float64
+}
+
+type ColorParamsStore interface {
+	GetCParam(rgba color.RGBA) ColorParams
+	GetAllColors() []color.RGBA
+}
+
 type Params struct {
-	Size, Blues, Reds, MBlue, MRed int
-	JRed, JBlue                    float64
+	Size         int
+	CParamsStore ColorParamsStore
 }
 
 func (p Params) String() string {
-	return fmt.Sprintf(
-		"size=%d_blues=%d_reds=%d_jblue=%f_jred=%f_mblue=%d_mred=%d",
-		p.Size, p.Blues, p.Reds, p.JBlue, p.JRed, p.MBlue, p.MRed,
-	)
+	return fmt.Sprintf("size=%d_cparams=%v", p.Size, p.CParamsStore)
 }
 
 type Model struct {
 	params  Params
-	Grid    *grid.Grid[agent.Agent]
+	Grid    *grid.Grid[color.RGBA]
 	StepNum int
 }
 
 func New(params Params) *Model {
 	model := Model{
 		params: params,
-		Grid:   grid.New[agent.Agent](params.Size),
+		Grid:   grid.New[color.RGBA](params.Size),
 	}
 
-	for range params.Blues {
-		model.Grid.Set(model.Grid.RandomUnoccupiedPos(), agent.Blue())
-	}
-
-	for range params.Reds {
-		model.Grid.Set(model.Grid.RandomUnoccupiedPos(), agent.Red())
+	for _, c := range params.CParamsStore.GetAllColors() {
+		for range params.CParamsStore.GetCParam(c).Population {
+			model.Grid.Set(model.Grid.RandomUnoccupiedPos(), c)
+		}
 	}
 
 	return &model
@@ -78,20 +84,12 @@ func (m *Model) step() (bool, error) {
 			return false, errors.New("cant find the agent")
 		}
 
-		var jColor float64
-		switch a {
-		case agent.ColorBlue:
-			jColor = m.params.JBlue
-		case agent.ColorRed:
-			jColor = m.params.JRed
-		}
-
 		segIndex, err := m.segIndex(pos)
 		if err != nil {
 			return false, err
 		}
 
-		if segIndex < jColor {
+		if segIndex < m.params.CParamsStore.GetCParam(a).J {
 			m.Grid.Set(m.Grid.RandomUnoccupiedPos(), a)
 			m.Grid.Delete(pos)
 			anyoneMoved = true
@@ -107,14 +105,7 @@ func (m *Model) segIndex(p grid.Pos) (float64, error) {
 		return 0, errors.New("cant find the agent")
 	}
 
-	var mColor int
-	if a == agent.ColorBlue {
-		mColor = m.params.MBlue
-	} else {
-		mColor = m.params.MRed
-	}
-
-	neighbours := m.Grid.GetClosestNeighbours(p, mColor)
+	neighbours := m.Grid.GetClosestNeighbours(p, m.params.CParamsStore.GetCParam(a).M)
 	if len(neighbours) == 0 {
 		return 0, nil
 	}

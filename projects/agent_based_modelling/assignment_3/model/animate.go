@@ -5,7 +5,6 @@ import (
 	"image"
 	"image/color"
 	"image/gif"
-	"main/model/agent"
 	"os"
 )
 
@@ -68,10 +67,12 @@ func (m *Model) Animate(params AnimateParams) error {
 }
 
 func (m *Model) renderFrame(cellSize int) *image.Paletted {
-	img := image.NewPaletted(
-		image.Rect(0, 0, m.params.Size*cellSize, m.params.Size*cellSize),
-		color.Palette{color.White, agent.ColorBlue, agent.ColorRed},
-	)
+	palette := color.Palette{color.White}
+	for _, c := range m.params.CParamsStore.GetAllColors() {
+		palette = append(palette, c)
+	}
+
+	img := image.NewPaletted(image.Rect(0, 0, m.params.Size*cellSize, m.params.Size*cellSize), palette)
 
 	for pos, c := range m.Grid.Grid {
 		startX := pos.X * cellSize

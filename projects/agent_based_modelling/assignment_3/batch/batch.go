@@ -6,6 +6,7 @@ import (
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
+	"image/color"
 	"main/model"
 	"sync"
 )
@@ -13,9 +14,39 @@ import (
 const (
 	BaseSize     = 100
 	BaseJ        = 0.5
-	BaseMaxSteps = 100
-	BaseRuns     = 10
+	BaseMaxSteps = 200
+	BaseRuns     = 100
 )
+
+var (
+	ColorRed  = color.RGBA{R: 255, A: 255}
+	ColorBlue = color.RGBA{B: 255, A: 255}
+)
+
+type CParams struct {
+	Blues, Reds, MBlue, MRed int
+	JBlue, JRed              float64
+}
+
+func (p CParams) GetAllColors() []color.RGBA {
+	return []color.RGBA{ColorRed, ColorBlue}
+}
+
+func (p CParams) GetCParam(rgba color.RGBA) model.ColorParams {
+	if rgba == ColorRed {
+		return model.ColorParams{
+			Population: p.Reds,
+			M:          p.MRed,
+			J:          p.JRed,
+		}
+	} else {
+		return model.ColorParams{
+			Population: p.Blues,
+			M:          p.MBlue,
+			J:          p.JBlue,
+		}
+	}
+}
 
 func PlotNumOfIterationsPerPopulationSize() {
 	p := plot.New()
@@ -38,8 +69,8 @@ func PlotNumOfIterationsPerPopulationSize() {
 }
 
 func numOfIterationsPerPopulationSize(mVal int) plotter.XYs {
-	popMin := 250
-	popMax := 4750
+	popMin := 50
+	popMax := 4950
 	step := 10
 
 	mu := sync.Mutex{}
@@ -51,13 +82,15 @@ func numOfIterationsPerPopulationSize(mVal int) plotter.XYs {
 		pop := popMin + i*step
 		xys[i].X = float64(pop)
 		params := model.Params{
-			Size:  BaseSize,
-			Blues: pop,
-			Reds:  pop,
-			JBlue: BaseJ,
-			JRed:  BaseJ,
-			MBlue: mVal,
-			MRed:  mVal,
+			Size: BaseSize,
+			CParamsStore: CParams{
+				Blues: pop,
+				Reds:  pop,
+				MBlue: mVal,
+				MRed:  mVal,
+				JBlue: BaseJ,
+				JRed:  BaseJ,
+			},
 		}
 		for j := range BaseRuns {
 			functions[BaseRuns*i+j] = func() {
@@ -116,13 +149,15 @@ func segIndexPerM(jVal float64, popVal int) plotter.XYs {
 		currentM := minM + i
 		xys[i].X = float64(currentM)
 		params := model.Params{
-			Size:  BaseSize,
-			Blues: popVal,
-			Reds:  popVal,
-			JBlue: jVal,
-			JRed:  jVal,
-			MBlue: currentM,
-			MRed:  currentM,
+			Size: BaseSize,
+			CParamsStore: CParams{
+				Blues: popVal,
+				Reds:  popVal,
+				MBlue: currentM,
+				MRed:  currentM,
+				JBlue: BaseJ,
+				JRed:  BaseJ,
+			},
 		}
 		for j := range BaseRuns {
 			functions[BaseRuns*i+j] = func() {
@@ -184,13 +219,15 @@ func segIndexPerJ(mVal, popVal int) plotter.XYs {
 	for i := range amount {
 		xys[i].X = minJ + float64(i)*(maxJ-minJ)/float64(amount)
 		params := model.Params{
-			Size:  BaseSize,
-			Blues: popVal,
-			Reds:  popVal,
-			JBlue: xys[i].X,
-			JRed:  xys[i].X,
-			MBlue: mVal,
-			MRed:  mVal,
+			Size: BaseSize,
+			CParamsStore: CParams{
+				Blues: popVal,
+				Reds:  popVal,
+				MBlue: mVal,
+				MRed:  mVal,
+				JBlue: xys[i].X,
+				JRed:  xys[i].X,
+			},
 		}
 		for j := range BaseRuns {
 			functions[BaseRuns*i+j] = func() {
