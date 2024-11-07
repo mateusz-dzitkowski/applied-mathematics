@@ -12,7 +12,7 @@ type AnimateParams struct {
 	CellSize,
 	Delay,
 	MaxSteps,
-	FramesWithFinalState int
+	SecondsWithFinalState int
 }
 
 func (m *Model) Animate(params AnimateParams) error {
@@ -37,10 +37,8 @@ func (m *Model) Animate(params AnimateParams) error {
 	}
 
 	finalFrame := m.renderFrame(params.CellSize)
-	for range params.FramesWithFinalState {
-		frames = append(frames, finalFrame)
-		delays = append(delays, params.Delay)
-	}
+	frames = append(frames, finalFrame)
+	delays = append(delays, 100*params.SecondsWithFinalState)
 
 	fileName := fmt.Sprintf("%s.gif", m.params)
 	f, err := os.Create(fileName)

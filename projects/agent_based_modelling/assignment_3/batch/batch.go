@@ -32,7 +32,7 @@ func (p CParams) GetAllColors() []color.RGBA {
 	return []color.RGBA{ColorRed, ColorBlue}
 }
 
-func (p CParams) GetCParam(rgba color.RGBA) model.ColorParams {
+func (p CParams) GetColorParam(rgba color.RGBA) model.ColorParams {
 	if rgba == ColorRed {
 		return model.ColorParams{
 			Population: p.Reds,

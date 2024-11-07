@@ -14,7 +14,7 @@ type ColorParams struct {
 }
 
 type ColorParamsStore interface {
-	GetCParam(rgba color.RGBA) ColorParams
+	GetColorParam(rgba color.RGBA) ColorParams
 	GetAllColors() []color.RGBA
 }
 
@@ -40,7 +40,7 @@ func New(params Params) *Model {
 	}
 
 	for _, c := range params.CParamsStore.GetAllColors() {
-		for range params.CParamsStore.GetCParam(c).Population {
+		for range params.CParamsStore.GetColorParam(c).Population {
 			model.Grid.Set(model.Grid.RandomUnoccupiedPos(), c)
 		}
 	}
@@ -89,7 +89,7 @@ func (m *Model) step() (bool, error) {
 			return false, err
 		}
 
-		if segIndex < m.params.CParamsStore.GetCParam(a).J {
+		if segIndex < m.params.CParamsStore.GetColorParam(a).J {
 			m.Grid.Set(m.Grid.RandomUnoccupiedPos(), a)
 			m.Grid.Delete(pos)
 			anyoneMoved = true
@@ -105,7 +105,7 @@ func (m *Model) segIndex(p grid.Pos) (float64, error) {
 		return 0, errors.New("cant find the agent")
 	}
 
-	neighbours := m.Grid.GetClosestNeighbours(p, m.params.CParamsStore.GetCParam(a).M)
+	neighbours := m.Grid.GetClosestNeighbours(p, m.params.CParamsStore.GetColorParam(a).M)
 	if len(neighbours) == 0 {
 		return 0, nil
 	}

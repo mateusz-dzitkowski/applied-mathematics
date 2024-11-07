@@ -13,33 +13,20 @@ var (
 )
 
 type CParams struct {
-	Blues, Reds, Greens, MBlue, MRed, MGreen int
-	JBlue, JRed, JGreen                      float64
+	Red, Green, Blue model.ColorParams
 }
 
 func (p CParams) GetAllColors() []color.RGBA {
 	return []color.RGBA{ColorRed, ColorBlue, ColorGreen}
 }
 
-func (p CParams) GetCParam(rgba color.RGBA) model.ColorParams {
+func (p CParams) GetColorParam(rgba color.RGBA) model.ColorParams {
 	if rgba == ColorRed {
-		return model.ColorParams{
-			Population: p.Reds,
-			M:          p.MRed,
-			J:          p.JRed,
-		}
+		return p.Red
 	} else if rgba == ColorGreen {
-		return model.ColorParams{
-			Population: p.Greens,
-			M:          p.MGreen,
-			J:          p.JGreen,
-		}
+		return p.Green
 	} else {
-		return model.ColorParams{
-			Population: p.Blues,
-			M:          p.MBlue,
-			J:          p.JBlue,
-		}
+		return p.Blue
 	}
 }
 
@@ -49,24 +36,30 @@ func main() {
 
 func run() {
 	params := model.Params{
-		Size: 100,
+		Size: 1000,
 		CParamsStore: CParams{
-			Blues:  3000,
-			Reds:   3000,
-			Greens: 3000,
-			MBlue:  1,
-			MRed:   1,
-			MGreen: 1,
-			JBlue:  0.6,
-			JRed:   0.6,
-			JGreen: 0.6,
+			Red: model.ColorParams{
+				Population: 250000,
+				M:          2,
+				J:          0.6,
+			},
+			Green: model.ColorParams{
+				Population: 250000,
+				M:          2,
+				J:          0.6,
+			},
+			Blue: model.ColorParams{
+				Population: 250000,
+				M:          2,
+				J:          0.6,
+			},
 		},
 	}
 	animateParams := model.AnimateParams{
-		CellSize:             10,
-		Delay:                5,
-		MaxSteps:             1000,
-		FramesWithFinalState: 10,
+		CellSize:              1,
+		Delay:                 5,
+		MaxSteps:              500,
+		SecondsWithFinalState: 2,
 	}
 	if err := model.New(params).Animate(animateParams); err != nil {
 		panic(err)
