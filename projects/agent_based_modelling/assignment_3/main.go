@@ -31,32 +31,32 @@ func (p CParams) GetColorParam(rgba color.RGBA) model.ColorParams {
 }
 
 func main() {
-	run()
+	plot()
 }
 
 func run() {
 	params := model.Params{
-		Size: 1000,
+		Size: 100,
 		CParamsStore: CParams{
 			Red: model.ColorParams{
-				Population: 250000,
-				M:          2,
-				J:          0.6,
+				Population: 4000,
+				M:          1,
+				J:          3.0 / 8.0,
 			},
 			Green: model.ColorParams{
-				Population: 250000,
-				M:          2,
-				J:          0.6,
+				Population: 0,
+				M:          0,
+				J:          0,
 			},
 			Blue: model.ColorParams{
-				Population: 250000,
-				M:          2,
-				J:          0.6,
+				Population: 4000,
+				M:          1,
+				J:          6.0 / 8.0,
 			},
 		},
 	}
 	animateParams := model.AnimateParams{
-		CellSize:              1,
+		CellSize:              10,
 		Delay:                 5,
 		MaxSteps:              500,
 		SecondsWithFinalState: 2,
@@ -67,5 +67,5 @@ func run() {
 }
 
 func plot() {
-	batch.PlotNumOfIterationsPerPopulationSize()
+	batch.PlotSegIndexPerM()
 }

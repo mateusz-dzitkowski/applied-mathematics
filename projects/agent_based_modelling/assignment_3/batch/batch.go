@@ -56,9 +56,9 @@ func PlotNumOfIterationsPerPopulationSize() {
 
 	if err := plotutil.AddScatters(
 		p,
-		"M=1", numOfIterationsPerPopulationSize(1),
-		"M=2", numOfIterationsPerPopulationSize(2),
-		"M=3", numOfIterationsPerPopulationSize(3),
+		"M=1", numOfIterationsPerPopulationSize(1, 0.5),
+		"M=2", numOfIterationsPerPopulationSize(2, 0.5),
+		"M=3", numOfIterationsPerPopulationSize(3, 0.5),
 	); err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func PlotNumOfIterationsPerPopulationSize() {
 	}
 }
 
-func numOfIterationsPerPopulationSize(mVal int) plotter.XYs {
+func numOfIterationsPerPopulationSize(mVal int, jVal float64) plotter.XYs {
 	popMin := 50
 	popMax := 4950
 	step := 10
@@ -88,8 +88,8 @@ func numOfIterationsPerPopulationSize(mVal int) plotter.XYs {
 				Reds:  pop,
 				MBlue: mVal,
 				MRed:  mVal,
-				JBlue: BaseJ,
-				JRed:  BaseJ,
+				JBlue: jVal,
+				JRed:  jVal,
 			},
 		}
 		for j := range BaseRuns {
@@ -125,9 +125,7 @@ func PlotSegIndexPerM() {
 
 	if err := plotutil.AddScatters(
 		p,
-		"N=250", segIndexPerM(BaseJ, 250),
-		"N=1500", segIndexPerM(BaseJ, 1500),
-		"N=2500", segIndexPerM(BaseJ, 2500),
+		"N=1000", segIndexPerM(BaseJ, 1000),
 		"N=4000", segIndexPerM(BaseJ, 4000),
 	); err != nil {
 		panic(err)
@@ -140,10 +138,11 @@ func PlotSegIndexPerM() {
 
 func segIndexPerM(jVal float64, popVal int) plotter.XYs {
 	minM := 1
-	maxM := 6
+	maxM := 10
 	mu := sync.Mutex{}
 	amount := maxM + 1 - minM
 	xys := make(plotter.XYs, amount)
+	todo := amount * BaseRuns
 	functions := make([]func(), amount*BaseRuns)
 	for i := range amount {
 		currentM := minM + i
@@ -174,6 +173,10 @@ func segIndexPerM(jVal float64, popVal int) plotter.XYs {
 
 				mu.Lock()
 				xys[i].Y += meanSegIndex / float64(BaseRuns)
+				todo -= 1
+				if todo%10 == 0 {
+					fmt.Println(todo)
+				}
 				mu.Unlock()
 			}
 		}
@@ -189,16 +192,13 @@ func PlotSegIndexPerJ() {
 	p.Title.Text = fmt.Sprintf("Segregation index as a function of J, averaged over %d runs", BaseRuns)
 	p.X.Label.Text = "J"
 	p.Y.Label.Text = "Segregation index"
+	p.Legend.Top = true
 	p.Y.Max = 1
 
 	if err := plotutil.AddScatters(
 		p,
-		"M=1, N=250", segIndexPerJ(1, 250),
-		"M=1, N=2500", segIndexPerJ(1, 2500),
-		"M=1, N=4000", segIndexPerJ(1, 4000),
-		"M=3, N=250", segIndexPerJ(3, 250),
-		"M=3, N=2500", segIndexPerJ(3, 2500),
-		"M=3, N=4000", segIndexPerJ(3, 4000),
+		"N=1000", segIndexPerJ(1, 1000),
+		"N=4000", segIndexPerJ(1, 4000),
 	); err != nil {
 		panic(err)
 	}
@@ -210,11 +210,12 @@ func PlotSegIndexPerJ() {
 
 func segIndexPerJ(mVal, popVal int) plotter.XYs {
 	minJ := 0.1
-	maxJ := 0.9
+	maxJ := 0.91
 	step := 0.01
 	mu := sync.Mutex{}
 	amount := int((maxJ - minJ) / step)
 	xys := make(plotter.XYs, amount)
+	todo := amount * BaseRuns
 	functions := make([]func(), amount*BaseRuns)
 	for i := range amount {
 		xys[i].X = minJ + float64(i)*(maxJ-minJ)/float64(amount)
@@ -244,6 +245,10 @@ func segIndexPerJ(mVal, popVal int) plotter.XYs {
 
 				mu.Lock()
 				xys[i].Y += meanSegIndex / float64(BaseRuns)
+				todo -= 1
+				if todo%10 == 0 {
+					fmt.Println(todo)
+				}
 				mu.Unlock()
 			}
 		}
