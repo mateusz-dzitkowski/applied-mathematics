@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"main/problem"
+)
 
 func main() {
-	fmt.Println("hello, mom")
+	fmt.Println(problem.MainProblem())
 }
