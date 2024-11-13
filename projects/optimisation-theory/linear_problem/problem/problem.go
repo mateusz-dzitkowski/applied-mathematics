@@ -4,23 +4,25 @@ type Emissions[T any] struct {
 	SO2, Particulate T
 }
 
-type EmissionsPerTon Emissions[int]
-type EmissionsPerDay Emissions[int]
-type EmissionsCost Emissions[int]
+type EmissionsPerTon Emissions[float64]
+type EmissionsPerDay Emissions[float64]
+type EmissionsCost Emissions[float64]
 
 type Incinerator struct {
 	Name              string
-	DailyCapacityTons int
-	CostPerTon        int
+	DailyCapacityTons float64
+	CostPerTon        float64
 	EmissionsPerTon
 }
 
 type Problem struct {
-	TonsOfTrashPerDay    int
+	TonsOfTrashPerDay    float64
 	Incinerators         []Incinerator
 	EmissionLimitsPerDay EmissionsPerDay
 	EmissionsCost
 }
+
+type Solution map[Incinerator]float64
 
 func MainProblem() Problem {
 	return Problem{
