@@ -6,5 +6,9 @@ import (
 )
 
 func main() {
-	fmt.Println(problem.MainProblem())
+	solution, err := problem.MainProblem().Solve()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(solution)
 }
