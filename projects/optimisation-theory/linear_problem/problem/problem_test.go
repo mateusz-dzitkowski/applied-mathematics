@@ -2,7 +2,6 @@ package problem
 
 import (
 	"github.com/stretchr/testify/assert"
-	"math"
 	"testing"
 )
 
@@ -109,12 +108,8 @@ func TestProblem(t *testing.T) {
 			assert.Nil(t, err)
 			assert.Equal(t, len(solution), len(tt.expected))
 			for n := range solution {
-				assert.True(t, isCLose(solution[n], tt.expected[n]))
+				assert.Equal(t, tt.expected[n], solution[n])
 			}
 		})
 	}
-}
-
-func isCLose(x, y float64) bool {
-	return math.Abs(x-y) < 1e-7
 }
