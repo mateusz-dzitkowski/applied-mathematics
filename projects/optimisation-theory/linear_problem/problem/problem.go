@@ -108,11 +108,7 @@ func (p Problem) convert() ([]float64, *mat.Dense, []float64) {
 }
 
 func (p Problem) emissionTypes() int {
-	emissionTypes := 0
-	for range p.EmissionsCost.AllEmissions() {
-		emissionTypes += 1
-	}
-	return emissionTypes
+	return len(p.EmissionsCost.AllEmissions())
 }
 
 func (p Problem) incinerators() int {
