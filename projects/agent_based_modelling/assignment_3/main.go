@@ -31,7 +31,7 @@ func (p CParams) GetColorParam(rgba color.RGBA) model.ColorParams {
 }
 
 func main() {
-	plot()
+	run()
 }
 
 func run() {
@@ -57,8 +57,8 @@ func run() {
 	}
 	animateParams := model.AnimateParams{
 		CellSize:              10,
-		Delay:                 5,
-		MaxSteps:              500,
+		Delay:                 10,
+		MaxSteps:              100,
 		SecondsWithFinalState: 2,
 	}
 	if err := model.New(params).Animate(animateParams); err != nil {

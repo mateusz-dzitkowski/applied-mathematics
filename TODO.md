@@ -22,4 +22,7 @@
 - [ ] prepare presentations for unstructured data list 3 and 4
 - [x] spanish homework
 - [x] spanish homework
-- [ ] machine learning list 4
+- [x] machine learning list 4
+- [x] machine learning list 5
+- [x] optimisation theory LP
+ 
