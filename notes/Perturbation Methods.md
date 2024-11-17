@@ -383,3 +383,51 @@ $$
 ||R(t, \varepsilon)|| \le \varepsilon^2\frac{LM}{||A|| + \varepsilon L}\left(e^{t(||A|| + \varepsilon L)} - 1\right),
 $$
 where $L$ is the Lipschitz constant of $f$ and $M = \max\limits_{t\in[0, T]} ||u_1(t)||$.
+
+# 4 Nonlinear oscillations and Poincaré-Lindstedt method
+
+Consider the equation
+$$
+\begin{aligned}
+y'' + y + \varepsilon y^3 &= 0 \\
+y(0) = 1, \; y'(0) &= 0
+\end{aligned}
+$$
+We have
+$$
+y_0'' + y_0 = 0, \;\; y_0(0) = 1, y_0'(0) = 0,
+$$
+and
+$$
+y_1'' + y_1 = y_0^3, \;\; y_1(0) = 0, y_1'(0) = 0.
+$$
+The equations can be solved analytically, yielding
+$$
+y_0(t) = \cos(t)
+$$
+and
+$$
+y_1(t) = \frac{1}{32}\left(\cos(3t) - \cos(t) \right) - \frac{3}{8}t\sin(t).
+$$
+Note the secular term $t\sin(t)$ which goes to infinity as $t$ goes to infinity.
+
+The idea of the Poincaré-Lindstedt method is to introduce a d???ed time scale in the perturbation sense
+$$
+y(t) = y_0(\tau) + \varepsilon y_1(\tau) + \varepsilon^2 y_2(\tau) + \cdots
+$$
+with
+$$
+\tau = \omega t, \quad \omega = \omega_0 + \varepsilon\omega_1 + \varepsilon^2\omega_2 + \cdots.
+$$
+We plug that into the equation and collect the coefficients with the same power of $\varepsilon$. Voila.
+The solution to the original equation using this method yield
+$$
+y_0(\tau) = \cos(\tau),
+$$
+$$
+y_1(\tau) = \frac{1}{32}\left(\cos(3\tau) - \cos(\tau)\right).
+$$
+In general the Poincaré-Lindstedt method works for equations of the following form:
+$$
+y'' + \omega^2y = \varepsilon f(t, y, y'), \; 0 < \varepsilon << 1.
+$$
