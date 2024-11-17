@@ -95,6 +95,10 @@ func MainProblem() Problem {
 }
 
 func (p Problem) Solve() ([]float64, error) {
+	//	minimize cᵀ * x
+	//	s.t      G * x <= h
+	//	         A * x = b
+
 	c, A, b := p.convert()
 	_, optX, err := lp.Simplex(c, A, b, 1e-10, nil)
 	if err != nil {
@@ -119,17 +123,29 @@ func (p Problem) n() int {
 	return p.incinerators() + p.emissionTypes()
 }
 
+func (p Problem) getC() []float64 {
+	output := make([]float64, p.n())
+	for row, incinerator := range p.Incinerators { // x * x's costPerTon
+		output[row] = incinerator.CostPerTon
+	}
+	for row, emissionType := range p.EmissionsCost.AllEmissions() { // excess emissions * excess emissions cost per ton
+		row += p.incinerators()
+		output[row] = p.EmissionsCost.Get(emissionType)
+	}
+	return output
+}
+
 func (p Problem) getG() mat.Matrix {
 	rows := 2 * p.n()
 	cols := p.n()
 
 	G := mat.NewDense(rows, cols, nil)
-	for row := range p.incinerators() {
+	for row := range p.incinerators() { // x <= x's daily capacity
 		insertedRow := make([]float64, cols)
 		insertedRow[row] = 1
 		G.SetRow(row, insertedRow)
 	}
-	for row, emissionType := range p.EmissionsCost.AllEmissions() {
+	for row, emissionType := range p.EmissionsCost.AllEmissions() { // x*emissions - excess emissions <= emissions limit
 		row += p.incinerators()
 		insertedRow := make([]float64, cols)
 		for i, incinerator := range p.Incinerators {
@@ -138,7 +154,7 @@ func (p Problem) getG() mat.Matrix {
 		insertedRow[row] = -1
 		G.SetRow(row, insertedRow)
 	}
-	for row := range p.n() {
+	for row := range p.n() { // x >= 0, and excess emissions >= 0
 		insertedRow := make([]float64, cols)
 		insertedRow[row] = -1
 		G.SetRow(row+p.n(), insertedRow)
@@ -147,39 +163,30 @@ func (p Problem) getG() mat.Matrix {
 	return G
 }
 
-func (p Problem) getA() mat.Matrix {
-	data := make([]float64, p.n())
-	for i := range p.incinerators() {
-		data[i] = 1
-	}
-	return mat.NewDense(1, p.n(), data)
-}
-
-func (p Problem) getC() []float64 {
-	output := make([]float64, p.n())
-	for row, incinerator := range p.Incinerators {
-		output[row] = incinerator.CostPerTon
-	}
-	for row, emissionType := range p.EmissionsCost.AllEmissions() {
-		row += p.incinerators()
-		output[row] = p.EmissionsCost.Get(emissionType)
-	}
-	return output
-}
-
 func (p Problem) getH() []float64 {
 	n := 2 * p.n()
 	output := make([]float64, n)
-	for row, incinerator := range p.Incinerators {
+	for row, incinerator := range p.Incinerators { // x <= x's daily capacity
 		output[row] = incinerator.DailyCapacityTons
 	}
-	for row, emissionType := range p.EmissionsCost.AllEmissions() {
+	for row, emissionType := range p.EmissionsCost.AllEmissions() { // x*emissions - excess emissions <= emissions limit
 		row += p.incinerators()
 		output[row] = p.EmissionLimitsPerDay.Get(emissionType)
 	}
+	// implicitly the rest is 0, due to x >= 0, and excess emissions >= 0
 	return output
 }
 
+func (p Problem) getA() mat.Matrix {
+	data := make([]float64, p.n())
+	for i := range p.incinerators() { // sum of all xs = total tons of trash per day
+		data[i] = 1
+	}
+	// the rest after the p.incinerators() is 0 because we only count the incinerators tons
+	// not the emission excess, which are only support variables
+	return mat.NewDense(1, p.n(), data)
+}
+
 func (p Problem) getB() []float64 {
-	return []float64{p.TonsOfTrashPerDay}
+	return []float64{p.TonsOfTrashPerDay} // sum of all xs = total tons of trash per day
 }
