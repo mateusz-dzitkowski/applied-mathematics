@@ -382,7 +382,7 @@ Then
 $$
 ||R(t, \varepsilon)|| \le \varepsilon^2\frac{LM}{||A|| + \varepsilon L}\left(e^{t(||A|| + \varepsilon L)} - 1\right),
 $$
-where $L$ is the Lipschitz constant of $f$ and $M = \max\limits_{t\in[0, T]} ||u_1(t)||$.
+where $L$ is the Lipschitz constant of $f$ w.r.t. the second variable and $M = \max\limits_{t\in[0, T]} ||u_1(t)||$.
 
 # 4 Nonlinear oscillations and Poincaré-Lindstedt method
 
@@ -431,3 +431,156 @@ In general the Poincaré-Lindstedt method works for equations of the following f
 $$
 y'' + \omega^2y = \varepsilon f(t, y, y'), \; 0 < \varepsilon << 1.
 $$
+
+# 5 Singular perturbation of ODEs
+#### Example
+Consider the boundary value problem
+$$
+\varepsilon y'' + (1 + \varepsilon)y' + y = 0, \quad y(0) = 0, \quad y(1) = 1.
+$$
+Let's try to apply the regular perturbation method. Assume a perturbation of the form
+$$
+y(x) = y_0(x) + \varepsilon y_1(x) + \varepsilon^2 y_2(x) + \cdots.
+$$
+Then substituting into the ODE we get
+$$
+\varepsilon \left( y_0'' + \varepsilon y_1'' + \varepsilon^2 y_2'' \right) + \left(y_0' + \varepsilon y_1' + \varepsilon^2 y_2'\right) + \varepsilon \left( y_0' + \varepsilon y_1' + \varepsilon^2 y_2' \right) + \left(y_0 + \varepsilon y_1 + \varepsilon^2 y_2\right) = 0.
+$$
+Collecting the terms with the same powers of $\varepsilon$, we get:
+$$
+y_0' + y_0 = 0, \quad y_0(0) = 0, \quad y_0(1) = 1.
+$$
+The general solution for the $y_0$ ODE is $y_0(x) = ce^{-x}$, which cannot exist with the given conditions. Hence, the regular perturbation method fails in the first step.
+
+Let's examine the perturbed problem. The exact solution to the ODE is 
+$$
+y(x) = \frac{1}{e^{-1} - e^{\frac{1}{\varepsilon}}}\left(e^{-x} - e^{-\frac{x}{\varepsilon}}\right).
+$$
+We may try to estimate the size of the terms in the ODE. We have
+$$
+y'(x) = \frac{1}{e^{-1} - e^{\frac{1}{\varepsilon}}}\left(-e^{-x} - \frac{1}{\varepsilon}e^{-\frac{x}{\varepsilon}}\right),
+$$
+and
+$$
+y''(x) = \frac{1}{e^{-1} - e^{\frac{1}{\varepsilon}}}\left(e^{-x} - \frac{1}{\varepsilon^2}e^{-\frac{x}{\varepsilon}}\right).
+$$
+Suppose $\varepsilon$ is small and $x$ is in the boundary layer. We can set $x = \varepsilon$, then
+$$
+y''(\varepsilon) = \frac{1}{e^{-1} - e^{\frac{1}{\varepsilon}}}\left(e^{-\varepsilon} - \frac{1}{\varepsilon^2}e^{-1}\right) = O(\varepsilon^{-2}).
+$$
+Note that $\varepsilon y''(\varepsilon)$ is not small.
+
+Suppose $\varepsilon$ is small and $x$ is away from the boundary layer. Let's just set $x = \frac{1}{2}$. Then
+$$
+y\left(\frac{1}{2}\right) = \frac{1}{e^{-1} - e^{-\frac{1}{\varepsilon}}}\left(e^{-\frac{1}{2}} - \frac{1}{\varepsilon^2}e^{-\frac{1}{2\varepsilon}}\right) = O(1).
+$$
+Then $\varepsilon y''\left(\frac{1}{2}\right)$ is small.
+
+This analysis suggests that in the outer layer the leading-order problem $y_0' + y_0 = 0$, is a valid approximation provided that $y_0(1) = 1$. Then $y_{out}(x) = e^{1-x}$ is our outer approximation of $y$.
+
+In general, to find an approximate solution of the singular perturbation problem we proceed in four steps:
+1. Find the outer approximation.
+2. Find the inner approximation.
+3. Matching.
+4. Composite expansion (uniformly valid approximation).
+
+In our particular case we have:
+
+Outer approximation: $y_{out}(x) = e^{1-x}$.
+
+Inner approximation
+The previous analysis we know that on the boundary layer we have to introduce proper scaling. We introduce the change of variables 
+$$
+\xi = \frac{x}{\delta(\varepsilon)},
+$$
+$$
+Y(\xi) = y(\delta(\varepsilon)\xi).
+$$
+Then the ODE becomes
+$$
+\frac{\varepsilon}{\delta(\varepsilon)^2}Y''(\xi) + \frac{1+\varepsilon}{\delta(\varepsilon)}Y'(\xi) + Y(\xi) = 0.
+$$
+To determine the scale factor $\delta(\varepsilon)$ we consider all possible dominant balances between pairs of coefficients. We want
+$$
+\frac{\varepsilon}{\delta(\varepsilon)^2} \sim \frac{1}{\delta(\varepsilon)},
+$$
+but keep $\frac{\varepsilon}{\delta(\varepsilon)}$ and $1$ small in comparison. Then we get
+$$
+\delta(\varepsilon) \sim \varepsilon.
+$$
+We also might want
+$$
+\frac{\varepsilon}{\delta(\varepsilon)^2} \sim 1,
+$$
+but keep $\frac{1}{\delta(\varepsilon)}$ and $\frac{\varepsilon}{\delta(\varepsilon)}$ small in comparison. Then we get
+$$
+\delta(\varepsilon) \sim \sqrt{\varepsilon}.
+$$
+but this does not satisfy our needs of "small in comparison".
+
+We also might want
+$$
+\frac{\varepsilon}{\delta(\varepsilon)^2} \sim \frac{\varepsilon}{\delta(\varepsilon)},
+$$
+but keep $\frac{1}{\delta(\varepsilon)}$ and $1$ small in comparison. Then we get
+$$
+\delta(\varepsilon) \sim 1,
+$$
+but this does not satisfy our needs of "small in comparison".
+
+So only the first method will work for us. We can set $\delta(\varepsilon) = \varepsilon$.
+Therefore, we get
+$$
+\frac{1}{\varepsilon}Y''(\xi) + \frac{1}{\varepsilon}Y'(\xi) + Y'(\xi) + Y(\xi) = 0.
+$$
+Then multiply the equation by $\varepsilon$ and voila.
+
+We apply the regular perturbation method to get the approximate solution of the rescaled problem.
+$$
+Y_0'' + Y_0' = 0,
+$$
+so we get
+$$
+Y_0(\xi) = C_1 + C_2e^{-\xi}.
+$$
+To determine one constant in the general solution we apply the boundary condition
+$$
+Y_0(0) = 0.
+$$
+So then we have $C_2 = -C_1$, and
+$$
+Y_0(\xi) = C_1\left(1 - e^{-\xi}\right)
+$$
+and the inner approximation is
+$$
+y_{in}(x) = C_1\left(1 - e^{-\frac{x}{\varepsilon}}\right).
+$$
+
+We will determine the constant $C_1$ in the third step: matching.
+We expect that $y_{in}$ and $y_{out}$ will match in the overlapped domain. We introduce yet another variable
+$$
+\eta = \frac{x}{\sqrt{\varepsilon}},
+$$
+and then for fixed $\eta$ we want to have
+$$
+\lim\limits_{\varepsilon \rightarrow 0}y_{out}(\sqrt{\varepsilon}\eta) = \lim\limits_{\varepsilon \rightarrow 0}y_{in}(\sqrt{\varepsilon}\eta).
+$$
+We have
+$$
+\lim\limits_{\varepsilon\rightarrow0}y_{out}(\sqrt{\varepsilon}\eta) = \lim\limits_{\varepsilon\rightarrow0} e^{1 - \sqrt{\varepsilon}\eta} = e.
+$$
+$$
+\lim\limits_{\varepsilon\rightarrow0}y_{in}(\sqrt{\varepsilon}\eta) = \lim\limits_{\varepsilon\rightarrow0}C_1\left(1-e^{-\frac{\eta}{\sqrt{\varepsilon}}}\right) = e.
+$$
+Then $y_{in}(x) = e\left(1 - e^{-\frac{x}{\varepsilon}}\right)$.
+
+Now we want to determine the composite expansion.
+$$
+y_u(x) = y_{out}(x) + y_{in}(x) - \text{"common part"}.
+$$
+In our case we have
+$$
+y_u(x) = e^{1-x} + e - e^{1 - \frac{x}{\varepsilon}} - \varepsilon = e\left(e^{-x} - e^{-\frac{x}{\varepsilon}}\right).
+$$
+
+
