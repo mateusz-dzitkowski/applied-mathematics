@@ -33,8 +33,7 @@ class Worker(Thread, ABC):
 class UserWorker(Worker):
     def process(self, url: str):
         user_handle = user_handle_from_url(url)
-        db_user = self.querier.get_user(handle=user_handle)
-        if db_user:
+        if self.querier.does_user_exist(handle=user_handle):
             log.warning(f"{url} has been visited already")
             return
 
@@ -54,16 +53,8 @@ class UserWorker(Worker):
 class TweetWorker(Worker):
     def process(self, url: str):
         tweet_id = tweet_id_from_url(url)
-        db_tweet = self.querier.get_tweet(id=tweet_id)
-        if db_tweet:
+        if self.querier.does_tweet_exist(id=tweet_id):
             log.warning(f"{url} has been visited already")
-            return
-
-        user_handle = user_handle_from_url(url)
-        user = self.querier.get_user(handle=user_handle)
-        if not user:
-            log.warning(f"{user_handle} was not yet processed for tweet={url} to be processed")
-            self.queue.put(url)
             return
 
         # TODO: visit and parse the site
@@ -76,7 +67,7 @@ class TweetWorker(Worker):
                 retweets=123,
                 likes=1321,
                 views=321,
-                user_handle=user.handle,
+                user_handle=user_handle_from_url(url),
                 parent_id=None,
             ),
         )

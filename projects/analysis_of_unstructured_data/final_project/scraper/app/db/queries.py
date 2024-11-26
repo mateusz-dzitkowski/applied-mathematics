@@ -7,7 +7,6 @@ from typing import Optional
 
 import pydantic
 import sqlalchemy
-from app.db import models
 
 CREATE_TWEET = """-- name: create_tweet \\:exec
 insert into tweet (id, tweeted_at, text, replies, retweets, likes, views, user_handle, parent_id)
@@ -41,13 +40,13 @@ class CreateUserParams(pydantic.BaseModel):
     followers: int
 
 
-GET_TWEET = """-- name: get_tweet \\:one
-select id, created_at, tweeted_at, text, replies, retweets, likes, views, user_handle, parent_id from tweet where id=:p1
+DOES_TWEET_EXIST = """-- name: does_tweet_exist \\:one
+select exists(select 1 from tweet where id=:p1)
 """
 
 
-GET_USER = """-- name: get_user \\:one
-select handle, created_at, name, description, following, followers from user_ where handle=:p1
+DOES_USER_EXIST = """-- name: does_user_exist \\:one
+select exists(select 1 from user_ where handle=:p1)
 """
 
 
@@ -83,32 +82,14 @@ class Querier:
             },
         )
 
-    def get_tweet(self, *, id: int) -> Optional[models.Tweet]:
-        row = self._conn.execute(sqlalchemy.text(GET_TWEET), {"p1": id}).first()
+    def does_tweet_exist(self, *, id: int) -> Optional[bool]:
+        row = self._conn.execute(sqlalchemy.text(DOES_TWEET_EXIST), {"p1": id}).first()
         if row is None:
             return None
-        return models.Tweet(
-            id=row[0],
-            created_at=row[1],
-            tweeted_at=row[2],
-            text=row[3],
-            replies=row[4],
-            retweets=row[5],
-            likes=row[6],
-            views=row[7],
-            user_handle=row[8],
-            parent_id=row[9],
-        )
+        return row[0]
 
-    def get_user(self, *, handle: str) -> Optional[models.User]:
-        row = self._conn.execute(sqlalchemy.text(GET_USER), {"p1": handle}).first()
+    def does_user_exist(self, *, handle: str) -> Optional[bool]:
+        row = self._conn.execute(sqlalchemy.text(DOES_USER_EXIST), {"p1": handle}).first()
         if row is None:
             return None
-        return models.User(
-            handle=row[0],
-            created_at=row[1],
-            name=row[2],
-            description=row[3],
-            following=row[4],
-            followers=row[5],
-        )
+        return row[0]
