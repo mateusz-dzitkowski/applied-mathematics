@@ -1,10 +1,12 @@
 import random
 from dataclasses import dataclass
 
-from tqdm import tqdm
-from projects.agent_based_modelling.assignment_2.game_of_life import GameOfLife, GameOfLifeFactory
 from IPython.display import Image
-from matplotlib import animation, pyplot as plt
+from matplotlib import animation
+from matplotlib import pyplot as plt
+from tqdm import tqdm
+
+from projects.agent_based_modelling.assignment_2.game_of_life import GameOfLife, GameOfLifeFactory
 
 
 @dataclass
@@ -57,19 +59,12 @@ def animate(game: GameOfLife, filename: str, steps: int = 500, fps: int = 20, su
 
 
 def single_glider_gun():
-    game = (
-        GameOfLifeFactory.empty((50, 50))
-        .embed(GameOfLifeFactory.glider_gun(), (5, 0))
-    )
+    game = GameOfLifeFactory.empty((50, 50)).embed(GameOfLifeFactory.glider_gun(), (5, 0))
     animate(game, "single_glider_gun_cyclic.gif", steps=500, fps=40)
 
 
 def death_edges():
-    game = (
-        GameOfLifeFactory.empty((50, 50))
-        .embed(GameOfLifeFactory.glider_gun(), (5, 5))
-        .embed(GameOfLifeFactory.pentadecathlon().rotated, (40, 20))
-    )
+    game = GameOfLifeFactory.empty((50, 50)).embed(GameOfLifeFactory.glider_gun(), (5, 5)).embed(GameOfLifeFactory.pentadecathlon().rotated, (40, 20))
     game.death_edges = True
     animate(game, "death_edges.gif", steps=500, fps=40)
 
