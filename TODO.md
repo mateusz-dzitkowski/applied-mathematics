@@ -27,3 +27,4 @@
 - [x] optimisation theory LP
 - [ ] perturbation methods list 4
 - [ ] machine learning list 6
+- [ ] twitter scraper 
