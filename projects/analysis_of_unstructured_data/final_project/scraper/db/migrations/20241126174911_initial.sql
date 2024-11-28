@@ -1,5 +1,5 @@
 -- migrate:up
-create table user_ (
+create table "user" (
     handle varchar primary key,
     created_at timestamp with time zone not null default now(),
 
@@ -24,11 +24,10 @@ create table tweet (
     user_handle varchar not null,
     parent_id int,
 
-    constraint fk_user foreign key (user_handle) references user_(handle),
     constraint fk_self foreign key (parent_id) references tweet(id)
 );
 
 
 -- migrate:down
 drop table tweet;
-drop table user_;
+drop table "user";

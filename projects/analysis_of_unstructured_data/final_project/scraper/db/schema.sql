@@ -41,10 +41,10 @@ CREATE TABLE public.tweet (
 
 
 --
--- Name: user_; Type: TABLE; Schema: public; Owner: -
+-- Name: user; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.user_ (
+CREATE TABLE public."user" (
     handle character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     name character varying NOT NULL,
@@ -71,11 +71,11 @@ ALTER TABLE ONLY public.tweet
 
 
 --
--- Name: user_ user__pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.user_
-    ADD CONSTRAINT user__pkey PRIMARY KEY (handle);
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (handle);
 
 
 --
@@ -84,14 +84,6 @@ ALTER TABLE ONLY public.user_
 
 ALTER TABLE ONLY public.tweet
     ADD CONSTRAINT fk_self FOREIGN KEY (parent_id) REFERENCES public.tweet(id);
-
-
---
--- Name: tweet fk_user; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.tweet
-    ADD CONSTRAINT fk_user FOREIGN KEY (user_handle) REFERENCES public.user_(handle);
 
 
 --

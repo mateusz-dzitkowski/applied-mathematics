@@ -1,9 +1,9 @@
 -- name: CreateUser :exec
-insert into user_ (handle, name, description, following, followers)
+insert into "user" (handle, name, description, following, followers)
 values ($1, $2, $3, $4, $5);
 
 -- name: DoesUserExist :one
-select exists(select 1 from user_ where handle=$1);
+select exists(select 1 from "user" where handle=$1);
 
 -- name: CreateTweet :exec
 insert into tweet (id, tweeted_at, text, replies, retweets, likes, views, user_handle, parent_id)

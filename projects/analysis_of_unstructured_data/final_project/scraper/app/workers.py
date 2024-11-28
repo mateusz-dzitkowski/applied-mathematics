@@ -1,64 +1,86 @@
-import logging
 from abc import ABC, abstractmethod
 from datetime import UTC, datetime
-from multiprocessing import Queue
-from threading import Thread
+from bs4 import BeautifulSoup
 
-from app.db.queries import CreateTweetParams, CreateUserParams, Querier
-from playwright.sync_api import Page
-from sqlalchemy import Connection
+from asyncio import Queue
+from app.db.queries import CreateTweetParams, CreateUserParams, AsyncQuerier
+from playwright.async_api import Page
+from sqlalchemy.ext.asyncio import AsyncConnection
 
-log = logging.getLogger(__file__)
-log.setLevel(logging.INFO)
+from app.log import log
 
 
-class Worker(Thread, ABC):
-    def __init__(self, page: Page, queue: Queue, conn: Connection, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class Worker(ABC):
+    def __init__(self, page: Page, queue: Queue, conn: AsyncConnection):
         self.page = page
         self.queue = queue
         self.conn = conn
-        self.querier = Querier(conn)
+        self.querier = AsyncQuerier(conn)
 
-    def run(self):
+    async def run(self):
         while True:
-            url: str = self.queue.get()
-            log.info(f"processing {url}")
-            self.process(url)
+            url: str = await self.queue.get()
+            log.debug(f"working on {url}")
+            await self.handle(url)
+            self.queue.task_done()
 
     @abstractmethod
-    def process(self, url: str): ...
+    async def handle(self, url: str): ...
 
 
 class UserWorker(Worker):
-    def process(self, url: str):
+    async def handle(self, url: str):
         user_handle = user_handle_from_url(url)
-        if self.querier.does_user_exist(handle=user_handle):
+        if await self.querier.does_user_exist(handle=user_handle):
             log.warning(f"{url} has been visited already")
             return
 
-        # TODO: visit and parse the site
-        self.querier.create_user(
+        await self.page.goto(url)
+        await self.querier.create_user(
             CreateUserParams(
                 handle=user_handle,
-                name="TODO",
-                description="TODO",
-                following=123,
-                followers=123,
+                name=await self._get_username(),
+                description=await self._get_description(),
+                following=await self._get_following(),
+                followers=await self._get_followers(),
             ),
         )
-        self.conn.commit()
+        await self.conn.commit()
+
+    async def _get_username(self) -> str:
+        selector = '[data-testid="UserName"] > div > div > div > div > div > div > span > span'
+        await self.page.wait_for_selector(selector)
+        soup = get_soup(await self.page.inner_html(selector))
+        return soup.text
+
+    async def _get_description(self) -> str:
+        selector = '[data-testid="UserDescription"] > span'
+        await self.page.wait_for_selector(selector)
+        soup = get_soup(await self.page.inner_html(selector))
+        return soup.text
+
+    async def _get_following(self) -> int:
+        selector = 'a[href$="following"] > span > span'
+        await self.page.wait_for_selector(selector)
+        soup = get_soup(await self.page.inner_html(selector))
+        return parse_followers(soup.text)
+
+    async def _get_followers(self) -> int:
+        selector = 'a[href$="followers"] > span > span'
+        await self.page.wait_for_selector(selector)
+        soup = get_soup(await self.page.inner_html(selector))
+        return parse_followers(soup.text)
 
 
 class TweetWorker(Worker):
-    def process(self, url: str):
+    async def handle(self, url: str):
         tweet_id = tweet_id_from_url(url)
-        if self.querier.does_tweet_exist(id=tweet_id):
+        if await self.querier.does_tweet_exist(id=tweet_id):
             log.warning(f"{url} has been visited already")
             return
 
         # TODO: visit and parse the site
-        self.querier.create_tweet(
+        await self.querier.create_tweet(
             CreateTweetParams(
                 id=tweet_id,
                 tweeted_at=datetime.now(UTC),
@@ -71,7 +93,7 @@ class TweetWorker(Worker):
                 parent_id=None,
             ),
         )
-        self.conn.commit()
+        await self.conn.commit()
 
 
 def user_handle_from_url(url: str) -> str | None:
@@ -88,3 +110,21 @@ def tweet_id_from_url(url: str) -> int | None:
     except (IndexError, ValueError):
         log.error(f"wrong url format: {url}")
         return None
+
+
+def get_soup(html: str) -> BeautifulSoup:
+    return BeautifulSoup(html, features="html.parser")
+
+
+def parse_followers(raw: str) -> int:
+    mult_map = {
+        "K": 1_000,
+        "M": 1_000_000,
+        "B": 1_000_000_000,
+    }
+
+    suffix = raw[-1].upper()
+    if suffix not in mult_map:
+        return int(raw.replace(",", ""))
+
+    return int(float(raw[:-1]) * mult_map.get(suffix, 1))

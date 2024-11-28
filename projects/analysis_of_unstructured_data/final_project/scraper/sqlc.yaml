@@ -13,5 +13,5 @@ sql:
         plugin: py
         options:
           package: app.db
-          emit_sync_querier: true
+          emit_async_querier: true
           emit_pydantic_models: true

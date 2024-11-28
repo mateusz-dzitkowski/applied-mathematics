@@ -3,10 +3,14 @@
 #   sqlc v1.27.0
 # source: queries.sql
 import datetime
+import pydantic
 from typing import Optional
 
-import pydantic
 import sqlalchemy
+import sqlalchemy.ext.asyncio
+
+from app.db import models
+
 
 CREATE_TWEET = """-- name: create_tweet \\:exec
 insert into tweet (id, tweeted_at, text, replies, retweets, likes, views, user_handle, parent_id)
@@ -27,7 +31,7 @@ class CreateTweetParams(pydantic.BaseModel):
 
 
 CREATE_USER = """-- name: create_user \\:exec
-insert into user_ (handle, name, description, following, followers)
+insert into "user" (handle, name, description, following, followers)
 values (:p1, :p2, :p3, :p4, :p5)
 """
 
@@ -46,50 +50,44 @@ select exists(select 1 from tweet where id=:p1)
 
 
 DOES_USER_EXIST = """-- name: does_user_exist \\:one
-select exists(select 1 from user_ where handle=:p1)
+select exists(select 1 from "user" where handle=:p1)
 """
 
 
-class Querier:
-    def __init__(self, conn: sqlalchemy.engine.Connection):
+class AsyncQuerier:
+    def __init__(self, conn: sqlalchemy.ext.asyncio.AsyncConnection):
         self._conn = conn
 
-    def create_tweet(self, arg: CreateTweetParams) -> None:
-        self._conn.execute(
-            sqlalchemy.text(CREATE_TWEET),
-            {
-                "p1": arg.id,
-                "p2": arg.tweeted_at,
-                "p3": arg.text,
-                "p4": arg.replies,
-                "p5": arg.retweets,
-                "p6": arg.likes,
-                "p7": arg.views,
-                "p8": arg.user_handle,
-                "p9": arg.parent_id,
-            },
-        )
+    async def create_tweet(self, arg: CreateTweetParams) -> None:
+        await self._conn.execute(sqlalchemy.text(CREATE_TWEET), {
+            "p1": arg.id,
+            "p2": arg.tweeted_at,
+            "p3": arg.text,
+            "p4": arg.replies,
+            "p5": arg.retweets,
+            "p6": arg.likes,
+            "p7": arg.views,
+            "p8": arg.user_handle,
+            "p9": arg.parent_id,
+        })
 
-    def create_user(self, arg: CreateUserParams) -> None:
-        self._conn.execute(
-            sqlalchemy.text(CREATE_USER),
-            {
-                "p1": arg.handle,
-                "p2": arg.name,
-                "p3": arg.description,
-                "p4": arg.following,
-                "p5": arg.followers,
-            },
-        )
+    async def create_user(self, arg: CreateUserParams) -> None:
+        await self._conn.execute(sqlalchemy.text(CREATE_USER), {
+            "p1": arg.handle,
+            "p2": arg.name,
+            "p3": arg.description,
+            "p4": arg.following,
+            "p5": arg.followers,
+        })
 
-    def does_tweet_exist(self, *, id: int) -> Optional[bool]:
-        row = self._conn.execute(sqlalchemy.text(DOES_TWEET_EXIST), {"p1": id}).first()
+    async def does_tweet_exist(self, *, id: int) -> Optional[bool]:
+        row = (await self._conn.execute(sqlalchemy.text(DOES_TWEET_EXIST), {"p1": id})).first()
         if row is None:
             return None
         return row[0]
 
-    def does_user_exist(self, *, handle: str) -> Optional[bool]:
-        row = self._conn.execute(sqlalchemy.text(DOES_USER_EXIST), {"p1": handle}).first()
+    async def does_user_exist(self, *, handle: str) -> Optional[bool]:
+        row = (await self._conn.execute(sqlalchemy.text(DOES_USER_EXIST), {"p1": handle})).first()
         if row is None:
             return None
         return row[0]
