@@ -3,14 +3,11 @@
 #   sqlc v1.27.0
 # source: queries.sql
 import datetime
-import pydantic
 from typing import Optional
 
+import pydantic
 import sqlalchemy
 import sqlalchemy.ext.asyncio
-
-from app.db import models
-
 
 CREATE_TWEET = """-- name: create_tweet \\:exec
 insert into tweet (id, tweeted_at, text, replies, retweets, likes, views, user_handle, parent_id)
@@ -59,26 +56,32 @@ class AsyncQuerier:
         self._conn = conn
 
     async def create_tweet(self, arg: CreateTweetParams) -> None:
-        await self._conn.execute(sqlalchemy.text(CREATE_TWEET), {
-            "p1": arg.id,
-            "p2": arg.tweeted_at,
-            "p3": arg.text,
-            "p4": arg.replies,
-            "p5": arg.retweets,
-            "p6": arg.likes,
-            "p7": arg.views,
-            "p8": arg.user_handle,
-            "p9": arg.parent_id,
-        })
+        await self._conn.execute(
+            sqlalchemy.text(CREATE_TWEET),
+            {
+                "p1": arg.id,
+                "p2": arg.tweeted_at,
+                "p3": arg.text,
+                "p4": arg.replies,
+                "p5": arg.retweets,
+                "p6": arg.likes,
+                "p7": arg.views,
+                "p8": arg.user_handle,
+                "p9": arg.parent_id,
+            },
+        )
 
     async def create_user(self, arg: CreateUserParams) -> None:
-        await self._conn.execute(sqlalchemy.text(CREATE_USER), {
-            "p1": arg.handle,
-            "p2": arg.name,
-            "p3": arg.description,
-            "p4": arg.following,
-            "p5": arg.followers,
-        })
+        await self._conn.execute(
+            sqlalchemy.text(CREATE_USER),
+            {
+                "p1": arg.handle,
+                "p2": arg.name,
+                "p3": arg.description,
+                "p4": arg.following,
+                "p5": arg.followers,
+            },
+        )
 
     async def does_tweet_exist(self, *, id: int) -> Optional[bool]:
         row = (await self._conn.execute(sqlalchemy.text(DOES_TWEET_EXIST), {"p1": id})).first()

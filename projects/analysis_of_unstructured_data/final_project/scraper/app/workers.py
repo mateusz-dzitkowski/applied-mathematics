@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
-from datetime import UTC, datetime
-from bs4 import BeautifulSoup
-
 from asyncio import Queue
-from app.db.queries import CreateTweetParams, CreateUserParams, AsyncQuerier
+from datetime import UTC, datetime
+
+from app.db.queries import AsyncQuerier, CreateTweetParams, CreateUserParams
+from app.log import log
+from bs4 import BeautifulSoup
 from playwright.async_api import Page
 from sqlalchemy.ext.asyncio import AsyncConnection
-
-from app.log import log
 
 
 class Worker(ABC):

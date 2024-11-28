@@ -2,8 +2,9 @@
 # versions:
 #   sqlc v1.27.0
 import datetime
-import pydantic
 from typing import Optional
+
+import pydantic
 
 
 class Tweet(pydantic.BaseModel):
