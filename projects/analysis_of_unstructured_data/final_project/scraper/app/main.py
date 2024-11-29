@@ -22,24 +22,16 @@ async def main():
             page=await context.new_page(),
             queue=tweet_queue,
             conn=conn,
+            users_queue=users_queue,
         )
 
-        for url in [
-            "https://x.com/RadekPiasecki1",
-            "https://x.com/SlawomirMentzen",
-            "https://x.com/kirawontmiss",
-            "https://x.com/reedshannon",
-            "https://x.com/bennyjohnson",
-            "https://x.com/IAPonomarenko",
-            "https://x.com/willnights1",
-            "https://x.com/TheFigen_",
-            "https://x.com/ZiobroPL",
-            "https://x.com/Inevitablewest",
-            "https://x.com/szymon_holownia",
-            "https://x.com/SpotifyUK",
-            "https://x.com/GarbageHuman24",
-        ]:
+        for url in []:
             await user_worker.queue.put(url)
+
+        for url in [
+            "https://x.com/LaraLeaTrump/status/1862347671102431637"
+        ]:
+            await tweet_worker.queue.put(url)
 
         tasks = [
             asyncio.create_task(tweet_worker.run()),
