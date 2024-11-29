@@ -583,4 +583,100 @@ $$
 y_u(x) = e^{1-x} + e - e^{1 - \frac{x}{\varepsilon}} - \varepsilon = e\left(e^{-x} - e^{-\frac{x}{\varepsilon}}\right).
 $$
 
+In general, we can define the matching condition in an alternative way:
+$$
+\lim\limits_{x \rightarrow 0^+}y_{out}(x) = \lim\limits_{\xi \rightarrow \infty} Y_{in}(\xi).
+$$
+### The general procedure
+If the boundary layer is at the right point, say $x=x_0$, to find an inner approximation we introduce the scaled variable 
+$$
+\xi = \frac{x - x_0}{\delta(\varepsilon)}.
+$$
+Then $Y(\xi) = y(x_0 + \xi\delta(\varepsilon))$. The matching condition is
+$$
+\lim\limits_{x \rightarrow x_0}y_{out}(x) = \lim\limits_{\xi \rightarrow \infty}Y(\xi).
+$$
+### Theorem 5.1
+Consider the boundary value problem
+$$
+\varepsilon y'' + p(x)y' + q(x)y = 0, \quad y(0) = a, \quad y(1) = b,
+$$
+where $p$ and $q$ are continuous functions on $[0, 1]$, and $p(x) > 0$ for all $x \in [0, 1]$. Then there exists a boundary layer at $x = 0$ with the inner and outer approximations given by
+$$
+y_{in}(x) = C_1 + (a - C_1)\exp\left(\frac{-p(0)x}{\varepsilon}\right),
+$$
+$$
+y_{out}(x) = b\exp\left(-\int_x^1\frac{q(s)}{p(s)}ds\right),
+$$
+where
+$$
+C_1 = b\exp\left(\int_0^1\frac{q(s)}{p(s)}ds\right).
+$$
 
+We note that if $p(x)<0$ on $[0,1]$, then no matching would be possible.
+On the other hand, matching would be possible in this case if the boundary layer is $x=1$.
+
+In summary, if $p(x) > 0$ for all $x \in [0, 1]$, then the boundary layer is at $x=0$, and if $p(x)<0$ for all $x\in[0, 1]$ then the boundary layer is at $x=1$.
+
+### Multiple boundary layer
+Consider the problem
+$$
+\varepsilon^2y'' + \varepsilon xy' - y = -e^x, \quad y(0) = 2, \quad y(1) = 1.
+$$
+We start with the outer approximation. By setting $\varepsilon=0$, we get $y_{out}(x)=e^x$. This function cannot satisfy either boundary condition.
+
+Now we proceed with the inner approximation.
+First, consider the case when the boundary layer is at $x=0$. We introduce
+$$
+\xi = \frac{x}{\varepsilon^\alpha}, \quad Y(\xi) = y(\varepsilon^\alpha \xi).
+$$
+Then we get
+$$
+\varepsilon^{2-2\alpha} Y'' + \varepsilon \xi Y' - Y = -e^{\varepsilon^\alpha\xi}.
+$$
+We get $\alpha = 1$ for the inner approximation. Then we get
+$$
+Y'' + \varepsilon \xi Y' - Y = -e^{\varepsilon \xi}.
+$$
+The inner approximation at $x = 0$ satisfies 
+$$
+Y_0'' - Y_0 = -1, \quad Y_0(0) = 2.
+$$
+Then the solution is 
+$$
+Y_0(\xi) = 1 + Ce^{-\xi} + (1-C)e^\xi.
+$$
+For matching we consider the following limits:
+$$
+\lim\limits_{x \rightarrow 0}y_{out}(x) = \lim\limits_{\xi \rightarrow \infty}Y_0(\xi)
+$$
+In order for $(1-C)e^\xi$ term to not explode, just set $C=1$, then we get
+$$
+Y_0(\xi) = 1 + e^{-\xi}.
+$$
+
+To determine the approximation at the boundary $x=1$, we introduce 
+$$
+\xi = \frac{x-1}{\varepsilon^\beta}, \quad W(\xi) = y(1 + \xi\varepsilon^\beta).
+$$
+We get the following equation for $W$:
+$$
+\varepsilon^{2-2\beta}W'' + (1 + \varepsilon\xi)\varepsilon^{1-\beta}W' - W = e^{1+\varepsilon^\beta\xi}.
+$$
+The method of dominant balance leads to $\beta = 1$. Then the equation for an inner approximation at $x=1$ is 
+$$
+W_0'' + W_0 - W_0 = -e, \quad W_0(0) = 1, \quad -\infty < \xi < 0.
+$$
+The solution of the above equation is given by
+$$
+W_0(\xi) = e + B\exp\left(\frac{-1+\sqrt{5}}{2}\xi\right) + (1 - e - B)\exp\left(-\frac{-1+\sqrt{5}}{2}\xi\right).
+$$
+Then the matching condition is
+$$
+e = \lim\limits_{x\rightarrow1}y_{out}(x) = \lim\limits_{\xi\rightarrow-\infty}W_0(\xi).
+$$
+We set $1 - e - B = 0$, so $B = 1 - e$. 
+Finally, the uniform approximation is given by 
+$$
+y_u(x) = y_{out}(x) + Y_0\left(\frac{x}{\varepsilon}\right) + W_0\left(\frac{x-1}{\varepsilon}\right) - 1 - e.
+$$
