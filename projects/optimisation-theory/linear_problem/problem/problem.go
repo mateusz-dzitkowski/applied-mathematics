@@ -3,6 +3,7 @@ package problem
 import (
 	"gonum.org/v1/gonum/mat"
 	"gonum.org/v1/gonum/optimize/convex/lp"
+	"math"
 )
 
 type Emission uint
@@ -104,7 +105,11 @@ func (p Problem) Solve() ([]float64, error) {
 	if err != nil {
 		return nil, err
 	}
-	return optX[:p.incinerators()], err
+	result := make([]float64, p.incinerators())
+	for i, x := range optX[:p.incinerators()] {
+		result[i] = round(x, 5)
+	}
+	return result, nil
 }
 
 func (p Problem) convert() ([]float64, *mat.Dense, []float64) {
@@ -189,4 +194,8 @@ func (p Problem) getA() mat.Matrix {
 
 func (p Problem) getB() []float64 {
 	return []float64{p.TonsOfTrashPerDay} // sum of all xs = total tons of trash per day
+}
+
+func round(val float64, precision int) float64 {
+	return math.Round(val*(math.Pow10(precision))) / math.Pow10(precision)
 }
