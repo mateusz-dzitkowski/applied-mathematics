@@ -1,1 +1,4 @@
-- [ ] how should the second lane behave?
+- [x] how should the second lane behave?
+- [ ] 9 simulation images: rho=[0.1, 0.3, 0.6], p=[0.0, 0.3, 0.6]
+- [x] avg velocity as a function of density
+- [ ] second lane: exact rules up to us, ways of presenting the system up to us

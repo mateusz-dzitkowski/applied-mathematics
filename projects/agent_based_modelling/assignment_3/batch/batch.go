@@ -14,7 +14,7 @@ import (
 const (
 	BaseSize     = 100
 	BaseJ        = 0.5
-	BaseMaxSteps = 200
+	BaseMaxSteps = 1000
 	BaseRuns     = 100
 )
 
@@ -192,7 +192,6 @@ func PlotSegIndexPerJ() {
 	p.Title.Text = fmt.Sprintf("Segregation index as a function of J, averaged over %d runs", BaseRuns)
 	p.X.Label.Text = "J"
 	p.Y.Label.Text = "Segregation index"
-	p.Legend.Top = true
 	p.Y.Max = 1
 
 	if err := plotutil.AddScatters(
@@ -209,9 +208,9 @@ func PlotSegIndexPerJ() {
 }
 
 func segIndexPerJ(mVal, popVal int) plotter.XYs {
-	minJ := 0.1
-	maxJ := 0.91
-	step := 0.01
+	minJ := 0.2
+	maxJ := 0.81
+	step := 0.03
 	mu := sync.Mutex{}
 	amount := int((maxJ - minJ) / step)
 	xys := make(plotter.XYs, amount)

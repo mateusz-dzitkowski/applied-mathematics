@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"main/batch"
 	"main/model"
 )
@@ -14,14 +13,12 @@ func run() {
 	params := model.Params{
 		MaxVelocity:           5,
 		RoadLength:            100,
-		CarDensity:            0.1,
+		CarDensity:            0.4,
 		DecelerateProbability: 0.4,
 	}
-	m := model.New(params)
-	for range 100 {
-		fmt.Println(m)
-		m.Step()
-	}
+	steps := 100
+
+	model.New(params).Run(steps)
 }
 
 func plot() {

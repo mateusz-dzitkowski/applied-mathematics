@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"main/model/road"
 	"main/model/road/car"
 	"math/rand"
@@ -33,6 +34,14 @@ func New(params Params) *Model {
 	}
 
 	return &model
+}
+
+func (m *Model) Run(steps int) {
+	fmt.Println(m)
+	for range steps {
+		m.Step()
+		fmt.Println(m)
+	}
 }
 
 func (m *Model) Step() {

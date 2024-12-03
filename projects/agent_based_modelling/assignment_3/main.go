@@ -31,7 +31,7 @@ func (p CParams) GetColorParam(rgba color.RGBA) model.ColorParams {
 }
 
 func main() {
-	run()
+	plot()
 }
 
 func run() {
@@ -67,5 +67,5 @@ func run() {
 }
 
 func plot() {
-	batch.PlotSegIndexPerM()
+	batch.PlotSegIndexPerJ()
 }
