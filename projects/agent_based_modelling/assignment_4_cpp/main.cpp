@@ -13,7 +13,6 @@ int main() {
 
     auto model = Model(params);
     model.run(100);
-    std::cout << std::format("{}", model.mean_velocity());
 
     return 0;
 }

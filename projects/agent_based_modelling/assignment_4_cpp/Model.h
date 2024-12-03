@@ -15,13 +15,13 @@ public:
 
     explicit Model(const Params &);
 
-    void step();
     void run(int);
     std::string to_string() const;
     double mean_velocity() const;
 private:
     [[nodiscard]] int max_possible_velocity(int, int) const;
     double uniform();
+    void step();
 };
 
 
