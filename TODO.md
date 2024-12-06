@@ -1,5 +1,5 @@
 - [ ] optimisation theory exercises
-- [ ] perturbation methods list 4
+- [x] perturbation methods list 4
 - [ ] machine learning list 6
 - [ ] twitter scraper 
 - [ ] agent-based list 4

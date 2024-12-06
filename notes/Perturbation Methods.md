@@ -680,3 +680,117 @@ Finally, the uniform approximation is given by
 $$
 y_u(x) = y_{out}(x) + Y_0\left(\frac{x}{\varepsilon}\right) + W_0\left(\frac{x-1}{\varepsilon}\right) - 1 - e.
 $$
+
+# Asymptotic approximation of integrals
+We will consider integrals of the form
+$$
+I(\lambda) = \int_a^bf(t)e^{-\lambda g(t)}dt
+$$
+with $\lambda >> 1$, or $\lambda = \frac{1}{\varepsilon}$, and where $g$ is a strictly increasing function on $[a, b]$ and $g'$ is continuous, $a < b \le \infty$.
+
+#### Example (The Laplace transform)
+$$
+\mathcal{U}(\lambda) = \int_0^\infty f(t)e^{-\lambda t}dt.
+$$
+We note that it is sufficient to examine integrals of the form
+$$
+I(\lambda) = \int_0^b f(t)e^{-\lambda t}dt.
+$$
+By substitution $s(t) = g(t) - g(a)$, where $t=t(s)$ is a solution of $s(t)=g(t)-g(a)$ for $t$ we get
+$$
+I(\lambda) = e^{-\lambda g(a)}\int_0^{g(b)-g(a)}\frac{f(t(s))}{g'(t(s))}e^{-\lambda s}ds
+$$
+The fundamental idea in finding an approximation for $I(\lambda)$ is to determine what subinterval gives the dominant contribution. We see that $e^{-\lambda t}$ is rapidly decreasing for large $\lambda$, thus the main contribution comes from the neighbourhood of $t=0$.
+
+#### Example
+Consider the integral
+$$
+I(\lambda) = \int_0^\infty\frac{\sin(t)}{t}e^{-\lambda t}dt.
+$$
+We can split the integral into two parts
+$$
+I(\lambda) = \int_0^T\frac{\sin(t)}{t}e^{-\lambda t}dt + \int_T^\infty\frac{\sin(t)}{t}e^{-\lambda t}dt.
+$$
+We observe that 
+$$
+\left|\int_T^\infty\frac{\sin(t)}{t}e^{-\lambda t}dt\right| \le \max\limits_{t\in[T, \infty]}\left|\frac{\sin(t)}{t}\right|\left|\int_T^\infty e^{-\lambda t} dt\right| \le \left|\int_T^\infty e^{-\lambda t} dt\right| \le \left|-\frac{1}{\lambda}e^{-\lambda T}\right| = o(\lambda^{-m})
+$$
+for any $m>0$. Thus, we have
+$$
+I(\lambda) = \int_0^T\frac{\sin(t)}{t}e^{-\lambda t}dt + o(\lambda^{-m}).
+$$
+In $[0, T]$ we approximate $\frac{\sin(t)}{t}$ by its Taylor series around $t=0$.
+$$
+\frac{\sin(t)}{t} = 1 - \frac{t^2}{3!} + O(t^4).
+$$
+Thus,
+$$
+I(\lambda) = \int_0^T\left(1 - \frac{t^2}{3!} + O(t^4)\right)e^{-\lambda t} dt + o(\lambda^{-m}).
+$$
+Then we introduce a variable $u=\lambda t$, $du = \lambda dt$:
+$$
+I(\lambda) = \frac{1}{\lambda}\int_0^{\lambda T}\left(1 - \frac{t^2}{\lambda^23!} + O\left(\frac{1}{\lambda^4}\right)\right)e^{-u}du.
+$$
+We use the formula
+$$
+\int_0^\infty u^me^{-u}du = m!.
+$$
+Then
+$$
+I(\lambda) \sim \frac{1}{\lambda} - \frac{2!}{3!\lambda^3} + O\left(\frac{1}{\lambda^5}\right).
+$$
+### Def
+The gamm function is defined by 
+$$
+\Gamma(x) = \int_0^\infty u^{x-1}e^{-u}du, \quad x>0,
+$$
+and has the property $\Gamma(x+1) = x\Gamma(x)$. In particular
+$$
+\Gamma(n) = (n-1)!, \quad n\in\mathbb{N},
+$$
+$$
+\Gamma\left(\frac{1}{2}\right) = \sqrt\pi.
+$$
+### Theorem (Watson's Lemma)
+Consider the integral
+$$
+I(\lambda) \int_0^bt^\alpha h(t) e^{-\lambda t}dt,
+$$
+where $\alpha > -1$, $h$ has a Taylor series expansion around $t=0$ with $h(0)\ne0$, and $|h(t)|<ke^{ct}$ on $[0, b]$ for some positive constants $k$ and $c$. Then
+$$
+I(\lambda) \sim \sum_{n=0}^\infty\frac{h^{(n)}(0)}{n!}\frac{\Gamma(\alpha + n + 1)}{\lambda^{\alpha + n + 1}}.
+$$
+#### Example
+Consider the error function
+$$
+erfc(\lambda) = \frac{2}{\sqrt\pi}\int_\lambda^\infty e^{-s^2}ds.
+$$
+We note that this integral can be transformed to the required form by substitution $t=s-\lambda$:
+$$
+erfc(\lambda) = \frac{2}{\sqrt\pi}e^{-\lambda^2}\int_0^\infty e^{-t^2} e^{-2\lambda t}dt = \frac{2}{\sqrt\pi}e^{-\lambda^2}\int_0^\infty e^{-\frac{\tau^2}{4}}e^{-\lambda\tau}d\tau.
+$$
+The Wilson's lemma implies that
+$$
+erfc(\lambda) \sim \frac{2}{\sqrt\pi}e^{-\lambda^2}\left(\frac{1}{2\lambda} - \frac{\Gamma(3)}{(2\lambda)^3} + \frac{\Gamma(5)}{2!(2\lambda)^5} + \cdots\right).
+$$
+## Integration by parts
+Sometimes an asymptotic expansion of integrals can be found by a successive integration by parts.
+$$
+erfc(\lambda) = \frac{2}{\sqrt\pi}\int_\lambda^\infty e^{-t^2}dt = \frac{2}{\sqrt\pi}\int_\lambda^\infty \frac{-2te^{-t^2}}{-2t}dt
+= \frac{2}{\sqrt\pi}\left(\frac{e^{-\lambda^2}}{2\lambda} - \int_\lambda^\infty \frac{e^{-t^2}}{2t^2}dt\right).
+$$
+We do the same trick to the remaining integral over and over. We note that by repeated integration by parts we can eventually reproduce the asymptotic expansion that we got by the application of the Watson's lemma.
+
+#### Remark
+We note that for fixed $\lambda$ the series does not converge, but we can check that after just $5$ terms we obtain $erfc(2)\approx0.004744$, where the exact value is $0.004678$.
+
+#### Remark
+Note that in order to get an approximation of $erfc(\lambda)$ we could also proceed as follows:
+$$
+erfc(\lambda) = \frac{2}{\sqrt\pi}\int_0^\infty e^{-t^2}dt - \frac{2}{\sqrt\pi}\int_0^\lambda e^{-t^2}dt = 1 - \frac{2}{\sqrt\pi}\int_0^\lambda e^{-t^2}dt.
+$$
+Next we replace $e^{-t^2}$ by its Taylor series and integrate term by term to obtain
+$$
+erfc(\lambda) = 1 - \frac{2}{\sqrt\pi}\int_0^\lambda\left(1 - \frac{t^2}{2} + \frac{t^2}{2^22!} + \cdots\right)dt = 1 - \frac{2}{\sqrt\pi}\left(\lambda - \frac{\lambda^3}{3} + \frac{\lambda^5}{5\cdot2!} + \cdots\right).
+$$
+We can show that this series converges, however to get the same accuracy as before, we should take at least $20$ terms.
