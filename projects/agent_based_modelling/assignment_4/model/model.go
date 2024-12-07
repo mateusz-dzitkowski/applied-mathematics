@@ -5,6 +5,7 @@ import (
 	"main/model/road"
 	"main/model/road/car"
 	"math/rand"
+	"strconv"
 	"strings"
 )
 
@@ -26,11 +27,10 @@ func New(params Params) *Model {
 		Road:   road.New(params.RoadLength),
 	}
 
-	numCars := int(float64(params.RoadLength) * params.CarDensity)
-
-	for range numCars {
-		n := model.Road.RandomUnoccupiedSpace()
-		model.Road.Lane[n] = car.New(params.MaxVelocity)
+	for n := range params.RoadLength {
+		if rand.Float64() < params.CarDensity {
+			model.Road.Lane[n] = car.New(params.MaxVelocity)
+		}
 	}
 
 	return &model
@@ -76,7 +76,7 @@ func (m *Model) String() string {
 	sb.WriteString("[")
 	for n := range m.params.RoadLength {
 		if m.Road.IsOccupied(n) {
-			sb.WriteString("C")
+			sb.WriteString(strconv.Itoa(m.Road.Lane[n].Velocity))
 		} else {
 			sb.WriteString(" ")
 		}

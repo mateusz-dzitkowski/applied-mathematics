@@ -13,7 +13,7 @@ import (
 const (
 	MaxVelocity = 5
 	Steps       = 20
-	RoadLength  = 1000
+	RoadLength  = 100
 	NumPoints   = 1000
 	Runs        = 100
 )
