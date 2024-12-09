@@ -27,10 +27,10 @@ func New(params Params) *Model {
 		Road:   road.New(params.RoadLength),
 	}
 
-	for n := range params.RoadLength {
-		if rand.Float64() < params.CarDensity {
-			model.Road.Lane[n] = car.New(params.MaxVelocity)
-		}
+	numCars := int(float64(params.RoadLength) * params.CarDensity)
+	for range numCars {
+		n := model.Road.RandomUnoccupiedSpace()
+		model.Road.Lane[n] = car.New(params.MaxVelocity)
 	}
 
 	return &model

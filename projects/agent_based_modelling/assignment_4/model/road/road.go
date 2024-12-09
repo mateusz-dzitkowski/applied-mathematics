@@ -2,6 +2,7 @@ package road
 
 import (
 	"main/model/road/car"
+	"math/rand"
 )
 
 type Road struct {
@@ -18,4 +19,13 @@ func New(length int) *Road {
 
 func (r *Road) IsOccupied(n int) bool {
 	return r.Lane[n%r.length] != nil
+}
+
+func (r *Road) RandomUnoccupiedSpace() int {
+	for {
+		n := rand.Intn(r.length)
+		if !r.IsOccupied(n) {
+			return n
+		}
+	}
 }

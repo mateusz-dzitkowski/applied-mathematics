@@ -12,15 +12,15 @@ import (
 
 const (
 	MaxVelocity = 5
-	Steps       = 20
+	Steps       = 50
 	RoadLength  = 100
-	NumPoints   = 1000
-	Runs        = 100
+	NumPoints   = 200
+	Runs        = 1000
 )
 
 func PlotMeanVelocities() {
 	p := plot.New()
-	p.Title.Text = fmt.Sprintf("Mean velocity as a function of the density of cars, over %d runs", Runs)
+	p.Title.Text = fmt.Sprintf("Mean velocity as a function of the density of cars, with road length = %d, averaged over %d runs", RoadLength, Runs)
 	p.X.Label.Text = "Car density"
 	p.Y.Label.Text = "Mean velocity"
 	p.Legend.Top = true

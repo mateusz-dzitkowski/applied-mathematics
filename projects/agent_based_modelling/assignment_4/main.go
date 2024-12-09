@@ -32,7 +32,7 @@ func plotGraph() {
 
 func plotGrid() {
 	densities := []float64{0.1, 0.3, 0.6}
-	probabilities := []float64{0.0, 0.3, 0.6, 0.9}
+	probabilities := []float64{0.0, 0.3, 0.6}
 
 	paramsGrid := make([][]model.Params, len(densities))
 	for i, density := range densities {
