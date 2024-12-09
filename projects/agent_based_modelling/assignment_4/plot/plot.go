@@ -11,8 +11,6 @@ import (
 )
 
 const (
-	TileX    = 500
-	TileY    = 500
 	PaddingX = 10
 	PaddingY = 10
 )
@@ -34,7 +32,8 @@ func GridSave(paramsGrid [][]model.Params, filename string) error {
 		}
 	}
 
-	img := vgimg.New(vg.Length(TileX*len(paramsGrid[0])), vg.Length(TileY*len(paramsGrid)))
+	size := 2 * paramsGrid[0][0].RoadLength // just assume all params have the same RoadLength yolo
+	img := vgimg.New(vg.Length(size*len(paramsGrid[0])), vg.Length(size*len(paramsGrid)))
 	canvases := plot.Align(
 		plots,
 		draw.Tiles{

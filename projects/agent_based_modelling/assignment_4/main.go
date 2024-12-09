@@ -7,12 +7,12 @@ import (
 )
 
 const (
-	BaseMaxVelocity = 5
-	BaseRoadLength  = 100
+	BaseMaxVelocity = 10
+	BaseRoadLength  = 1000
 )
 
 func main() {
-	plotGraph()
+	plotGrid()
 }
 
 func run() {
