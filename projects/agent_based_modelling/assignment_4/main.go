@@ -12,7 +12,7 @@ const (
 )
 
 func main() {
-	plotGrid()
+	plotGraph()
 }
 
 func run() {

@@ -14,7 +14,7 @@ const (
 	MaxVelocity = 5
 	Steps       = 50
 	RoadLength  = 100
-	NumPoints   = 200
+	NumPoints   = 101
 	Runs        = 1000
 )
 
