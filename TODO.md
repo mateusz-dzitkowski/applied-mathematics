@@ -4,3 +4,4 @@
 - [ ] twitter scraper 
 - [x] agent-based list 4
 - [x] perturbation methods list 5
+- [ ] spanish flashcards

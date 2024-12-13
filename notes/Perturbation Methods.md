@@ -794,3 +794,141 @@ $$
 erfc(\lambda) = 1 - \frac{2}{\sqrt\pi}\int_0^\lambda\left(1 - \frac{t^2}{2} + \frac{t^2}{2^22!} + \cdots\right)dt = 1 - \frac{2}{\sqrt\pi}\left(\lambda - \frac{\lambda^3}{3} + \frac{\lambda^5}{5\cdot2!} + \cdots\right).
 $$
 We can show that this series converges, however to get the same accuracy as before, we should take at least $20$ terms.
+
+# The WKB approximation
+The WKB (Wentzel-Kramers-Brillouin) method can be applied in particular to the linear differential equations of the following form:
+$$
+\varepsilon^2 y'' + q(t)y = 0,
+$$
+$$
+y'' + (\lambda^2p(t) - q(t))y = 0,
+$$
+$$
+y'' + q(\varepsilon t)^2 y = 0.
+$$
+Consider the first equation, with $q(t) = -k^2(t) < 0$, a non-oscillatory case:
+$$
+\varepsilon y'' - k^2(t) y = 0.
+$$
+We note that if $k$ is constant, $k(t) = k_0$, the equation would have the solution of the form
+$$
+y(t) = e^{\pm \frac{k_0}{\varepsilon}t}.
+$$
+This suggests making the substitution
+$$
+y(t) = e^{\frac{u(t)}{\varepsilon}}.
+$$
+Then we have
+$$
+y'(t) = y(t)\frac{u'(t)}{\varepsilon}, \quad y''(t) = y(t)\left(\left(\frac{u'(t)}{\varepsilon}\right)^2 + \frac{u''(t)}{\varepsilon}\right).
+$$
+Then, substituting back into the equation, we are left with
+$$
+\varepsilon v' + v^2 - k^2 = 0, \quad v = u'.
+$$
+Now we can apply the regular perturbation method to solve this equation. Let
+$$
+v(t) = v_0(t) + \varepsilon v_1(t) + O(\varepsilon^2).
+$$
+This gives us
+$$
+\varepsilon\left(v_0' + \varepsilon v_1'\right) + (v_0 + \varepsilon v_1)^2 - k^2 \sim 0
+$$
+$$
+\varepsilon v_0' + \varepsilon^2 v_1' + v_0^2 + \varepsilon^2 v_1^2 + 2\varepsilon v_0v_1 - k^2 \sim 0.
+$$
+Equating the same powers of $\varepsilon$ we get
+$$
+\begin{aligned}
+v_0^2 - k^2 &= 0, \\
+v_0' + 2v_0v_1 &= 0.
+\end{aligned}
+$$
+The first equation gives us $v_0 = \pm k$, the second one gives us $v_1 = -\frac{1}{2}\frac{k'}{k}$. From the fact that $v = u'$, we get
+$$
+u(t) = \pm\int_a^t k(s)ds - \frac{\varepsilon}{2}\ln\left(\frac{k(t)}{k(a)}\right) + O(e^2).
+$$
+Finally we get
+$$
+y(t) = e^{\frac{u(t)}{\varepsilon}} = \frac{\sqrt{k(a)}}{\sqrt{k(x)}}\exp\left(\pm\frac{1}{\varepsilon}\int_a^tk(s)ds\right)(1 + O(\varepsilon)).
+$$
+The WKB approximation is the linear combination of these two solutions
+$$
+y_{WKB}(t) = C_1\frac{\sqrt{k(a)}}{\sqrt{k(x)}}\exp\left(\frac{1}{\varepsilon}\int_a^tk(s)ds\right) + C_2\frac{\sqrt{k(a)}}{\sqrt{k(x)}}\exp\left(-\frac{1}{\varepsilon}\int_a^tk(s)ds\right).
+$$
+The constants $C_1$ and $C_2$ can be determined by the initial conditions.
+
+#### Example
+Find the WKB approximation to
+$$
+\varepsilon^2 y'' - (1 + t)^2 y = 0,\quad y(0)=1, \quad y(\infty) = 0.
+$$
+Here, $k(t) = 1 + t$, so $\int_0^tk(s)ds = t + \frac{t^2}{2}$. Hence, our approximation is
+$$
+y_{WKB}(t) = C_1\frac{1}{\sqrt{1 + t}}\exp\left(\frac{1}{\varepsilon}\left(t + \frac{t^2}{2}\right)\right) + C_2\frac{1}{\sqrt{1 + t}}\exp\left(-\frac{1}{\varepsilon}\left(t + \frac{t^2}{2}\right)\right).
+$$
+In order to satisfy $y(\infty) = 0$, $C_1$ has to be equal to $0$. Then $y_{WKB}(0) = C_2$, hence $C_2=1$. Finally we get
+$$
+y_{WKB}(t) = \frac{1}{\sqrt{1 + t}}\exp\left(-\frac{1}{\varepsilon}\left(t + \frac{t^2}{2}\right)\right).
+$$
+
+Now let's consider the oscillatory case, $q(t) = k^2(t) > 0$. Then
+$$
+\varepsilon^2 y'' + k^2(t)y = 0.
+$$
+To get the WKB approximation we proceed in a similar way as before. We make a substitution
+$$
+y(t) = e^{i\frac{u(t)}{\varepsilon}}
+$$
+and get
+$$
+y_{WKB}(t) = C_1\frac{\sqrt{k(a)}}{\sqrt{k(t)}}\exp\left(\frac{i}{\varepsilon}\int_a^tk(s)ds\right) + C_2\frac{\sqrt{k(a)}}{\sqrt{k(t)}}\exp\left(-\frac{i}{\varepsilon}\int_a^tk(s)ds\right).
+$$
+Using the Euler formula $e^{ix} = \cos(x) + i\sin(x)$ we can rewrite this $y_{WKB}$ to
+$$
+y_{WKB}(t) = C_1\frac{\sqrt{k(a)}}{\sqrt{k(t)}}\cos\left(\frac{1}{\varepsilon}\int_a^tk(s)ds\right) + C_2\frac{\sqrt{k(a)}}{\sqrt{k(t)}}\sin\left(\frac{1}{\varepsilon}\int_a^tk(s)ds\right).
+$$
+
+#### Example (Schrödinger equation)
+$$
+-\frac{\hbar^2}{2m}y'' + (V(t) - E)y = 0,
+$$
+where $\hbar$ is the reduced Planck constant, $m$ is a mass, $V(t)$ is a potential, and $E$ is some constant. In the case $V(t) > E$, we have
+$$
+y_{WKB}(t) = \frac{A}{(V(t) - E)^{\frac{1}{4}}}\cos\left(\frac{\sqrt{2m}}{\hbar}\int_a^t\sqrt{V(s) - E}ds + \phi\right),
+$$
+where $A$ and $\phi$ depend on specific initial/boundary conditions.
+
+#### Example
+Consider the boundary value problem
+$$
+y'' + \lambda q(t) y = 0, \quad 0 < t < \pi, \quad y(0) = y(\pi) = 0.
+$$
+We assume that $q(t) > 0$. 
+Here the number $\lambda$ is called the eigenvalue of the equation is there exists a non-trivial solution for that particular value of $\lambda$. The corresponding non-trivial solutions are called eigenfunctions.
+
+We set $\varepsilon = \frac{1}{\sqrt{\lambda}}$ and $k(t) = \sqrt{q(t)}$. Then the equation in question becomes
+$$
+\varepsilon^2 y'' + k^2(t) y = 0.
+$$
+If $\varepsilon$ is small, or, equivalently, $\lambda$ is large, then the WKB approximation is given by
+$$
+y_{WKB}(t) = \left(\frac{q(0)}{q(t)}\right)^\frac{1}{4}\left(C_1\cos\left(\sqrt{\lambda}\int_0^t\sqrt{q(s)}ds\right) + C_2\sin\left(\sqrt{\lambda}\int_0^t\sqrt{q(s)}ds\right)\right).
+$$
+Since $y(0) = 0$, then $C_1 = 0$, and since $y(\pi) = 0$, then 
+$$
+C_2\sin\left(\sqrt{\lambda}\int_0^\pi\sqrt{q(s)}ds\right) = 0,
+$$
+hence, since we don't want trivial solutions, we need $\lambda$ such that
+$$
+\sqrt{\lambda}\int_0^\pi\sqrt{q(s)}ds = \pi k, \quad k\in\mathbb{Z}.
+$$
+$$
+\lambda = \frac{\pi^2 k^2}{A^2},
+$$
+where $A = \int_0^\pi\sqrt{q(s)}ds$.
+Then the corresponding eigenfunctions have the form
+$$
+y_{WKB}(t) = C_2\left(\frac{q(0)}{q(t)}\right)^\frac{1}{4}\sin\left(k\pi\frac{\int_0^t\sqrt{q(s)}ds}{\int_0^\pi\sqrt{q(s)}ds}\right).
+$$
+

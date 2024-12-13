@@ -1,2 +1,2 @@
 source .env
-parallel -j 3 npx tweet-harvest@latest --token "$TOKEN" --search-keyword {} --limit 20 :::: args
+parallel -j 3 npx tweet-harvest@latest --token "$ACCESS_TOKEN" --search-keyword {} --limit 1000 :::: args
