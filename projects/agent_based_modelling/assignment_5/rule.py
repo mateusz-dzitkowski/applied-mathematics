@@ -17,8 +17,7 @@ class Rule(BaseModel):
 
     @cached_property
     def bit_list(self) -> list[int]:
-        without_padding = [int(bit) for bit in f"{self.number:b}"]
-        return [0] * (BITS_IN_RULE - len(without_padding)) + without_padding
+        return [int(bit) for bit in f"{self.number:0{BITS_IN_RULE}b}"]
 
     @cached_property
     def step_function(self) -> StepFunction:
