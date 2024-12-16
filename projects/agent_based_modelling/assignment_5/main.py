@@ -1,8 +1,9 @@
-from enum import Enum
 from dataclasses import dataclass, field
-from projects.agent_based_modelling.assignment_5.rule import Rule
+from enum import Enum
 
 import numpy as np
+
+from projects.agent_based_modelling.assignment_5.rule import Rule
 
 
 class StartPosition(Enum):
@@ -43,7 +44,7 @@ class Automaton:
         self._arr_history.append(self._arr)
 
     def __str__(self) -> str:
-        return "[" + "".join(["█" if bit else " " for bit in self._arr[self.run_length:-self.run_length]]) + "]"
+        return "[" + "".join(["█" if bit else " " for bit in self._arr[self.run_length : -self.run_length]]) + "]"
 
 
 if __name__ == "__main__":
