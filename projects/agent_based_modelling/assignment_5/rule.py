@@ -1,15 +1,15 @@
 from functools import cached_property
-from typing import Protocol
+from typing import Callable
 
 import numpy as np
 from pydantic import BaseModel, Field
+from scipy.ndimage import shift
 
 BITS_IN_RULE = 8
 MAX_RULE_NUMBER = 2**BITS_IN_RULE - 1
 
 
-class StepFunction(Protocol):
-    def __call__(self, p: np.ndarray, q: np.ndarray, r: np.ndarray) -> np.ndarray: ...
+StepFunction = Callable[[np.ndarray], np.ndarray]
 
 
 class Rule(BaseModel):
@@ -21,31 +21,33 @@ class Rule(BaseModel):
 
     @cached_property
     def step_function(self) -> StepFunction:
-        def step_function(p: np.ndarray, q: np.ndarray, r: np.ndarray) -> np.ndarray:
+        def step_function(middle: np.ndarray) -> np.ndarray:
+            left = shift(middle, 1, cval=False)
+            right = shift(middle, -1, cval=False)
             return np.where(
-                p,
+                left,
                 np.where(
-                    q,
+                    middle,
                     np.where(
-                        r,
+                        right,
                         self.bit_list[0],
                         self.bit_list[1],
                     ),
                     np.where(
-                        r,
+                        right,
                         self.bit_list[2],
                         self.bit_list[3],
                     ),
                 ),
                 np.where(
-                    q,
+                    middle,
                     np.where(
-                        r,
+                        right,
                         self.bit_list[4],
                         self.bit_list[5],
                     ),
                     np.where(
-                        r,
+                        right,
                         self.bit_list[6],
                         self.bit_list[7],
                     ),
