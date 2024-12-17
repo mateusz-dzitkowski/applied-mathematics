@@ -1,61 +1,28 @@
-from dataclasses import dataclass, field
-from enum import Enum
-
-import numpy as np
-
 from projects.agent_based_modelling.assignment_5.rule import Rule
+from projects.agent_based_modelling.assignment_5.automaton import Automaton, StartPosition
+from matplotlib import pyplot as plt
 
 
-class StartPosition(Enum):
-    DOT = 0
-    RANDOM = 1
+SIZE = 200
+RUN_LENGTH = 200
+GRID_SIDE_LENGTH = 16
 
 
-@dataclass
-class Automaton:
-    rule: Rule
-    size: int
-    run_length: int
-    start_position: StartPosition
+def plot_all_rules(start_position: StartPosition):
+    fig, axes = plt.subplots(GRID_SIDE_LENGTH, GRID_SIDE_LENGTH, figsize=(SIZE, RUN_LENGTH))
+    for i, row in enumerate(axes):
+        for j, ax in enumerate(row):
+            automaton = Automaton(
+                rule=Rule(number=GRID_SIDE_LENGTH*i + j),
+                size=SIZE,
+                run_length=RUN_LENGTH,
+                start_position=start_position,
+            )
+            automaton.run()
+            automaton.plot(ax)
 
-    _arr: np.ndarray = field(default_factory=lambda: np.array([]))
-    _arr_history: list[np.ndarray] = field(default_factory=list)
-
-    def __post_init__(self):
-        match self.start_position:
-            case StartPosition.DOT:
-                self._arr = np.zeros(self.size)
-                self._arr[self.size // 2] = 1
-            case StartPosition.RANDOM:
-                self._arr = np.random.randint(low=0, high=2, size=self.size)
-
-        self._arr = self._arr.astype(int)
-        self._arr = np.concatenate([np.array([0] * self.run_length), self._arr, np.array([0] * self.run_length)])
-        self._arr_history.append(self._arr)
-
-    def run(self):
-        print(self)
-        for _ in range(self.run_length):
-            self.step()
-            print(self)
-
-    def step(self):
-        self._arr = self.rule.step_function(self._arr)
-        self._arr_history.append(self._arr)
-
-    def __str__(self) -> str:
-        return "[" + "".join(["█" if bit else " " for bit in self._arr[self.run_length : -self.run_length]]) + "]"
+    fig.savefig("test.png")
 
 
 if __name__ == "__main__":
-    size = 201
-    arr = np.zeros(size)
-    arr[size // 2] = 1
-
-    automaton = Automaton(
-        rule=Rule(number=161),
-        size=200,
-        run_length=100,
-        start_position=StartPosition.RANDOM,
-    )
-    automaton.run()
+    plot_all_rules(StartPosition.RANDOM)
