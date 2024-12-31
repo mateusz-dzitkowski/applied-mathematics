@@ -6,14 +6,14 @@ from pydantic import BaseModel, Field
 from scipy.ndimage import shift
 
 BITS_IN_RULE = 8
-MAX_RULE_NUMBER = 2**BITS_IN_RULE - 1
+RULES = 2**BITS_IN_RULE
 
 
 StepFunction = Callable[[np.ndarray], np.ndarray]
 
 
 class Rule(BaseModel):
-    number: int = Field(ge=0, le=MAX_RULE_NUMBER)
+    number: int = Field(ge=0, lt=RULES)
 
     @cached_property
     def bit_list(self) -> list[int]:

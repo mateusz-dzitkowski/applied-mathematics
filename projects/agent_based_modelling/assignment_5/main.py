@@ -1,28 +1,37 @@
-from projects.agent_based_modelling.assignment_5.rule import Rule
+from projects.agent_based_modelling.assignment_5.rule import Rule, RULES
 from projects.agent_based_modelling.assignment_5.automaton import Automaton, StartPosition
 from matplotlib import pyplot as plt
 
 
-SIZE = 200
-RUN_LENGTH = 200
-GRID_SIDE_LENGTH = 16
+SIZE = 100
+RUN_LENGTH = 100
+COLUMNS = 4
 
 
-def plot_all_rules(start_position: StartPosition):
-    fig, axes = plt.subplots(GRID_SIDE_LENGTH, GRID_SIDE_LENGTH, figsize=(SIZE, RUN_LENGTH))
-    for i, row in enumerate(axes):
-        for j, ax in enumerate(row):
-            automaton = Automaton(
-                rule=Rule(number=GRID_SIDE_LENGTH*i + j),
-                size=SIZE,
-                run_length=RUN_LENGTH,
-                start_position=start_position,
-            )
-            automaton.run()
-            automaton.plot(ax)
+def plot():
+    fig, axes = plt.subplots(RULES, COLUMNS, figsize=(COLUMNS * SIZE, RULES * RUN_LENGTH))
+    for i, (evolution_dot, evolution_random, timeseries_dot, timeseries_random) in enumerate(axes):
+        print(i)
+        dot = Automaton(
+            rule=Rule(number=i),
+            size=SIZE,
+            run_length=RUN_LENGTH,
+            start_position=StartPosition.DOT,
+        )
+        dot.plot_evolution(evolution_dot)
+        dot.plot_timeseries(timeseries_dot)
+
+        random = Automaton(
+            rule=Rule(number=i),
+            size=SIZE,
+            run_length=RUN_LENGTH,
+            start_position=StartPosition.RANDOM,
+        )
+        random.plot_evolution(evolution_random)
+        random.plot_timeseries(timeseries_random)
 
     fig.savefig("test.png")
 
 
 if __name__ == "__main__":
-    plot_all_rules(StartPosition.RANDOM)
+    plot()

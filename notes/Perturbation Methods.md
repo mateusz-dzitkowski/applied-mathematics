@@ -932,3 +932,110 @@ $$
 y_{WKB}(t) = C_2\left(\frac{q(0)}{q(t)}\right)^\frac{1}{4}\sin\left(k\pi\frac{\int_0^t\sqrt{q(s)}ds}{\int_0^\pi\sqrt{q(s)}ds}\right).
 $$
 
+# Regular perturbations of PDEs
+
+Consider a "near" sphere with a surface given by
+$$
+S(\theta; \varepsilon) = 1 + \varepsilon P_2(\cos(\theta)),
+$$
+where $P_2(x) = \frac{1}{2}(3x^2 - 1)$ is the Legendre polynomial of degree $2$.
+We assume that the potential outside this perturbed sphere is given by the equation
+$$
+\Delta u = 0, \quad r > S(\theta, \varepsilon),
+$$
+$$
+u = 1, \quad r = S(\theta, \varepsilon),
+$$
+$$
+\lim\limits_{r \rightarrow \infty} u = 0.
+$$
+Recall that the Laplacian in spherical coordinates is given by
+$$
+\Delta u = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial u}{\partial r}\right) + \frac{1}{r^2\sin(\theta)}\frac{\partial}{\partial \theta}\left(\sin(\theta)\frac{\partial u}{\partial \theta}\right) + \frac{1}{r^2\sin(\theta)}\frac{\partial^2 u}{\partial \phi^2},
+$$
+where $\phi$ is a polar angle, and $\theta$ is an azymuthal angle.
+
+Assuming azymuthal symmetry the Laplacian becomes
+$$
+\Delta u = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial u}{\partial r}\right) + \frac{1}{r^2\sin(\theta)}\frac{\partial}{\partial \theta}\left(\sin(\theta)\frac{\partial u}{\partial \theta}\right).
+$$
+We are seeking an asymptotic expansion of the form
+$$
+u(r, \theta) = u_0(r, \theta) + \varepsilon u_1(r, \theta) + \varepsilon^2 u_2(r, \theta).
+$$
+Expanding the boundary conditions in a Taylor series we get
+$$
+1 = u(1 + \varepsilon P_2(\cos(\theta)), \theta) = u(1, \theta) + \varepsilon P_2(\cos(\theta))\frac{\partial u}{\partial r}(1, \theta) + \frac{(\varepsilon P_2(\cos(\theta)))^2}{2}\frac{\partial^2 u}{\partial r^2}(1, \theta) + \cdots
+$$
+Substituting the expansion to the above we get
+$$
+\begin{aligned}
+1 &\sim u_0(1, \theta) + \\
+& +\varepsilon\left(u_1(1, \theta) + P_2(\cos(\theta))\frac{\partial u_0}{\partial r}(1, \theta)\right) + \\ 
+&+\varepsilon^2\left(u_2(1, \theta) + P_2(\cos(\theta)) \frac{\partial u_1}{\partial r}(1, \theta) + \frac{1}{2}P_2(\cos(\theta))^2\frac{\partial^2 u_0}{\partial r^2}(1, \theta)\right).
+\end{aligned}
+$$
+Then we get
+$$
+\begin{aligned}
+\Delta u_0 = 0,& \quad r > S(\theta, 0), \\
+u_0 = 1,& \quad r = 1, \\
+\lim\limits_{r \rightarrow \infty} u_0 = 0,& \\
+&\\
+\Delta u_1 = 0,& \quad r > S(\theta, 0), \\
+u_1 = -P_2(\cos(\theta))\frac{\partial u_0}{\partial r}(1, \theta),& \quad r = 1, \\
+\lim\limits_{r \rightarrow \infty} u_1 = 0,& \\
+&\\
+\Delta u_2 = 0,& \quad r > S(\theta, 0), \\
+u_2 = -P_2(\cos(\theta))\frac{\partial u_1}{\partial r}(1, \theta) - \frac{1}{2}P_2(\cos(\theta))^2\frac{\partial^2 u_0}{\partial r^2}(1, \theta),& \quad r = 1, \\
+\lim\limits_{r \rightarrow \infty} u_2 = 0.
+\end{aligned}
+$$
+To solve the Laplace equation $\Delta u = 0$ in spherical coordinates we apply the method of separation of variables. Assume that
+$$
+u(r, \theta) = R(r)\Theta(\theta),
+$$
+and use the assumption by substituting into the equation. We have
+$$
+\frac{\partial u}{\partial r} = R'(r)\Theta(\theta),
+$$
+and
+$$
+\frac{\partial u}{\partial \theta} = R(r)\Theta(\theta),
+$$
+so
+$$
+\Delta u = \frac{\Theta(\theta)}{r^2}(r^2R'(r))' + \frac{R(r)}{r^2\sin(\theta)}(\sin(\theta)\Theta'(\theta))' = 0.
+$$
+We multiply the equation by $\frac{r^2}{R\Theta}$ to get
+$$
+\frac{1}{R}(r^2R')' = -\frac{1}{\Theta\sin(\theta)}(\sin(\theta)\Theta')' = C,
+$$
+where $C$ is a chosen constant. We get two equations then:
+$$
+\frac{1}{R}(r^2R')' = C,
+$$
+$$
+\frac{1}{\Theta\sin(\theta)}(\sin(\theta)\Theta')' = -C.
+$$
+The general solution of the first equation is
+$$
+R(r) = Ar^l + Br^{-(l+1)}.
+$$
+The general solution to the second equation is
+$$
+\Theta(\theta) = P_l(\cos(\theta)),
+$$
+where $P_l$ is the Legendre polynomial of degree $l$
+
+Then the general solution to the Laplace equation is
+$$
+u(r, \theta) = \sum_{l=0}^\infty \left(Ar^l + Br^{-(l+1)}\right)P_l(\cos(\theta)).
+$$
+For our perturbed problem we get:
+$$
+u_0(r, \theta) = \frac{1}{r},
+$$
+$$
+u_1(r, \theta) = \frac{1}{r^3}P_2(\cos(\theta)),
+$$
