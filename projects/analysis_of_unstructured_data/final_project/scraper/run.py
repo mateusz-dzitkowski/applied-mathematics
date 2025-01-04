@@ -55,14 +55,7 @@ class UnitOfWork:
 
     @property
     def is_done(self) -> bool:
-        tweets_data_dir = Path(__file__, "..", "tweets-data").resolve()
-        tweets_data_dir.mkdir(exist_ok=True)
-        return any(
-            [
-                path.name.startswith(self.filename.replace(" ", "_"))
-                for path in tweets_data_dir.iterdir()
-            ]
-        )
+        return Path(__file__, "..", "tweets-data", f"{self.filename.replace(' ', '_')}.csv").resolve().exists()
 
     @property
     def filename(self) -> str:
