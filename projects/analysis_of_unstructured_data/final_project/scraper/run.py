@@ -1,0 +1,96 @@
+from dataclasses import dataclass
+from datetime import date, timedelta
+from itertools import product
+import os
+from pathlib import Path
+import subprocess
+from typing import Self, Iterable
+
+
+UOW_TIMEOUT_SECONDS = 120
+LIMIT = 10_000
+START = date(2024, 1, 1)
+KEYWORDS = [
+    "wybory2025",
+    "wybory",
+    "wybory prezydenckie",
+    "trzaskowski",
+    "nawrocki",
+    "hołownia",
+    "mentzen",
+    "jakubiak",
+    "witkowski",
+    "starosielec",
+    "duda",
+    "polityka",
+    "tusk",
+    "razem",
+    "koalicja",
+    "trzecia droga",
+    "pis",
+    "konfederacja",
+]
+
+DATES = [START + timedelta(days=n) for n in range((date.today() - START).days + 1)]
+DATE_FORMAT = "%d-%m-%Y"
+
+
+@dataclass
+class UnitOfWork:
+    start: date
+    keyword: str
+
+    @classmethod
+    def all(cls) -> Iterable[Self]:
+        for _date, keyword in product(reversed(DATES), KEYWORDS):
+            yield cls(
+                start=_date,
+                keyword=keyword,
+            )
+
+    @property
+    def end(self) -> date:
+        return self.start + timedelta(days=1)
+
+    @property
+    def is_done(self) -> bool:
+        tweets_data_dir = Path(__file__, "..", "tweets-data").resolve()
+        tweets_data_dir.mkdir(exist_ok=True)
+        return any(
+            [
+                path.name.startswith(f"{self.keyword.replace(' ', '_')}_{self.start.strftime(DATE_FORMAT)}")
+                for path in tweets_data_dir.iterdir()
+            ]
+        )
+
+
+def main():
+    with open("logs.log", "a", buffering=1) as f:
+        for uow in UnitOfWork.all():
+            if uow.is_done:
+                print(f"{uow} is done, skipping")
+                continue
+
+            cmd = [
+                "npx", "tweet-harvest@latest",
+                "--token", os.environ["ACCESS_TOKEN"],
+                "--search-keyword", uow.keyword,
+                "--from", uow.start.strftime(DATE_FORMAT),
+                "--to", uow.end.strftime(DATE_FORMAT),
+                "--limit", str(LIMIT),
+            ]
+
+            try:
+                print(f"running {cmd}")
+                subprocess.call(
+                    cmd,
+                    stdout=f,
+                    stderr=f,
+                    timeout=UOW_TIMEOUT_SECONDS,
+                )
+            except subprocess.TimeoutExpired:
+                continue
+
+
+if __name__ == "__main__":
+    main()

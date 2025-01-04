@@ -1,7 +1,7 @@
 - [ ] optimisation theory exercises
 - [x] perturbation methods list 4
-- [ ] machine learning list 6
-- [ ] twitter scraper 
+- [x] machine learning list 6
+- [x] twitter scraper 
 - [x] agent-based list 4
 - [x] perturbation methods list 5
 - [ ] spanish flashcards
