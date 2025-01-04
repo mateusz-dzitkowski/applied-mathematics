@@ -59,10 +59,14 @@ class UnitOfWork:
         tweets_data_dir.mkdir(exist_ok=True)
         return any(
             [
-                path.name.startswith(f"{self.keyword.replace(' ', '_')}_{self.start.strftime(DATE_FORMAT)}")
+                path.name.startswith(self.filename.replace(" ", "_"))
                 for path in tweets_data_dir.iterdir()
             ]
         )
+
+    @property
+    def filename(self) -> str:
+        return f"{self.keyword}_{self.start}"
 
 
 def main():
@@ -79,6 +83,7 @@ def main():
                 "--from", uow.start.strftime(DATE_FORMAT),
                 "--to", uow.end.strftime(DATE_FORMAT),
                 "--limit", str(LIMIT),
+                "--output-filename", uow.filename,
             ]
 
             print(f"running {cmd}")
