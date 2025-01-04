@@ -32,16 +32,20 @@ def solve(*, x: np.ndarray, func_c: Func, func_f: Func, alpha: float = 1.0) -> n
     f = func_f(x)
     f[0] = f[-1] = 0
 
+    diagonal = 1 + alpha / (4*h**2) * (8*c)
+    superdiagonal = -alpha / (4*h**2) * (4*c + c_plus - c_minus)
+    subdiagonal = -alpha / (4*h**2) * (4*c + c_minus - c_plus)
+
     a = np.zeros((n, n))
-    np.fill_diagonal(a, np.hstack([np.array([1]), 1 + alpha / h**2 * (3*c + (c_plus + c_minus)/2), np.array([1])]))  # diagonal
-    a[kth_diag_indices(a, 1)] = np.hstack([np.array([-1]), -alpha / h**2 * (c + (c_plus + c) / 2)])  # superdiagonal
-    a[kth_diag_indices(a, -1)] = np.hstack([-alpha / h**2 * (c + (c + c_minus) / 2), np.array([-1])])  # subdiagonal
+    np.fill_diagonal(a, np.hstack([np.array([1]), diagonal, np.array([1])]))
+    a[kth_diag_indices(a, 1)] = np.hstack([np.array([-1]), superdiagonal])
+    a[kth_diag_indices(a, -1)] = np.hstack([subdiagonal, np.array([-1])])
 
     return np.linalg.solve(a, f)
 
 
 def main():
-    x = np.linspace(0, np.pi, 500, endpoint=True)
+    x = np.linspace(0, np.pi, 1000, endpoint=True)
     alpha = 1.0
     plt.plot(
         x,
@@ -50,12 +54,15 @@ def main():
             func_c=lambda _x: np.ones_like(_x),
             func_f=lambda _x: 2*np.cos(_x),
             alpha=alpha,
-        )
+        ),
+        label="numerical",
     )
     plt.plot(
         x,
         np.cos(x),
+        label="true",
     )
+    plt.legend()
     plt.show()
 
 
