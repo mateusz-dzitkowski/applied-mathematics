@@ -4,6 +4,7 @@ from itertools import product
 import os
 from pathlib import Path
 import subprocess
+import traceback
 from typing import Self, Iterable
 
 
@@ -80,16 +81,16 @@ def main():
                 "--limit", str(LIMIT),
             ]
 
-            try:
-                print(f"running {cmd}")
-                subprocess.call(
-                    cmd,
-                    stdout=f,
-                    stderr=f,
-                    timeout=UOW_TIMEOUT_SECONDS,
-                )
-            except subprocess.TimeoutExpired:
-                continue
+            print(f"running {cmd}")
+            with subprocess.Popen(cmd, stdout=f, stderr=f) as process:
+                try:
+                    process.communicate(None, timeout=UOW_TIMEOUT_SECONDS)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    print(f"{uow} has been terminated due to reaching the timeout")
+                    continue
+                except:
+                    print(traceback.format_exc())
 
 
 if __name__ == "__main__":
