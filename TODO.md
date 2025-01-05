@@ -6,4 +6,4 @@
 - [x] perturbation methods list 5
 - [ ] spanish flashcards
 - [ ] agent based list 5
-- [ ] perturbation methods list 6
+- [x] perturbation methods list 6
