@@ -8,7 +8,7 @@ import traceback
 from typing import Self, Iterable
 
 
-UOW_TIMEOUT_SECONDS = 120
+UOW_TIMEOUT_SECONDS = 60
 LIMIT = 10_000
 START = date(2024, 1, 1)
 KEYWORDS = [
