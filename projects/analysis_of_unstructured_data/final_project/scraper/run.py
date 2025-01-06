@@ -21,15 +21,27 @@ KEYWORDS = [
     "mentzen",
     "jakubiak",
     "witkowski",
-    "starosielec",
     "duda",
     "polityka",
     "tusk",
     "razem",
     "koalicja",
     "trzecia droga",
-    "pis",
     "konfederacja",
+    "@donaldtusk",
+    "@szymon_holownia",
+    "@trzaskowski_",
+    "@MorawieckiM",
+    "@AndrzejDuda",
+    "@Nawrocki25",
+    "@NawrockiKn",
+    "@SlawomirMentzen",
+    "@pkukiz",
+    "@ZiobroPL",
+    "@SasinJacek",
+    "@pisorgpl",
+    "@Platforma_org",
+    "@Macierewicz_A",
 ]
 
 DATES = [START + timedelta(days=n) for n in range((date.today() - START).days + 1)]
@@ -89,6 +101,8 @@ def main():
                     continue
                 except:
                     print(traceback.format_exc())
+                finally:
+                    subprocess.run("kill $(ps aux | grep chromium | awk '{print $2}')", shell=True, stdout=f, stderr=f)
 
 
 if __name__ == "__main__":
