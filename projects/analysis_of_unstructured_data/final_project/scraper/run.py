@@ -8,6 +8,12 @@ import traceback
 from typing import Self, Iterable
 
 
+SPECIAL_DAYS = {
+    date(2024, 12, 23),
+    date(2024, 12, 24),
+    date(2024, 12, 25),
+    date(2024, 12, 26),
+}
 UOW_TIMEOUT_SECONDS = 60
 LIMIT = 10_000
 START = date(2024, 1, 1)
@@ -77,6 +83,10 @@ class UnitOfWork:
 def main():
     with open("logs.log", "a", buffering=1) as f:
         for uow in UnitOfWork.all():
+            if uow.start in SPECIAL_DAYS:
+                print(f"{uow.start} is on Christmas, there's no tweets anyway")
+                continue
+
             if uow.is_done:
                 print(f"{uow} is done, skipping")
                 continue
