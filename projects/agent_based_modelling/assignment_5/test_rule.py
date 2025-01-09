@@ -18,4 +18,5 @@ def fixture_rule(request):
     ids=[f"{number:0{BITS}b}" for number in range(2**BITS)],
 )
 def test_rules(arr, rule):
-    assert_array_equal(rule.custom_step_function(arr), rule.generic_step_function(arr))
+    assert rule.step_function is not rule.generic_step_function
+    assert_array_equal(rule.step_function(arr), rule.generic_step_function(arr))
