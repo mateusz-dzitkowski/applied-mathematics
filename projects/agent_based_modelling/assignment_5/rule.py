@@ -4,9 +4,11 @@ from typing import Callable
 import numpy as np
 from pydantic import BaseModel, Field
 from scipy.ndimage import shift
+import networkx as nx
 
 BITS_IN_RULE = 8
 RULES = 2**BITS_IN_RULE
+SPACE_DIAGRAM_BITS = 3
 
 _not = np.logical_not
 _and = np.logical_and
@@ -34,8 +36,21 @@ class Rule(BaseModel):
     number: int = Field(ge=0, lt=RULES)
 
     @cached_property
-    def bit_list(self) -> list[int]:
-        return [int(bit) for bit in f"{self.number:0{BITS_IN_RULE}b}"]
+    def configuration_space_diagram(self) -> nx.Graph:
+        g = nx.DiGraph()
+        nodes = list(range(2**SPACE_DIAGRAM_BITS))
+        g.add_nodes_from(nodes)
+
+        for node in nodes:
+            arr = int_to_array(node, SPACE_DIAGRAM_BITS)
+            res = self.step_function(arr)
+            g.add_edge(node, array_to_int(res))
+
+        return g
+
+    @cached_property
+    def bit_list(self) -> np.ndarray:
+        return int_to_array(self.number, BITS_IN_RULE)
 
     @cached_property
     def step_function(self) -> StepFunction:
@@ -87,3 +102,11 @@ def left(x: np.ndarray) -> np.ndarray:
 
 def right(x: np.ndarray) -> np.ndarray:
     return shift(x, -1, cval=0)
+
+
+def int_to_array(n: int, bits: int) -> np.ndarray:
+    return np.array([int(bit) for bit in f"{n:0{bits}b}"])
+
+
+def array_to_int(arr: np.ndarray) -> int:
+    return int(arr @ (1 << np.arange(arr.shape[-1] - 1, -1, -1)))

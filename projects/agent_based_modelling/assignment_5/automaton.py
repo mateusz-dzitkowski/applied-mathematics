@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+from functools import cached_property
 from matplotlib import pyplot as plt
 
 import numpy as np
@@ -39,17 +40,20 @@ class Automaton:
             self._arr = self.rule.step_function(self._arr)
             self._arr_history = np.vstack([self._arr_history, self._arr])
 
+    @cached_property
+    def arr_history(self) -> np.ndarray:
+        return self._arr_history[:, self.run_length : -self.run_length]
+
     def plot_evolution(self, ax: Axes):
         ax.set_aspect("equal", adjustable="box")
-        ax.set_title(f"rule {self.rule.number}")
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.imshow(self._arr_history[:, self.run_length : -self.run_length], cmap=plt.cm.gray_r)  # type: ignore
+        ax.imshow(self.arr_history, cmap=plt.cm.gray_r)  # type: ignore
 
     def plot_timeseries(self, ax: Axes):
-        number_of_ones = self._arr_history.sum(axis=1)
-        activity = np.vstack([np.zeros(self._arr_history[0].shape[0]), np.abs(np.diff(self._arr_history, axis=0))]).sum(axis=1)
-        bonds = np.abs(np.diff(self._arr_history, axis=1)).sum(axis=1)
+        number_of_ones = self.arr_history.sum(axis=1)
+        activity = np.vstack([np.zeros(self.arr_history[0].shape[0]), np.abs(np.diff(self.arr_history, axis=0))]).sum(axis=1)
+        bonds = np.abs(np.diff(self.arr_history, axis=1)).sum(axis=1)
 
         ax.plot(number_of_ones, label="number of ones")
         ax.plot(activity, label="activity")
