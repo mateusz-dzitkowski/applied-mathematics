@@ -1039,3 +1039,104 @@ $$
 $$
 u_1(r, \theta) = \frac{1}{r^3}P_2(\cos(\theta)),
 $$
+# Multiple scales
+
+Consider the Duffing equation:
+$$
+u'' + u = \varepsilon u^3, \quad u(0)=1, \quad u'(0)=0.
+$$
+Application of the Lindstedt method leads to the approximation
+$$
+u(t) \approx \cos\left(t - \frac{3}{8}\varepsilon t\right) = \cos(t)\cos\left(\frac{3}{8}\varepsilon t\right) + \sin(t)\sin\left(\frac{3}{8}\varepsilon t\right).
+$$
+We observe that the solution of the Duffing equation loves on two different time scales. This observation suggests that the solution of the Duffing equation should be written (formally) as $u(t_1, t_2)$ where $t_1=t$, and $t_2=\varepsilon t$. Then we seek a multiple scales expansion
+$$
+u(t_1, t_2) \sim u_0(t_1, t_2) + \varepsilon u_1(t_1, t_2).
+$$
+We have
+$$
+\frac{d}{dt} = \frac{\partial}{\partial t_1} + \varepsilon \frac{\partial}{\partial t_2},
+$$
+and
+$$
+\frac{d^2}{dt^2} = \frac{\partial^2}{\partial t_1^2} + 2\varepsilon\frac{\partial^2}{\partial t_1 \partial t_2} + \varepsilon^2\frac{\partial^2}{\partial t_2^2}.
+$$
+Plugging that into the Duffing equation, hell nah, I'm not writing all that. Then collecting the terms:
+$$
+\frac{\partial^2}{\partial t_1}u_0 + u_0 = 0 \quad \implies \quad u_0(t_1, t_2) = A_0(t_2)\cos(t_1) + B_0(t_2)\sin(t_1).
+$$
+From the initial condition we get
+$$
+f(0) = 1, \quad g(0) + \varepsilon f'(0) = 0.
+$$
+Using some trigonometry black magic we get
+$$
+\begin{aligned}
+g' &= \frac{3}{8}f(f^2 + g^2), \\
+f' &= -\frac{3}{8}g(f^2 + g^2), \\
+\frac{\partial^2 u_1}{\partial t_1^2} + u_1 &= \frac{f}{4}(f^2-3g^2)\cos(3t_1) + \frac{g}{4}(3f^2-g^2)\sin(3t_1).
+\end{aligned}
+$$
+We note that the first two equations have to hold for all $t_2$, so
+$$
+0 = g'g + f'f = \frac{1}{2}(f^2+g^2)',
+$$
+hence $f^2 + g^2 = 1$, by the initial condition. Then we get simplified equations
+$$
+\begin{aligned}
+g' &= \frac{3}{8}f, \\
+f' &= -\frac{3}{8}g,
+\end{aligned}
+$$
+with the solutions (initial conditions applied)
+$$
+\begin{aligned}
+g(t) &= \sin\left(\frac{3}{8}t\right), \\
+f(t) &= \cos\left(\frac{3}{8}t\right).
+\end{aligned}
+$$
+Finally we get
+$$
+u_0(t_1, t_2) = \cos\left(\frac{3}{8}t_2\right)\cos(t_1) + \sin\left(\frac{3}{8}t_2\right)\sin(t_1).
+$$
+Then
+$$
+u(t) \sim \cos\left(\frac{3}{8}\varepsilon t\right)\cos(t) + \sin\left(\frac{3}{8}\varepsilon t\right)\sin(t).
+$$
+
+Multiple temporal (or spacial) scales to not only appear in periodic systems. Such problems we may also find in problems that are modelled by
+- $u''+\varepsilon u' + u = 0$ - weakly damped oscillator
+- $u'' + k(\varepsilon t) u = 0$ - slowly varying coefficients
+- $\nabla\left(k\left(\frac{x}{\varepsilon}\right)\nabla u\right) = f$ - diffusion in complex media
+
+### Example (weakly dampened oscillator)
+Consider the following problem
+$$
+u'' + \varepsilon u' + u = 0, \quad u(0)=0, \quad u'(0)=1.
+$$
+By the application of the regular perturbation method we get
+$$
+u(t) \sim \sin(t) - \frac{1}{2}\varepsilon t\sin(t),
+$$
+which doesn't make sense physically due to the secular term.
+
+On the other side, from the application of the Lindstedt method we get
+$$
+u(t) \sim \left(1 - \varepsilon t + \frac{\varepsilon^3}{8}\right)\sin\left(t - \frac{\varepsilon^2}{8}t\right).
+$$
+We can see the same issue with the solution blowing up.
+
+Then we try to apply the multiple scale approach.
+We assume te existence of two time scales $t_1=t$, and $t_2=\varepsilon^\alpha t$.
+$$
+u(t) \sim u_0(t_1, t_2) + \varepsilon^\alpha u_1(t_1, t_2) + \cdots
+$$
+Comparing the terms with the same power of $\varepsilon$ yields
+$$
+\frac{\partial^2 u_0}{\partial t_1^2} + u_0 = 0
+$$
+The solution to the above is
+$$
+u_0(t_1, t_2) = a(t_2)\sin(t_1) + b(t_2)\cos(t_1),
+$$
+with $b(0)=0$, and $a(0)=1$. I don't want to write notes anymore.

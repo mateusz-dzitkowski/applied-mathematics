@@ -45,7 +45,7 @@ def plot_graphs():
     for rule_number in range(RULES):
         print(rule_number)
         g = Rule(number=rule_number).configuration_space_diagram
-        pos = nx.kamada_kawai_layout(g)
+        pos = nx.spring_layout(g, k=0.5)
 
         fig, ax = plt.subplots(layout="tight")
         ax.set_title(f"Configuration space diagram of rule {rule_number}")
@@ -63,5 +63,5 @@ def plot_graphs():
 
 
 if __name__ == "__main__":
-    plot_rules()
+    # plot_rules()
     plot_graphs()

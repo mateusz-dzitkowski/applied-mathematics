@@ -8,7 +8,7 @@ import networkx as nx
 
 BITS_IN_RULE = 8
 RULES = 2**BITS_IN_RULE
-SPACE_DIAGRAM_BITS = 3
+SPACE_DIAGRAM_BITS = 5
 
 _not = np.logical_not
 _and = np.logical_and
