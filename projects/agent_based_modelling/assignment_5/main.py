@@ -1,8 +1,8 @@
-from projects.agent_based_modelling.assignment_5.rule import Rule, RULES
-from projects.agent_based_modelling.assignment_5.automaton import Automaton, StartPosition
-from matplotlib import pyplot as plt
 import networkx as nx
+from matplotlib import pyplot as plt
 
+from projects.agent_based_modelling.assignment_5.automaton import Automaton, StartPosition
+from projects.agent_based_modelling.assignment_5.rule import RULES, Rule
 
 SIZE = 100
 RUN_LENGTH = 100

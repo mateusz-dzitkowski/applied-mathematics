@@ -1,9 +1,8 @@
 from typing import Callable
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 from scipy.integrate import odeint
-
 
 Field = np.ndarray
 Funcs = tuple[Field, Field]
@@ -14,7 +13,8 @@ Func = Callable[[Field], Field]
 
 def wkb_approx(*, eps: float) -> Func:
     def inner(x: Field) -> Field:
-        return eps/np.sqrt(1+x**2)*(np.exp((x+x**3/3)/eps) - np.exp(-(x+x**3/3)/eps))
+        return eps / np.sqrt(1 + x**2) * (np.exp((x + x**3 / 3) / eps) - np.exp(-(x + x**3 / 3) / eps))
+
     return inner
 
 
@@ -23,8 +23,9 @@ def ode_system(*, eps: float) -> System:
         y, z = yz
         return (
             z,
-            (1 + x**2)**2 / eps**2 * y,
+            (1 + x**2) ** 2 / eps**2 * y,
         )
+
     return inner
 
 

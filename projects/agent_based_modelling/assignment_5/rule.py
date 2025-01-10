@@ -1,10 +1,10 @@
 from functools import cached_property
 from typing import Callable
 
+import networkx as nx
 import numpy as np
 from pydantic import BaseModel, Field
 from scipy.ndimage import shift
-import networkx as nx
 
 BITS_IN_RULE = 8
 RULES = 2**BITS_IN_RULE

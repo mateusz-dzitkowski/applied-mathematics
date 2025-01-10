@@ -53,7 +53,7 @@ class Problem:
         for j, plant in enumerate(self.plants):
             for i in range(self.days_beets_delivered):
                 processing_time = cp.sum(self.x[:i, j]) / plant.capacity
-                objective += plant.coefficient * self.x[i, j] * (processing_time + processing_time - 2*(i+1))
+                objective += plant.coefficient * self.x[i, j] * (processing_time + processing_time - 2 * (i + 1))
 
         return objective
 

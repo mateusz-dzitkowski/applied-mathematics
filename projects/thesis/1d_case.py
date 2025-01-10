@@ -1,7 +1,7 @@
 from typing import Callable
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 
 Func = Callable[[np.ndarray], np.ndarray]
 
@@ -21,7 +21,7 @@ def kth_diag_indices(a, k):
 
 def vo_smoothing(beta: float) -> Func:
     def inner(x: np.ndarray) -> np.ndarray:
-        return 1 / np.sqrt(beta ** 2 + np.abs(x) ** 2)
+        return 1 / np.sqrt(beta**2 + np.abs(x) ** 2)
 
     return inner
 
@@ -44,9 +44,9 @@ def solve_once(*, x: np.ndarray, c_full: np.ndarray, f_full: np.ndarray, alpha: 
     f = f_full
     f[0] = f[-1] = 0
 
-    diagonal = 1 + alpha / (4 * h ** 2) * (8 * c)
-    superdiagonal = -alpha / (4 * h ** 2) * (4 * c + c_plus - c_minus)
-    subdiagonal = -alpha / (4 * h ** 2) * (4 * c + c_minus - c_plus)
+    diagonal = 1 + alpha / (4 * h**2) * (8 * c)
+    superdiagonal = -alpha / (4 * h**2) * (4 * c + c_plus - c_minus)
+    subdiagonal = -alpha / (4 * h**2) * (4 * c + c_minus - c_plus)
 
     a = np.zeros((n, n))
     np.fill_diagonal(a, np.hstack([np.array([1]), diagonal, np.array([1])]))

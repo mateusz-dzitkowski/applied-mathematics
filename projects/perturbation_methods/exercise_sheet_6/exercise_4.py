@@ -1,10 +1,9 @@
 from typing import Callable
 
-from matplotlib import pyplot as plt
 import numpy as np
-from scipy.integrate import solve_bvp
+from matplotlib import pyplot as plt
 from scipy.constants import hbar, pi
-
+from scipy.integrate import solve_bvp
 
 Field = np.ndarray
 Funcs = tuple[Field, Field]
@@ -19,8 +18,9 @@ def ode_system(*, m: float, e: float) -> System:
         psi, phi = psi_phi
         return (
             phi,
-            -2*m*e/hbar**2 * psi,
+            -2 * m * e / hbar**2 * psi,
         )
+
     return inner
 
 
@@ -37,7 +37,7 @@ def main():
     n = 10
     m = 10
 
-    e = (n*pi*hbar/a)**2/(2*m)
+    e = (n * pi * hbar / a) ** 2 / (2 * m)
     x = np.linspace(0, a, 10000)
     psi = solve(
         system=ode_system(m=m, e=e),
@@ -45,11 +45,11 @@ def main():
         x=x,
     )
     psi_minmax = psi / psi.max()
-    int_psi = (np.abs(psi_minmax)**2).sum() * a * np.diff(x)[0]
+    int_psi = (np.abs(psi_minmax) ** 2).sum() * a * np.diff(x)[0]
     psi_scaled = psi_minmax / int_psi
 
-    wkb = np.sin(np.sqrt(2*m*e)/hbar*x)
-    int_wkb = (np.abs(wkb)**2).sum() * a * np.diff(x)[0]
+    wkb = np.sin(np.sqrt(2 * m * e) / hbar * x)
+    int_wkb = (np.abs(wkb) ** 2).sum() * a * np.diff(x)[0]
     wkb_scaled = wkb / int_wkb
 
     plt.plot(x, psi_scaled, label="odeint")

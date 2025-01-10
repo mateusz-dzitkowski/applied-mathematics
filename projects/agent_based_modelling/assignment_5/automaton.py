@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import cached_property
-from matplotlib import pyplot as plt
 
 import numpy as np
+from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
 from projects.agent_based_modelling.assignment_5.rule import Rule

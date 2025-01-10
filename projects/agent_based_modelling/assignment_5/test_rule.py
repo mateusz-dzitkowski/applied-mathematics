@@ -1,8 +1,8 @@
-import pytest
 import numpy as np
+import pytest
 from numpy.testing import assert_array_equal
-from projects.agent_based_modelling.assignment_5.rule import Rule, CUSTOM_STEP_FUNCTIONS
 
+from projects.agent_based_modelling.assignment_5.rule import CUSTOM_STEP_FUNCTIONS, Rule
 
 BITS = 3
 

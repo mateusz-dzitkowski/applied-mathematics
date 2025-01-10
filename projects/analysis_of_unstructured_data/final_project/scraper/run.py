@@ -1,12 +1,11 @@
+import os
+import subprocess
+import traceback
 from dataclasses import dataclass
 from datetime import date, timedelta
 from itertools import product
-import os
 from pathlib import Path
-import subprocess
-import traceback
-from typing import Self, Iterable
-
+from typing import Iterable, Self
 
 SPECIAL_DAYS = {
     date(2024, 12, 23),
@@ -92,13 +91,20 @@ def main():
                 continue
 
             cmd = [
-                "npx", "tweet-harvest@latest",
-                "--token", os.environ["ACCESS_TOKEN"],
-                "--search-keyword", uow.keyword,
-                "--from", uow.start.strftime(DATE_FORMAT),
-                "--to", uow.end.strftime(DATE_FORMAT),
-                "--limit", str(LIMIT),
-                "--output-filename", uow.filename,
+                "npx",
+                "tweet-harvest@latest",
+                "--token",
+                os.environ["ACCESS_TOKEN"],
+                "--search-keyword",
+                uow.keyword,
+                "--from",
+                uow.start.strftime(DATE_FORMAT),
+                "--to",
+                uow.end.strftime(DATE_FORMAT),
+                "--limit",
+                str(LIMIT),
+                "--output-filename",
+                uow.filename,
             ]
 
             print(f"running {cmd}")
