@@ -33,7 +33,7 @@ def solve(system: System, bcs: BCs, x: Field) -> Field:
 
 
 def main():
-    n = 68
+    n = 13
     lam = (3*n/7/np.pi**2)**2
 
     x = np.linspace(0, np.pi, 10000)
@@ -46,7 +46,7 @@ def main():
     wkb = np.pi/(np.pi + x) * np.sin(np.sqrt(lam)*(np.pi**2*x + np.pi*x**2 + x**3/3))
     y_scaled = y / y.max() * wkb.max()
 
-    plt.plot(x, y_scaled, label="ode")
+    plt.plot(x, y_scaled, label="odeint")
     plt.plot(x, wkb,label="wkb")
     plt.legend()
     plt.show()
