@@ -40,13 +40,15 @@ def solve_once(*, x: np.ndarray, c_full: np.ndarray, f_full: np.ndarray, alpha: 
     c_plus = c_full[2:]
     c_minus = c_full[:-2]
     c = c_full[1:-1]
+    c_plus_half = (c_plus + c) / 2
+    c_minus_half = (c_minus + c) / 2
 
     f = f_full
     f[0] = f[-1] = 0
 
-    diagonal = 1 + alpha / (4 * h**2) * (8 * c)
-    superdiagonal = -alpha / (4 * h**2) * (4 * c + c_plus - c_minus)
-    subdiagonal = -alpha / (4 * h**2) * (4 * c + c_minus - c_plus)
+    diagonal = 1 + alpha / h**2 * (c_plus_half + c_minus_half)
+    superdiagonal = -alpha / h**2 * c_plus_half
+    subdiagonal = -alpha / h**2 * c_minus_half
 
     a = np.zeros((n, n))
     np.fill_diagonal(a, np.hstack([np.array([1]), diagonal, np.array([1])]))
