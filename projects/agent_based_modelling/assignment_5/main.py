@@ -37,7 +37,7 @@ def plot_rules():
         evolution_rand.set_title(f"Rule {rule_number} starting random")
         time_series_rand.set_title(f"Time series of rule {rule_number} starting random")
 
-        fig.savefig(f"plots/rule_{rule_number}.png")
+        fig.savefig(f"plots/rule_{rule_number:03}.png")
         plt.close(fig)
 
 
@@ -58,9 +58,10 @@ def plot_graphs():
             font_weight="normal",
             node_color="skyblue",
         )
-        fig.savefig(f"graphs/rule_{rule_number}.png")
+        fig.savefig(f"graphs/rule_{rule_number:03}.png")
         plt.close(fig)
 
 
 if __name__ == "__main__":
+    plot_rules()
     plot_graphs()
