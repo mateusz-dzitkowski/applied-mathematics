@@ -43,19 +43,27 @@ def solve_once(*, x: np.ndarray, c: np.ndarray, f: np.ndarray, alpha: float = 1.
     c_plus_half = (c_plus + c_mid) / 2
     c_minus_half = (c_minus + c_mid) / 2
 
+    # mid sections of the diagonals derived from the discretization of the differential equation
     almost_diagonal = 1 + alpha / h**2 * (c_plus_half + c_minus_half)
     almost_superdiagonal = -alpha / h**2 * c_plus_half
     almost_subdiagonal = -alpha / h**2 * c_minus_half
 
+    # adding *special* values at the ends of the diagonals due to boundary conditions
     diagonal = np.hstack(
+        [np.array([1 + alpha / h**2 * (c[0] + c[1]) / 2]), almost_diagonal, np.array([1 + alpha / h**2 * (c[-1] + c[-2]) / 2])],
+    )
+    superdiagonal = np.hstack(
         [
-            np.array([1 + alpha/h**2*(c[0]+c[1])/2]),
-            almost_diagonal,
-            np.array([1 + alpha/h**2*(c[-1]+c[-2])/2])
+            np.array([-alpha / h**2 * (c[0] + c[1]) / 2]),
+            almost_superdiagonal,
         ],
     )
-    superdiagonal = np.hstack([np.array([-alpha/h**2*(c[0]+c[1])/2]), almost_superdiagonal])
-    subdiagonal = np.hstack([almost_subdiagonal, np.array([-alpha/h**2*(c[-1]+c[-2])/2])])
+    subdiagonal = np.hstack(
+        [
+            almost_subdiagonal,
+            np.array([-alpha / h**2 * (c[-1] + c[-2]) / 2]),
+        ],
+    )
 
     a = np.zeros((n, n))
     np.fill_diagonal(a, diagonal)
@@ -87,7 +95,7 @@ def main():
     beta = 0.00001
 
     def func_f(_x: np.ndarray) -> np.ndarray:
-        return 1 + np.heaviside(_x - 0.4, 1) - np.heaviside(_x - 0.7, 1) + np.cos(np.pi*_x)
+        return 1 + np.heaviside(_x - 0.4, 1) - np.heaviside(_x - 0.7, 1) + np.cos(np.pi * _x)
 
     f_with_randomness = func_f(x) + np.random.normal(scale=0.03, size=x.size)
 
