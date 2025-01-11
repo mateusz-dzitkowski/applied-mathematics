@@ -63,5 +63,5 @@ def plot_graphs():
 
 
 if __name__ == "__main__":
-    # plot_rules()
-    plot_graphs()
+    plot_rules()
+    # plot_graphs()

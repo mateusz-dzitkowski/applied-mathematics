@@ -52,7 +52,7 @@ class Automaton:
 
     def plot_timeseries(self, ax: Axes):
         number_of_ones = self.arr_history.sum(axis=1)
-        activity = np.vstack([np.zeros(self.arr_history[0].shape[0]), np.abs(np.diff(self.arr_history, axis=0))]).sum(axis=1)
+        activity = np.vstack([np.full(self.arr_history[0].shape[0], np.nan), np.abs(np.diff(self.arr_history, axis=0))]).sum(axis=1)
         bonds = np.abs(np.diff(self.arr_history, axis=1)).sum(axis=1)
 
         ax.plot(number_of_ones, label="number of ones")
