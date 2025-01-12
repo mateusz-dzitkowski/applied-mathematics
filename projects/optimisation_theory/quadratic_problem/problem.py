@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Callable, Self
+from typing import Callable
 
 import numpy as np
 from matplotlib.axes import Axes
@@ -18,27 +18,6 @@ class Problem:
     beets_per_day: int
     num_days: int
     plants: list[Plant]
-
-    @classmethod
-    def main_problem(cls) -> Self:
-        return cls(
-            beets_per_day=800,
-            num_days=20,
-            plants=[
-                Plant(
-                    capacity=220,
-                    coefficient=0.00006,
-                ),
-                Plant(
-                    capacity=160,
-                    coefficient=0.00002,
-                ),
-                Plant(
-                    capacity=180,
-                    coefficient=0.00003,
-                ),
-            ],
-        )
 
     @cached_property
     def num_plants(self) -> int:
@@ -72,12 +51,14 @@ class Problem:
     @cached_property
     def constraint(self) -> Callable[[np.ndarray], list[float]]:
         def inner(v: np.ndarray) -> list[float]:
+            # every day, all beets have to be distributed
             return self.v_to_x(v).sum(axis=1) - self.beets_per_day
 
         return inner
 
     @cached_property
     def bounds(self) -> list[tuple[float, None]]:
+        # number of beets assigned to plant j at day i has to be nonnegative
         return [(0, None) for _ in self.days for _ in self.plants]
 
     @cached_property
