@@ -1,27 +1,29 @@
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Self
+from typing import Callable, Self
 
-import cvxpy as cp
+import numpy as np
+from matplotlib.axes import Axes
+from scipy.optimize import minimize
 
 
-@dataclass
+@dataclass(frozen=True)
 class Plant:
     capacity: float
     coefficient: float
 
 
-@dataclass
+@dataclass(frozen=True)
 class Problem:
     beets_per_day: int
-    days_beets_delivered: int
+    num_days: int
     plants: list[Plant]
 
     @classmethod
     def main_problem(cls) -> Self:
         return cls(
             beets_per_day=800,
-            days_beets_delivered=20,
+            num_days=20,
             plants=[
                 Plant(
                     capacity=220,
@@ -43,40 +45,55 @@ class Problem:
         return len(self.plants)
 
     @cached_property
-    def x(self) -> cp.Variable:
-        return cp.Variable((self.days_beets_delivered, self.num_plants))
+    def days(self) -> list[int]:
+        return list(range(self.num_days))
 
     @cached_property
-    def objective(self) -> cp.Expression:
-        objective = 0
+    def total_demand(self) -> float:
+        return self.num_days * self.beets_per_day
 
-        for j, plant in enumerate(self.plants):
-            for i in range(self.days_beets_delivered):
-                processing_time = cp.sum(self.x[:i, j]) / plant.capacity
-                objective += plant.coefficient * self.x[i, j] * (processing_time + processing_time - 2 * (i + 1))
-
-        return objective
+    def v_to_x(self, v: np.ndarray) -> np.ndarray:
+        return v.reshape(self.num_days, self.num_plants)
 
     @cached_property
-    def constraints(self) -> list[cp.Constraint]:
-        constraints = []
+    def loss_function(self) -> Callable[[np.ndarray], float]:
+        def inner(v: np.ndarray) -> float:
+            x = self.v_to_x(v)
+            t = np.zeros((self.num_days + 1, self.num_plants))
+            loss = 0
+            for j, plant in enumerate(self.plants):
+                for i in self.days:
+                    t[i + 1, j] = x[: i + 1, j].sum() / plant.capacity
+                    loss += plant.coefficient * x[i, j] * (t[i, j] + t[i + 1, j] - 2 * (i + 1)) / 2
+            return loss
 
-        for i in range(self.days_beets_delivered):
-            constraints.append(cp.sum(self.x[i, :]) == self.beets_per_day)
+        return inner
 
-        for j, plant in enumerate(self.plants):
-            for i in range(self.days_beets_delivered):
-                constraints.append(self.x[i, j] <= plant.capacity)
+    @cached_property
+    def constraint(self) -> Callable[[np.ndarray], list[float]]:
+        def inner(v: np.ndarray) -> list[float]:
+            return self.v_to_x(v).sum(axis=1) - self.beets_per_day
 
-        constraints.append(self.x >= 0)
+        return inner
 
-        return constraints  # type: ignore
+    @cached_property
+    def bounds(self) -> list[tuple[float, None]]:
+        return [(0, None) for _ in self.days for _ in self.plants]
 
-    def solve(self) -> cp.Variable:
-        problem = cp.Problem(
-            objective=cp.Minimize(self.objective),
-            constraints=self.constraints,
+    @cached_property
+    def solution(self) -> np.ndarray:
+        result = minimize(
+            fun=self.loss_function,
+            x0=np.ones(self.num_days * self.num_plants),
+            method="SLSQP",
+            bounds=self.bounds,
+            constraints={
+                "type": "eq",
+                "fun": self.constraint,
+            },
         )
-        print(problem)
-        problem.solve()
-        return self.x
+        return self.v_to_x(result.x)
+
+    def plot_solution(self, ax: Axes):
+        for i, x in enumerate(self.solution.T):
+            ax.plot(x, "-*", label=f"Plant {i + 1}")
