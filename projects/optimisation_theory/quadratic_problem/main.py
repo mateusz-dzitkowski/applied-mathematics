@@ -29,6 +29,9 @@ def main():
     ax.legend()
     plt.show()
 
+    print(f"Sum of beets distributed each day: {problem.solution.sum(axis=1)}")
+    print(f"Sum of total beets distributed: {problem.solution.sum()}")
+
 
 if __name__ == "__main__":
     main()
