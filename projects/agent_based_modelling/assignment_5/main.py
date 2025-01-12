@@ -1,16 +1,17 @@
+from typing import Iterable
 import networkx as nx
 from matplotlib import pyplot as plt
 
 from projects.agent_based_modelling.assignment_5.automaton import Automaton, StartPosition
-from projects.agent_based_modelling.assignment_5.rule import RULES, Rule
+from projects.agent_based_modelling.assignment_5.rule import Rule, CUSTOM_STEP_FUNCTIONS
 
 SIZE = 100
 RUN_LENGTH = 100
 COLUMNS = 4
 
 
-def plot_rules():
-    for rule_number in range(RULES):
+def plot_rules(rules: Iterable[int] = CUSTOM_STEP_FUNCTIONS):
+    for rule_number in rules:
         print(rule_number)
         rule = Rule(number=rule_number)
         fig, ((evolution_dot, evolution_rand), (time_series_dot, time_series_rand)) = plt.subplots(2, 2, figsize=(15, 15), layout="tight")
@@ -41,8 +42,8 @@ def plot_rules():
         plt.close(fig)
 
 
-def plot_graphs():
-    for rule_number in range(RULES):
+def plot_graphs(rules: Iterable[int] = CUSTOM_STEP_FUNCTIONS):
+    for rule_number in rules:
         print(rule_number)
         g = Rule(number=rule_number).configuration_space_diagram
         pos = nx.spring_layout(g, k=0.5)
@@ -64,4 +65,4 @@ def plot_graphs():
 
 if __name__ == "__main__":
     plot_rules()
-    # plot_graphs()
+    plot_graphs()
