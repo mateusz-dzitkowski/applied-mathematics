@@ -11,19 +11,19 @@ System = Callable[[Funcs, Field], Funcs]
 Func = Callable[[Field], Field]
 
 
-def wkb_approx(*, eps: float) -> Func:
+def wkb_approx(*, lam: float) -> Func:
     def inner(x: Field) -> Field:
-        return eps / 2 / np.sqrt(1 + x**2) * (np.exp((x + x**3 / 3) / eps) - np.exp(-(x + x**3 / 3) / eps))
+        return 1 / 2 / np.sqrt(lam) / np.sqrt(1 + x**2) * (np.exp(np.sqrt(lam) * (x + x**3 / 3)) - np.exp(- np.sqrt(lam) * (x + x**3 / 3)))
 
     return inner
 
 
-def ode_system(*, eps: float) -> System:
+def ode_system(*, lam: float) -> System:
     def inner(yz: Funcs, x: Field) -> Funcs:
         y, z = yz
         return (
             z,
-            (1 + x**2) ** 2 / eps**2 * y,
+            (1 + x**2) ** 2 * lam * y,
         )
 
     return inner
@@ -36,11 +36,11 @@ def solve(*, system: System, init: Initial, x: Field) -> Field:
 
 def main():
     init = 0.0, 1.0
-    eps = 0.005
-    x = np.linspace(0, 10**-3, 1000000)
+    lam = 100000
+    x = np.linspace(0, 0.5, 100000)
 
-    system = ode_system(eps=eps)
-    wkb = wkb_approx(eps=eps)
+    system = ode_system(lam=lam)
+    wkb = wkb_approx(lam=lam)
 
     y_odeint = solve(
         system=system,
@@ -49,9 +49,9 @@ def main():
     )
     y_wkb = wkb(x)
 
-    # plt.loglog(x, y_odeint, label="odeint")
-    # plt.loglog(x, y_wkb, label="wkb")
-    plt.loglog(x, y_odeint - y_wkb, label="difference")
+    plt.loglog(x, y_odeint, label="odeint")
+    plt.loglog(x, y_wkb, label="wkb")
+    # plt.loglog(x, y_odeint - y_wkb, label="difference")
     plt.legend()
     plt.show()
 
