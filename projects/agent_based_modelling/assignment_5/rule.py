@@ -38,10 +38,8 @@ class Rule(BaseModel):
     @cached_property
     def configuration_space_diagram(self) -> nx.Graph:
         g = nx.DiGraph()
-        nodes = list(range(2**SPACE_DIAGRAM_BITS))
-        g.add_nodes_from(nodes)
 
-        for node in nodes:
+        for node in range(2**SPACE_DIAGRAM_BITS):
             arr = int_to_array(node, SPACE_DIAGRAM_BITS)
             res = self.step_function(arr)
             g.add_edge(node, array_to_int(res))
