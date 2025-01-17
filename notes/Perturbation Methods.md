@@ -1140,3 +1140,72 @@ $$
 u_0(t_1, t_2) = a(t_2)\sin(t_1) + b(t_2)\cos(t_1),
 $$
 with $b(0)=0$, and $a(0)=1$. I don't want to write notes anymore.
+
+# Slowly varying coefficients
+
+Let $k: \mathbb{R} \rightarrow [a, b]$ be smooth and $a > 0$. Then we consider two problems:
+$$
+u'' + k^2(\varepsilon t)u = 0,
+$$
+and
+$$
+u'' + k^2\left(\frac{t}{\varepsilon}\right)u = 0.
+$$
+The first equation is well defined for $\varepsilon \rightarrow 0$ since $k(0) = k_0$, and we expect $u(t, \varepsilon) \rightarrow \alpha\cos(k_0t) + \beta\sin(k_0t)$.
+
+The situation is not so clear with the second problem:
+- what happens with $k\left(\frac{t}{\varepsilon}\right)$ as $\varepsilon \rightarrow 0$?
+- does the solution $u(t, \varepsilon)$ converge to $u_0(t)$ in some sense?
+- which equation does $u_0$ satisfy?
+
+For now let's consider the first problem.
+$$
+u'' + k^2(\varepsilon t)u = 0, \quad u(0)=1, \quad u'(0)=0.
+$$
+
+We seek a two-scales solution with $t_1 = f(t, \varepsilon)$, and $t_2=\varepsilon t$.
+For the solution we seek an expansion of the form $u(t, \varepsilon) \sim u_0(t_1, t_2)$.
+The function $f$ should satisfy the following assumptions:
+- $f$ should be smooth,
+- $f$ should be increasing w.r.t $t$,
+- $f(0)=0$,
+- $f >> \varepsilon t$ to separate it from the slow scale $t_2=\varepsilon t$,
+- $f$ should simplify the problem.
+
+We get the following equation
+$$
+f''{u_0}_{t_1} + (f')^2{u_0}_{t_1t_1} + k^2(t_2)u_0 = 0.
+$$
+We note that the unperturbed problem oscillates and is damped, therefore second and third term should be of the same order and dominate.
+
+$$
+(f')^2{u_0}_{t_1t_1} + k^2(t_2)u_0 = 0.
+$$
+We solve it with some initial conditions and get
+$$
+u_0(t_1, t_2) = a(t_2)\cos(t_1) + b(t_2)\cos(t_1).
+$$
+To determine $a$ and $b$, we have to consider the next order term:
+$$
+TODO: equation here
+$$
+To avoid secular terma ins the solution we set
+$$
+\begin{aligned}
+2ka' + ak' &= 0, \quad a(0)=1 \\
+2kb' + bk' &= 0, \quad b(0)=0.
+\end{aligned}
+$$
+The solutions are:
+$$
+\begin{aligned}
+a(t_2) &= \sqrt{\frac{k(0)}{k(t_2)}}, \\
+b(t_2) &= 0.
+\end{aligned}
+$$
+
+Finally we get
+$$
+u(t_1, t_2) = a(t_2)\cos(t_1) = \sqrt{\frac{k(0)}{k(t_2)}}\cos\left(\int_0^tk(\varepsilon s)ds\right).
+$$
+
