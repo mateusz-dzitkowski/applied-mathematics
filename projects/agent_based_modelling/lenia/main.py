@@ -5,20 +5,16 @@ from projects.agent_based_modelling.lenia.animate import animate_lenia
 
 
 def main():
-    world = World.new(100, 100)
-    world.arr = np.random.uniform(size=(100, 100))
+    size = 100
+    initial = np.zeros((size, size))
+    initial[size // 2, size // 2] = 1
+    initial[size // 2 + 1, size // 2] = 1
+    initial[size // 2 - 1, size // 2] = 1
+    initial[size // 2, size // 2 - 1] = 1
+    initial[size // 2 + 1, size // 2 + 1] = 1
 
-    lenia = Lenia(
-        world=world,
-        kernel=Kernel.from_func(
-            func=bell(0.5, 0.15),
-            radius_cells=50,
-            radius_xy=13,
-        ),
-        growth_mapping=GrowthMapping(func=lambda x: 2*bell(0.15, 0.015)(x) - 1),
-        dt=0.1,
-    )
-    animate_lenia(lenia, 300, "random.gif")
+    gol = Lenia.game_of_life(initial=World(initial))
+    animate_lenia(gol, 300, "gol.gif")
 
 
 if __name__ == "__main__":
