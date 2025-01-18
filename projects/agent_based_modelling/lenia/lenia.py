@@ -1,11 +1,11 @@
-from functools import cached_property
 from dataclasses import dataclass
-from typing import Self, Callable
-import numpy as np
-from scipy.signal import convolve2d
+from functools import cached_property
 from pathlib import Path
-from matplotlib import pyplot as plt
+from typing import Callable, Self
 
+import numpy as np
+from matplotlib import pyplot as plt
+from scipy.signal import convolve2d
 
 Array = np.ndarray
 Func = Callable[[Array], Array]
@@ -13,7 +13,8 @@ Func = Callable[[Array], Array]
 
 def bell(m: float, s: float) -> Func:
     def inner(x: Array) -> Array:
-        return np.exp(-0.5*((x-m)/s)**2)
+        return np.exp(-0.5 * ((x - m) / s) ** 2)
+
     return inner
 
 
@@ -28,7 +29,7 @@ class Kernel:
     @classmethod
     def from_func(cls, func: Func, radius_cells: int, radius_xy: float, midpoint: bool = False) -> Self:
         if midpoint:
-            x, y = np.meshgrid(*np.ogrid[-radius_cells:radius_cells+1, -radius_cells:radius_cells+1])
+            x, y = np.meshgrid(*np.ogrid[-radius_cells : radius_cells + 1, -radius_cells : radius_cells + 1])
         else:
             x, y = np.meshgrid(*np.ogrid[-radius_cells:radius_cells, -radius_cells:radius_cells])
         x, y = x / radius_xy, y / radius_xy
@@ -70,7 +71,7 @@ class World:
     def embed(self, other: Self, at: tuple[int, int] = (0, 0)) -> Self:
         x, y = at
         dx, dy = other.arr.shape
-        self.arr[x:x + dx, y:y + dy] = other.arr
+        self.arr[x : x + dx, y : y + dy] = other.arr
         return self
 
     def save(self, path: Path | str):
@@ -107,7 +108,7 @@ class Lenia:
     def step(self):
         convolved = self.kernel.apply(self.world.arr)
         growth = self.growth_mapping.apply(convolved)
-        self.world.arr[:, :] = np.clip(self.world.arr + self.dt*growth, 0, 1)
+        self.world.arr[:, :] = np.clip(self.world.arr + self.dt * growth, 0, 1)
 
     def show(self):
         plt.imshow(self.world.arr)

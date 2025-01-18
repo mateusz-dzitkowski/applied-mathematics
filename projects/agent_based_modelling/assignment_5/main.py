@@ -1,9 +1,10 @@
 from typing import Iterable
+
 import networkx as nx
 from matplotlib import pyplot as plt
 
 from projects.agent_based_modelling.assignment_5.automaton import Automaton, StartPosition
-from projects.agent_based_modelling.assignment_5.rule import Rule, CUSTOM_STEP_FUNCTIONS
+from projects.agent_based_modelling.assignment_5.rule import CUSTOM_STEP_FUNCTIONS, Rule
 
 SIZE = 100
 RUN_LENGTH = 100

@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from projects.optimisation_theory.quadratic_problem.problem import Problem, Plant
+from projects.optimisation_theory.quadratic_problem.problem import Plant, Problem
 
 
 def main():

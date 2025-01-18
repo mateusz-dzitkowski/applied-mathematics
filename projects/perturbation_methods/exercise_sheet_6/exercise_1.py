@@ -13,7 +13,7 @@ Func = Callable[[Field], Field]
 
 def wkb_approx(*, lam: float) -> Func:
     def inner(x: Field) -> Field:
-        return 1 / 2 / np.sqrt(lam) / np.sqrt(1 + x**2) * (np.exp(np.sqrt(lam) * (x + x**3 / 3)) - np.exp(- np.sqrt(lam) * (x + x**3 / 3)))
+        return 1 / 2 / np.sqrt(lam) / np.sqrt(1 + x**2) * (np.exp(np.sqrt(lam) * (x + x**3 / 3)) - np.exp(-np.sqrt(lam) * (x + x**3 / 3)))
 
     return inner
 

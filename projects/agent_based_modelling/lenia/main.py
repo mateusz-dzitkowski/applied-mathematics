@@ -1,7 +1,7 @@
 import numpy as np
 
-from projects.agent_based_modelling.lenia.lenia import World, Lenia, Kernel, GrowthMapping, bell
 from projects.agent_based_modelling.lenia.animate import animate_lenia
+from projects.agent_based_modelling.lenia.lenia import Lenia, World
 
 
 def main():
