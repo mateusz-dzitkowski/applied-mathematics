@@ -1,13 +1,12 @@
+import numpy as np
+
 from projects.agent_based_modelling.lenia.lenia import World, Lenia, Kernel, GrowthMapping, bell
 from projects.agent_based_modelling.lenia.animate import animate_lenia
 
 
 def main():
     world = World.new(100, 100)
-    orbium = World.load("orbium.npy")
-
-    world.embed(orbium, at=(10, 20))
-    world.embed(orbium.flipped_vertical, at=(70, 30))
+    world.arr = np.random.uniform(size=(100, 100))
 
     lenia = Lenia(
         world=world,
@@ -19,7 +18,7 @@ def main():
         growth_mapping=GrowthMapping(func=lambda x: 2*bell(0.15, 0.015)(x) - 1),
         dt=0.1,
     )
-    animate_lenia(lenia, 300, "orbium.gif")
+    animate_lenia(lenia, 300, "random.gif")
 
 
 if __name__ == "__main__":
