@@ -9,7 +9,7 @@ def animate_lenia(lenia: Lenia, steps: int, filename: str, fps: int = 30):
     fig, ax = plt.subplots(figsize=(8, 8), constrained_layout=True)
     ax.set_aspect("equal")
 
-    img = ax.imshow(lenia.world.arr, cmap=plt.cm.gray_r)  # type: ignore
+    img = ax.imshow(lenia.world.arr)
 
     def update(_: int):
         lenia.step()
