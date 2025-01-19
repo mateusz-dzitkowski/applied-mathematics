@@ -8,7 +8,7 @@ from scipy.ndimage import shift
 
 BITS_IN_RULE = 8
 RULES = 2**BITS_IN_RULE
-SPACE_DIAGRAM_BITS = 5
+SPACE_DIAGRAM_BITS = 8
 
 _not = np.logical_not
 _and = np.logical_and

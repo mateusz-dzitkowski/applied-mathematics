@@ -65,5 +65,5 @@ def plot_graphs(rules: Iterable[int] = CUSTOM_STEP_FUNCTIONS):
 
 
 if __name__ == "__main__":
-    plot_rules()
+    # plot_rules()
     plot_graphs()
