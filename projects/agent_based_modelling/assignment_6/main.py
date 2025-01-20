@@ -19,7 +19,7 @@ def plot_evolutions():
     setups = list(product(PARAMS, INITIAL_ADOPTIONS, GRAPH_SIZES, MEAN_DEGREES))
     fig, axs = plt.subplots(len(setups), 1, figsize=(10, 6*len(setups)), layout="tight")
 
-    for i, ((params, initial_adoptions, graph_size, mean_degree), ax) in enumerate(zip(setups, axs)):
+    for (params, initial_adoptions, graph_size, mean_degree), ax in zip(setups, axs):
         for beta in REWIRING_PROBABILITIES:
             model = Model(
                 params=params,
