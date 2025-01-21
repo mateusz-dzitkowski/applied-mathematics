@@ -1,6 +1,7 @@
 from enum import IntEnum
 from dataclasses import dataclass, field
 from random import sample, uniform
+from typing import Self
 
 import numpy as np
 import networkx as nx
@@ -36,13 +37,15 @@ class Model:
 
         self.save_adoption()
 
-    def run(self):
+    def run(self) -> Self:
         if self.fraction_of_adopted() == 0 and self.params.innovation == 0:
             self.save_adoption()
-            return
+            return self
 
         while any([not self.is_adopted(node) for node in self.graph]):
             self.step()
+
+        return self
 
     def step(self):
         self.current_step += 1
