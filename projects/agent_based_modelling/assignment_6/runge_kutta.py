@@ -2,7 +2,7 @@ from typing import Callable
 import numpy as np
 
 
-def runge_kutta_4(func: Callable[[float, float], float], init: float, x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def runge_kutta_4(func: Callable[[float, float], float], init: float, x: np.ndarray) -> np.ndarray:
     output = [init]
 
     for h, t in zip(np.diff(x), x[:-1]):
@@ -13,4 +13,4 @@ def runge_kutta_4(func: Callable[[float, float], float], init: float, x: np.ndar
         k4 = func(t + h, y + h*k3)
         output.append(y + h/6*(k1 + 2*k2 + 2*k3 + k4))
 
-    return x, np.array(output)
+    return np.array(output)

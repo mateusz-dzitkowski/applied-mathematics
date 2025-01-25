@@ -1,13 +1,12 @@
 from itertools import product
-
-import numpy as np
-
 from multiprocessing import Pool
-from projects.agent_based_modelling.assignment_6.model import Model, Params
-from projects.agent_based_modelling.assignment_6.runge_kutta import runge_kutta_4
 
 from matplotlib import pyplot as plt
 import networkx as nx
+import numpy as np
+
+from projects.agent_based_modelling.assignment_6.model import Model, Params
+from projects.agent_based_modelling.assignment_6.runge_kutta import runge_kutta_4
 
 
 GRAPH_SIZES = [100]
@@ -69,9 +68,32 @@ def plot_time_to_stabilise():
     plt.show()
 
 
+def compare_graph_and_ode():
+    params = Params(
+        innovation=0.01,
+        imitation=0.35,
+    )
+    model = Model(
+        params=params,
+        graph=nx.watts_strogatz_graph(100, 8, 0.3),
+        initial_adoptions=0,
+    ).run()
+
+    def ode(_: float, y: float) -> float:
+        return (1 - y)*(params.innovation + params.imitation*y)
+
+    x = np.linspace(start=0, stop=30, num=model.current_step)
+    y = runge_kutta_4(ode, 0, x)
+
+    plt.plot(y)
+    plt.plot(model.adoption_history)
+    plt.show()
+
+
 def main():
     # plot_evolutions()
-    plot_time_to_stabilise()
+    # plot_time_to_stabilise()
+    compare_graph_and_ode()
 
 
 if __name__ == "__main__":
