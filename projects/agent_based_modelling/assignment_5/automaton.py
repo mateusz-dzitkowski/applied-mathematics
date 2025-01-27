@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from functools import cached_property
+from functools import cached_property, reduce
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -33,16 +33,13 @@ class Automaton:
                 self._arr = np.random.randint(low=0, high=2, size=self.size)
 
         self._arr = self._arr.astype(int)
-        self._arr = np.concatenate([np.array([0] * self.run_length), self._arr, np.array([0] * self.run_length)])
-        self._arr_history = np.array([self._arr])
-
-        for _ in range(self.run_length):
-            self._arr = self.rule.step_function(self._arr)
-            self._arr_history = np.vstack([self._arr_history, self._arr])
+        self._arr = np.array([np.concatenate([np.array([0] * self.run_length), self._arr, np.array([0] * self.run_length)])]).astype(int)
+        self._arr = reduce(lambda a, _: np.vstack([self._arr[-1, :], self.rule.step_function(a)]), [0]*self.run_length, self._arr)
 
     @cached_property
     def arr_history(self) -> np.ndarray:
-        return self._arr_history[:, self.run_length : -self.run_length]
+        print(self._arr)
+        return self._arr[:, self.run_length : -self.run_length]
 
     def plot_evolution(self, ax: Axes):
         ax.set_aspect("equal", adjustable="box")

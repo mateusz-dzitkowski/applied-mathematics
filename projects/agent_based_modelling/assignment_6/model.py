@@ -2,11 +2,11 @@ from dataclasses import dataclass, field
 from random import sample, uniform, choice
 from typing import Self
 
-from line_profiler import profile
 import numpy as np
 import networkx as nx
 
 
+STATE = "state"
 NOT_ADOPTED = 0
 ADOPTED = 1
 
@@ -23,14 +23,13 @@ class Model:
     graph: nx.Graph
     initial_adoptions: int
     current_step: int = 0
-    states: dict[int, int] = field(default_factory=dict)
     adoption_history: np.ndarray = field(default_factory=lambda: np.array([]))
 
     def __post_init__(self):
-        self.states = {n: NOT_ADOPTED for n in self.graph}
+        nx.set_node_attributes(self.graph, NOT_ADOPTED, STATE)  # type: ignore
 
         for node in sample(list(self.graph), self.initial_adoptions):
-            self.states[node] = ADOPTED
+            self.graph.nodes[node][STATE] = ADOPTED
 
         self.save_adoption()
 
@@ -46,25 +45,27 @@ class Model:
 
     def step(self):
         self.current_step += 1
-        # TODO: does "select an agent i randomly" allow for duplicates? Current implementation says NO
-        for node in sample(list(self.graph), len(self.graph)):
-            if self.states[node] == ADOPTED:
+        for _ in range(len(self.graph)):
+            node = choice(list(self.graph.nodes))
+            if self.is_adopted(node):
                 continue
 
             if uniform(0, 1) < self.params.innovation + self.params.imitation * self.fraction_of_adopted_neighbours(node):
-                self.states[node] = ADOPTED
+                self.set_adopted(node)
 
         self.save_adoption()
 
-    @profile
-    def fraction_of_adopted_neighbours(self, node: int) -> float:
+    def fraction_of_adopted_neighbours(self, node) -> float:
         return len([1 for neighbor in self.graph[node] if self.is_adopted(neighbor)]) / len(self.graph)
 
     def fraction_of_adopted(self) -> float:
         return len([1 for node in self.graph if self.is_adopted(node)]) / len(self.graph)
 
-    def is_adopted(self, node: int) -> bool:
-        return self.states[node] == ADOPTED
+    def set_adopted(self, node):
+        self.graph.nodes[node][STATE] = ADOPTED
+
+    def is_adopted(self, node) -> bool:
+        return self.graph.nodes[node][STATE] == ADOPTED
 
     def save_adoption(self):
         self.adoption_history = np.append(self.adoption_history, self.fraction_of_adopted())

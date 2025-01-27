@@ -49,7 +49,7 @@ def plot_graphs(rules: Iterable[int] = CUSTOM_STEP_FUNCTIONS):
         g = Rule(number=rule_number).configuration_space_diagram
         pos = nx.spring_layout(g, k=0.5)
 
-        fig, ax = plt.subplots(layout="tight")
+        fig, ax = plt.subplots(layout="tight", figsize=(20, 20))
         ax.set_title(f"Configuration space diagram of rule {rule_number}")
         nx.draw_networkx(
             g,
@@ -65,5 +65,5 @@ def plot_graphs(rules: Iterable[int] = CUSTOM_STEP_FUNCTIONS):
 
 
 if __name__ == "__main__":
-    # plot_rules()
+    plot_rules()
     plot_graphs()
