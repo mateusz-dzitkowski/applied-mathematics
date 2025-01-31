@@ -6,11 +6,6 @@ import numpy as np
 import networkx as nx
 
 
-STATE = "state"
-NOT_ADOPTED = 0
-ADOPTED = 1
-
-
 @dataclass
 class Params:
     innovation: float
@@ -23,13 +18,18 @@ class Model:
     graph: nx.Graph
     initial_adoptions: int
     current_step: int = 0
-    adoption_history: np.ndarray = field(default_factory=lambda: np.array([]))
+
+    _adopted: set = field(default_factory=set)
+    _adoption_history: list = field(default_factory=list)
+    _nodes: list = field(default_factory=list)
+    _num_nodes: int = 0
 
     def __post_init__(self):
-        nx.set_node_attributes(self.graph, NOT_ADOPTED, STATE)  # type: ignore
+        self._nodes = list(self.graph)
+        self._num_nodes = len(self._nodes)
 
-        for node in sample(list(self.graph), self.initial_adoptions):
-            self.graph.nodes[node][STATE] = ADOPTED
+        for node in sample(self._nodes, self.initial_adoptions):
+            self.set_adopted(node)
 
         self.save_adoption()
 
@@ -38,15 +38,15 @@ class Model:
             self.save_adoption()
             return self
 
-        while any([not self.is_adopted(node) for node in self.graph]):
+        while any(not self.is_adopted(node) for node in self.graph):
             self.step()
 
         return self
 
     def step(self):
         self.current_step += 1
-        for _ in range(len(self.graph)):
-            node = choice(list(self.graph.nodes))
+        for _ in range(self._num_nodes):
+            node = choice(self._nodes)
             if self.is_adopted(node):
                 continue
 
@@ -56,16 +56,20 @@ class Model:
         self.save_adoption()
 
     def fraction_of_adopted_neighbours(self, node) -> float:
-        return len([1 for neighbor in self.graph[node] if self.is_adopted(neighbor)]) / len(self.graph)
+        return len(set(self.graph[node]) & self._adopted) / len(self.graph)
 
     def fraction_of_adopted(self) -> float:
-        return len([1 for node in self.graph if self.is_adopted(node)]) / len(self.graph)
+        return len(self._adopted) / len(self.graph)
 
     def set_adopted(self, node):
-        self.graph.nodes[node][STATE] = ADOPTED
+        self._adopted.add(node)
 
     def is_adopted(self, node) -> bool:
-        return self.graph.nodes[node][STATE] == ADOPTED
+        return node in self._adopted
 
     def save_adoption(self):
-        self.adoption_history = np.append(self.adoption_history, self.fraction_of_adopted())
+        self._adoption_history.append(self.fraction_of_adopted())
+
+    @property
+    def adoption_history(self) -> np.ndarray:
+        return np.array(self._adoption_history)

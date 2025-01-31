@@ -14,7 +14,7 @@ INITIAL_ADOPTIONS = [0, 8]
 PARAMS = [Params(innovation=innovation, imitation=imitation) for innovation, imitation in product([0, 0.01], [0.25, 0.5])]
 
 REWIRING_PROBABILITIES = [0.3, 0.6, 0.9]
-TIME_TO_STABILISE_RUNS = 100
+TIME_TO_STABILISE_RUNS = 20
 
 
 def plot_evolutions():
