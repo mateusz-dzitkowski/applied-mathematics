@@ -63,8 +63,15 @@ def fish():
     animate_lenia(lenia, 1500, "test.gif", fps=50)
 
 
+def game_of_life():
+    init = World(np.random.randint(0, 2, (101, 101)))
+    gol = Lenia.game_of_life(initial=init)
+    gol.mapping.show()
+    animate_lenia(gol, 200, "test.gif", fps=50)
+
+
 def main():
-    fish()
+    game_of_life()
 
 
 if __name__ == "__main__":
