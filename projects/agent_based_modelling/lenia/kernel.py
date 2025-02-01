@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Self
 
@@ -13,14 +13,25 @@ class Kernel:
     arr: Array
 
     @classmethod
-    def from_func(cls, func: Func, radius_cells: int, radius_xy: float, midpoint: bool = False) -> Self:
+    def from_func(
+        cls,
+        func: Func,
+        radius_cells: int,
+        radius_xy: float,
+        midpoint: bool = False,
+        peaks: Array | list[float] | None = None,
+    ) -> Self:
+        if peaks is None:
+            peaks = [1]
+        peaks = np.asarray(peaks)
+
         if midpoint:
             x, y = np.meshgrid(*np.ogrid[-radius_cells : radius_cells + 1, -radius_cells : radius_cells + 1])
         else:
             x, y = np.meshgrid(*np.ogrid[-radius_cells:radius_cells, -radius_cells:radius_cells])
-        x, y = x / radius_xy, y / radius_xy
+        x, y = x / radius_xy * len(peaks), y / radius_xy * len(peaks)
         r = np.sqrt(x**2 + y**2)
-        return cls(arr=func(r))
+        return cls(arr=(r < len(peaks)) * peaks[np.minimum(r.astype(int), len(peaks)-1)] * func(r % 1))
 
     @cached_property
     def fft(self) -> Array:
