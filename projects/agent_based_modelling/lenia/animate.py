@@ -2,7 +2,7 @@ from matplotlib import animation
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from projects.agent_based_modelling.lenia.lenia import Lenia
+from lenia import Lenia
 
 
 def animate_lenia(lenia: Lenia, steps: int, filename: str, fps: int = 30):

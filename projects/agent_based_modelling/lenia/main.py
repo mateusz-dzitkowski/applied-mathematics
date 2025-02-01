@@ -1,15 +1,11 @@
 import numpy as np
 
-from projects.agent_based_modelling.lenia.animate import animate_lenia
-from projects.agent_based_modelling.lenia.lenia import (
-    Lenia,
-    World,
-    Kernel,
-    bell,
-    Growth,
-    Mapping,
-    Map,
-)
+from kernel import Kernel
+from lenia import Lenia
+from mapping import Map, Mapping, Growth
+from base import bell
+from world import World
+from animate import animate_lenia
 
 
 def fish():
