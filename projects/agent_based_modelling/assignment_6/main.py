@@ -1,5 +1,6 @@
 from itertools import product
 from multiprocessing import Pool
+import time
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -14,7 +15,7 @@ INITIAL_ADOPTIONS = [0, 8]
 PARAMS = [Params(innovation=innovation, imitation=imitation) for innovation, imitation in product([0, 0.01], [0.25, 0.5])]
 
 REWIRING_PROBABILITIES = [0.3, 0.6, 0.9]
-TIME_TO_STABILISE_RUNS = 20
+TIME_TO_STABILISE_RUNS = 100
 
 
 def plot_evolutions():
@@ -33,6 +34,8 @@ def plot_evolutions():
             )
             ax.set_title(f"{params=}, {initial_adoptions=}, {m=}, {n=}")
         ax.legend()
+        ax.set_xlabel("step")
+        ax.set_ylabel("fraction of adopted")
         ax.set_ylim(-0.05, 1.05)
         ax.grid()
 
@@ -64,6 +67,9 @@ def plot_time_to_stabilise():
             ax.plot(beta, time_to_stabilise, label=f"{params=}, {initial_adoptions=}, {graph_size=}")
 
     ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+    ax.set_title(f"mean time to stabilise as a function of beta over {TIME_TO_STABILISE_RUNS} runs")
+    ax.set_xlabel("beta")
+    ax.set_ylabel("mean time to stabilise")
     plt.show()
 
 
@@ -72,13 +78,19 @@ def compare_graph_and_ode():
         innovation=0.01,
         imitation=0.35,
     )
+    initial_adoptions = 0
+    m = 10
+    n = 10
+    beta = 0
+    runs = 100
+
     simulated_raw = [
         Model(
             params=params,
-            graph=lattice_with_diagonals(10, 10, 0.2),
-            initial_adoptions=0,
+            graph=lattice_with_diagonals(m, n, beta),
+            initial_adoptions=initial_adoptions,
         ).run().adoption_history
-        for _ in range(10)
+        for _ in range(runs)
     ]
     max_run_length = max(len(run) for run in simulated_raw)
     simulated = np.array(
@@ -91,16 +103,20 @@ def compare_graph_and_ode():
     def ode(_: float, y: float) -> float:
         return (1 - y)*(params.innovation + params.imitation*y)
 
-    def exact(_x: np.ndarray, p: float, q: float) -> float:
-        return p*(np.exp((p+q)*_x) - 1)/(p*np.exp((p+q)*_x) + q)
+    def exact(_x: np.ndarray, p: float, q: float, a: float) -> float:
+        return (p*(a + np.exp((p+q)*_x) - 1) + a*q*np.exp((p+q)*_x))/((a*q+p)*np.exp((p+q)*_x) + q - a*q)
 
-    x = np.linspace(start=0, stop=50, num=len(simulated))
+    x = np.linspace(start=0, stop=50, num=len(simulated))  # arbitrary 50 IDK
     y_rk4 = runge_kutta_4(ode, 0, x)
-    y_exact = exact(x, params.innovation, params.imitation)
+    y_exact = exact(x, params.innovation, params.imitation, initial_adoptions / (m*n))
 
-    plt.plot(y_rk4)
-    plt.plot(y_exact)
-    plt.plot(simulated)
+    plt.plot(y_rk4, label="runge kutta 4")
+    plt.plot(y_exact, label="exact solution")
+    plt.plot(simulated, label="graph simulation")
+    plt.title("comparison of the graph simulation with the ode")
+    plt.xlabel("step")
+    plt.ylabel("fraction of adopted")
+    plt.legend()
     plt.show()
 
 
@@ -111,4 +127,8 @@ def main():
 
 
 if __name__ == "__main__":
+    start = time.perf_counter()
     main()
+    end = time.perf_counter()
+
+    print(f"Done, took {end - start} seconds")

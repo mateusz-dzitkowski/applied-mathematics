@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from random import sample, uniform, choice
+from random import sample, random, choice
 from typing import Self
 
 import numpy as np
@@ -38,7 +38,7 @@ class Model:
             self.save_adoption()
             return self
 
-        while any(not self.is_adopted(node) for node in self.graph):
+        while len(self._adopted) < self._num_nodes:
             self.step()
 
         return self
@@ -50,16 +50,16 @@ class Model:
             if self.is_adopted(node):
                 continue
 
-            if uniform(0, 1) < self.params.innovation + self.params.imitation * self.fraction_of_adopted_neighbours(node):
+            if random() < self.params.innovation + self.params.imitation * self.fraction_of_adopted_neighbours(node):
                 self.set_adopted(node)
 
         self.save_adoption()
 
     def fraction_of_adopted_neighbours(self, node) -> float:
-        return len(set(self.graph[node]) & self._adopted) / len(self.graph)
+        return len(set(self.graph[node]) & self._adopted) / self._num_nodes
 
     def fraction_of_adopted(self) -> float:
-        return len(self._adopted) / len(self.graph)
+        return len(self._adopted) / self._num_nodes
 
     def set_adopted(self, node):
         self._adopted.add(node)

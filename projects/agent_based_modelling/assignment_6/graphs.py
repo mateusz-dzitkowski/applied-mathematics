@@ -25,9 +25,9 @@ def lattice_with_diagonals(m: int, n: int, beta: float) -> nx.Graph:
 
     for node, adj in product(g, ONE_SIDE_ADJ):
         if uniform(0, 1) < beta:
+            g.remove_edge(node, add(node, adj))
             candidates = all_nodes - set(g.neighbors(node)) - {node}
             target = choice(list(candidates))
-            g.remove_edge(node, add(node, adj))
             g.add_edge(node, target)
 
     return g
