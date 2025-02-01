@@ -8,17 +8,29 @@ from scipy import ndimage
 from base import Array
 
 
-OrganismName = Literal["fish", "orbium", "geminium"]
+OrganismName = Literal[
+    "aquarium",
+    "fish",
+    "geminium",
+    "orbium",
+]
 
 
 @dataclass
 class World:
     arr: Array
 
+    def __post_init__(self):
+        dims = self.arr.ndim
+        if dims not in {2, 3}:
+            raise ValueError("the array should be 2 or 3 dimensional")
+        if dims == 2:
+            self.arr = np.array([self.arr])
+
     def embed(self, other: Self, *, at: tuple[int, int] = (0, 0)) -> Self:
         x, y = at
-        dx, dy = other.arr.shape
-        self.arr[x : x + dx, y : y + dy] = other.arr
+        dx, dy = other.arr.shape[1:]
+        self.arr[:, x : x + dx, y : y + dy] = other.arr
         return self
 
     def save(self, name: OrganismName):
@@ -26,7 +38,7 @@ class World:
 
     def show(self):
         fig, ax = plt.subplots(1, 1, constrained_layout=True)
-        ax.imshow(self.arr)
+        ax.imshow(np.dstack(self.arr))
         fig.show()
 
     @classmethod
@@ -34,8 +46,8 @@ class World:
         return cls(np.load(f"organisms/{name}.npy"))
 
     @classmethod
-    def new(cls, width: int, height: int):
-        return cls(np.zeros((width, height)))
+    def new(cls, channels: int, width: int, height: int):
+        return cls(np.zeros((channels, width, height)))
 
     @property
     def flipped_horizontal(self) -> Self:

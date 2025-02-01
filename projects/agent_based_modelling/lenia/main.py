@@ -8,14 +8,13 @@ from world import World
 
 
 def main():
-    fish = World.load("fish")
-    world = World.new(100, 100)
-    world.embed(fish.flipped_vertical, at=(10, 10))
-    world.embed(fish.rotated, at=(70, 70))
+    aquarium = World.load("aquarium").zoom(0.9)
+    world = World.new(3, 64, 64)
+    world.embed(aquarium, at=(20, 20))
 
-    lenia = Lenia.fish(initial=world)
+    lenia = Lenia.aquarium(initial=world)
     lenia.show()
-    lenia.animate(steps=500)
+    lenia.animate()
 
 
 if __name__ == "__main__":

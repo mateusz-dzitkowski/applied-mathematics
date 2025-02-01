@@ -5,6 +5,7 @@ import numpy as np
 
 from base import Func, Array
 from kernel import Kernel
+from world import World
 
 
 class Growth:
@@ -27,10 +28,10 @@ class Map:
 class Mapping:
     maps: list[Map]
 
-    def apply(self, arr: Array) -> Array:
-        convolved = [_map.kernel.apply(arr) for _map in self.maps]
+    def apply(self, world: World) -> World:
+        convolved = [_map.kernel.apply(world.arr) for _map in self.maps]
         growth = np.asarray([_map.growth.apply(conv) for conv, _map in zip(convolved, self.maps)])
-        return growth.mean(axis=0)
+        return World(arr=growth.mean(axis=0))
 
     def show(self):
         fig, (ax1, ax2, ax3) = plt.subplots(
@@ -42,7 +43,7 @@ class Mapping:
         )
         arrays = np.asarray([_map.kernel.arr for _map in self.maps])
 
-        ax1.imshow(np.dstack(arrays), cmap="viridis", interpolation="nearest", vmin=0)
+        ax1.imshow(np.dstack(arrays[:3]), cmap="viridis", interpolation="nearest", vmin=0)
         ax1.set_title("kernel matrix")
 
         ax2.plot(arrays[:, arrays.shape[1] // 2, :].T)
