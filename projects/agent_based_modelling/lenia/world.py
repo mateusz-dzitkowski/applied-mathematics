@@ -46,8 +46,8 @@ class World:
         return cls(np.load(f"organisms/{name}.npy"))
 
     @classmethod
-    def new(cls, channels: int, width: int, height: int):
-        return cls(np.zeros((channels, width, height)))
+    def new(cls, shape: tuple[int, ...]):
+        return cls(np.zeros(shape))
 
     @property
     def flipped_horizontal(self) -> Self:

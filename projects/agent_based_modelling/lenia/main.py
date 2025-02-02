@@ -9,12 +9,12 @@ from world import World
 
 def main():
     aquarium = World.load("aquarium").zoom(0.9)
-    world = World.new(3, 64, 64)
+    world = World.new((3, 64, 64))
     world.embed(aquarium, at=(20, 20))
 
     lenia = Lenia.aquarium(initial=world)
     lenia.show()
-    lenia.animate()
+    lenia.animate(steps=10)
 
 
 if __name__ == "__main__":

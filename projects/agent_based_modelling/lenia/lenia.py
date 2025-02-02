@@ -19,7 +19,8 @@ class Lenia:
     dt: float
 
     def step(self):
-        self.world.arr[:, :] = np.clip(self.world.arr + self.dt * self.mapping.apply(self.world).arr, 0, 1)
+        self.world.arr = np.clip(self.world.arr + self.dt * self.mapping.apply(self.world).arr, 0, 1)
+        print(self.world.arr.sum())
 
     def show(self):
         self.world.show()
