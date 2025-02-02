@@ -1,4 +1,4 @@
-from random import choice, uniform
+from random import choice, random
 from itertools import product
 
 import networkx as nx
@@ -24,7 +24,7 @@ def lattice_with_diagonals(m: int, n: int, beta: float) -> nx.Graph:
         g.add_edge(node, add(node, adj))
 
     for node, adj in product(g, ONE_SIDE_ADJ):
-        if uniform(0, 1) < beta:
+        if random() < beta:
             g.remove_edge(node, add(node, adj))
             candidates = all_nodes - set(g.neighbors(node)) - {node}
             target = choice(list(candidates))

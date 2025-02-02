@@ -10,7 +10,7 @@ from projects.agent_based_modelling.assignment_6.runge_kutta import runge_kutta_
 from projects.agent_based_modelling.assignment_6.graphs import lattice_with_diagonals
 
 
-GRAPH_SIZES = [(10, 10)]
+GRAPH_SIZES = [(40, 40)]
 PARAMS = [
     Params(
         innovation=innovation,
@@ -19,14 +19,14 @@ PARAMS = [
     )
     for innovation, imitation, initial_adoptions
     in product(
-        [0, 0.01],
+        [0.001, 0.004, 0.007],
         [0.25, 0.5],
         [0, 8],
     )
 ]
 
 REWIRING_PROBABILITIES = [0.3, 0.6, 0.9]
-TIME_TO_STABILISE_RUNS = 100
+TIME_TO_STABILISE_RUNS = 10
 
 
 def plot_evolutions():
@@ -130,8 +130,8 @@ def compare_graph_and_ode():
 
 def main():
     # plot_evolutions()
-    # plot_time_to_stabilise()
-    compare_graph_and_ode()
+    plot_time_to_stabilise()
+    # compare_graph_and_ode()
 
 
 if __name__ == "__main__":
