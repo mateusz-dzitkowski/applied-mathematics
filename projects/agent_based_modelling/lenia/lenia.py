@@ -20,7 +20,6 @@ class Lenia:
 
     def step(self):
         self.world.arr = np.clip(self.world.arr + self.dt * self.mapping.apply(self.world).arr, 0, 1)
-        print(self.world.arr.sum())
 
     def show(self):
         self.world.show()
@@ -67,6 +66,7 @@ class Lenia:
                         growth=Growth(lambda x: h(x - 1) + h(x - 2) - 2 * h(x - 3) - 1),
                     ),
                 ],
+                use_fft=False,
             ),
             dt=1,
         )
@@ -81,7 +81,7 @@ class Lenia:
                     Map(
                         kernel=Kernel.from_func(
                             func=bell(0.5, 0.15),
-                            radius_cells=initial.arr.shape[0] // 2,
+                            radius_cells=initial.arr.shape[1] // 2,
                             radius_xy=18,
                             peaks=[0.5, 1, 0.667],
                         ),
@@ -93,6 +93,8 @@ class Lenia:
 
     @classmethod
     def fish(cls, initial: World) -> Self:
+        common_r_cells = initial.arr.shape[1] // 2
+        common_r = 10
         return cls(
             world=initial,
             dt=0.2,
@@ -101,8 +103,8 @@ class Lenia:
                     Map(
                         kernel=Kernel.from_func(
                             func=bell(0.5, 0.15),
-                            radius_cells=initial.arr.shape[0] // 2,
-                            radius_xy=10,
+                            radius_cells=common_r_cells,
+                            radius_xy=common_r,
                             peaks=[1, 5/12, 2/3],
                         ),
                         growth=Growth(func=lambda x: bell(0.156, 0.0118)(x) * 2 - 1),
@@ -110,8 +112,8 @@ class Lenia:
                     Map(
                         kernel=Kernel.from_func(
                             func=bell(0.5, 0.15),
-                            radius_cells=initial.arr.shape[0] // 2,
-                            radius_xy=10,
+                            radius_cells=common_r_cells,
+                            radius_xy=common_r,
                             peaks=[1/12, 1],
                         ),
                         growth=Growth(func=lambda x: bell(0.193, 0.049)(x) * 2 - 1),
@@ -119,8 +121,8 @@ class Lenia:
                     Map(
                         kernel=Kernel.from_func(
                             func=bell(0.5, 0.15),
-                            radius_cells=initial.arr.shape[0] // 2,
-                            radius_xy=10,
+                            radius_cells=common_r_cells,
+                            radius_xy=common_r,
                         ),
                         growth=Growth(func=lambda x: bell(0.342, 0.0891)(x) * 2 - 1),
                     ),
@@ -203,7 +205,7 @@ class Lenia:
                         kernel=Kernel.from_func(
                             func=common_bell,
                             radius_cells=common_r_cells,
-                            radius_xy=common_r * 0.622,
+                            radius_xy=common_r * 0.8,
                             peaks=[5/6, 1],
                             from_chan=1,
                             to_chan=1,
@@ -291,7 +293,7 @@ class Lenia:
                         kernel=Kernel.from_func(
                             func=common_bell,
                             radius_cells=common_r_cells,
-                            radius_xy=common_r * 0.43,
+                            radius_xy=common_r * 0.82,
                             peaks=[1/6, 1, 0],
                             from_chan=2,
                             to_chan=0,

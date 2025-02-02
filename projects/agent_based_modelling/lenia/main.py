@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 from kernel import Kernel
@@ -8,14 +10,14 @@ from world import World
 
 
 def main():
-    aquarium = World.load("aquarium").zoom(0.9)
-    world = World.new((3, 64, 64))
-    world.embed(aquarium, at=(20, 20))
-
+    world = World.new((3, 200, 200)).embed(World.load("aquarium"), at=(100, 100))
     lenia = Lenia.aquarium(initial=world)
-    lenia.show()
-    lenia.animate(steps=10)
+    # lenia.show()
+    lenia.animate(steps=1000)
 
 
 if __name__ == "__main__":
+    start = time.perf_counter()
     main()
+    end = time.perf_counter()
+    print(f"Done! It took only {end-start} seconds")

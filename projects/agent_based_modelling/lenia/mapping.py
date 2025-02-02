@@ -27,11 +27,17 @@ class Map:
 @dataclass
 class Mapping:
     maps: list[Map]
+    use_fft: bool = True
 
     def apply(self, world: World) -> World:
-        convolved = [_map.kernel.apply(world.arr) for _map in self.maps]
-        growth = np.asarray([_map.growth.apply(conv) for conv, _map in zip(convolved, self.maps)])
-        return World(arr=growth.mean(axis=0))
+        arr = np.fft.fft2(world.arr) if self.use_fft else world.arr
+        convolved = [
+            _map.kernel.apply(arr[_map.kernel.from_chan], use_fft=self.use_fft)
+            for _map in self.maps
+        ]
+        growth = [_map.growth.apply(conv) for conv, _map in zip(convolved, self.maps)]
+        h = [sum(g for g, _map in zip(growth, self.maps) if _map.kernel.to_chan == chan) for chan in range(len(arr))]
+        return World(arr=np.array(h))
 
     def show(self):
         fig, (ax1, ax2, ax3) = plt.subplots(

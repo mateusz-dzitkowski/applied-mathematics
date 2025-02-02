@@ -51,15 +51,15 @@ class World:
 
     @property
     def flipped_horizontal(self) -> Self:
-        return World(arr=np.flip(self.arr, axis=1))
+        return World(arr=np.flip(self.arr, axis=self.arr.ndim - 1))
 
     @property
     def flipped_vertical(self) -> Self:
-        return World(arr=np.flip(self.arr, axis=0))
+        return World(arr=np.flip(self.arr, axis=self.arr.ndim - 2))
 
     @property
     def rotated(self) -> Self:
-        return World(arr=np.rot90(self.arr))
+        return World(arr=np.rot90(self.arr, axes=(-1, -2)))
 
     def zoom(self, scale: float, order: int = 0) -> Self:
         return World(arr=ndimage.zoom(self.arr, scale, order=order))

@@ -43,12 +43,10 @@ class Kernel:
 
     @cached_property
     def fft(self) -> Array:
-        print("using fft to compute the convolution")
         return np.fft.fft2(np.fft.fftshift(self.arr / self.arr.sum()))
 
-    def apply(self, arr: Array) -> Array:
-        out = np.zeros_like(arr)
-        if arr[self.from_chan].shape == self.arr.shape:  # if you set everything up nicely you will get a performance boost from fft
-            out[self.to_chan] = np.real(np.fft.ifft2(self.fft * np.fft.fft2(arr[self.from_chan])))
-        out[self.to_chan] = convolve2d(arr[self.from_chan], self.arr, mode="same", boundary="wrap")
-        return out
+    def apply(self, arr: Array, use_fft: bool = True) -> Array:
+        if use_fft:
+            return np.real(np.fft.ifft2(self.fft * arr))
+        else:
+            return convolve2d(arr, self.arr, mode="same", boundary="wrap")
