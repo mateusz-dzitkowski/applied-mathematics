@@ -10,13 +10,13 @@ import networkx as nx
 class Params:
     innovation: float
     imitation: float
+    initial_adoptions: int
 
 
 @dataclass
 class Model:
     params: Params
     graph: nx.Graph
-    initial_adoptions: int
     current_step: int = 0
 
     _adopted: set = field(default_factory=set)
@@ -28,7 +28,7 @@ class Model:
         self._nodes = list(self.graph)
         self._num_nodes = len(self._nodes)
 
-        for node in sample(self._nodes, self.initial_adoptions):
+        for node in sample(self._nodes, self.params.initial_adoptions):
             self.set_adopted(node)
 
         self.save_adoption()
@@ -56,7 +56,8 @@ class Model:
         self.save_adoption()
 
     def fraction_of_adopted_neighbours(self, node) -> float:
-        return len(set(self.graph[node]) & self._adopted) / self._num_nodes
+        all_neighbours = set(self.graph[node])
+        return len(all_neighbours & self._adopted) / len(all_neighbours)
 
     def fraction_of_adopted(self) -> float:
         return len(self._adopted) / self._num_nodes
