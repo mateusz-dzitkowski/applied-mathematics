@@ -10,7 +10,7 @@ from world import World
 
 
 def main():
-    world = World.new((3, 200, 200)).embed(World.load("aquarium"), at=(100, 100))
+    world = World(arr=np.zeros((3, 200, 200))).embed(World.load("aquarium"), at=(100, 100))
     lenia = Lenia.aquarium(initial=world)
     # lenia.show()
     lenia.animate(steps=1000)

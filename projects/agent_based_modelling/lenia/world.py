@@ -45,10 +45,6 @@ class World:
     def load(cls, name: OrganismName):
         return cls(np.load(f"organisms/{name}.npy"))
 
-    @classmethod
-    def new(cls, shape: tuple[int, ...]):
-        return cls(np.zeros(shape))
-
     @property
     def flipped_horizontal(self) -> Self:
         return World(arr=np.flip(self.arr, axis=self.arr.ndim - 1))
@@ -61,5 +57,5 @@ class World:
     def rotated(self) -> Self:
         return World(arr=np.rot90(self.arr, axes=(-1, -2)))
 
-    def zoom(self, scale: float, order: int = 0) -> Self:
+    def zoomed(self, scale: float, order: int = 0) -> Self:
         return World(arr=ndimage.zoom(self.arr, scale, order=order))
