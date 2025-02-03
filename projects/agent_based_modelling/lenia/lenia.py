@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import Self
+from typing import Self, Callable
 
 from matplotlib import animation
 from matplotlib import pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from base import h, bell
+from base import h, bell, Array
 from world import World
 from mapping import Mapping, Map, Growth
 from kernel import Kernel
@@ -17,9 +17,12 @@ class Lenia:
     world: World
     mapping: Mapping
     dt: float
+    bcs: Callable[[Array], ...] | None = None
 
     def step(self):
         self.world.arr = np.clip(self.world.arr + self.dt * self.mapping.apply(self.world).arr, 0, 1)
+        if self.bcs:
+            self.bcs(self.world.arr)
 
     def show(self):
         self.world.show()
