@@ -24,9 +24,9 @@ class Lenia:
         if self.bcs:
             self.bcs(self.world.arr)
 
-    def show(self):
+    def show(self, _from: int = 0, _to: int = -1):
         self.world.show()
-        self.mapping.show()
+        self.mapping.show(_from, _to)
 
     def animate(self, *, steps: int = 50, filename: str = "test.gif", fps: int = 50):
         fig, ax = plt.subplots(figsize=(8, 8), constrained_layout=True)
@@ -134,9 +134,8 @@ class Lenia:
         )
 
     @classmethod
-    def aquarium(cls, initial: World) -> Self:
+    def aquarium(cls, initial: World, common_r: float = 12 * 0.9) -> Self:
         common_bell = bell(0.5, 0.15)
-        common_r = 12 * 0.9
         common_r_cells = initial.arr.shape[1] // 2
 
         def growth(_m, _s, _h):

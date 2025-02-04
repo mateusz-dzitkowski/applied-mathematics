@@ -39,7 +39,7 @@ class Mapping:
         h = [sum(g for g, _map in zip(growth, self.maps) if _map.kernel.to_chan == chan) for chan in range(len(arr))]
         return World(arr=np.array(h))
 
-    def show(self):
+    def show(self, _from: int, _to: int):
         fig, (ax1, ax2, ax3) = plt.subplots(
             nrows=1,
             ncols=3,
@@ -49,10 +49,10 @@ class Mapping:
         )
         arrays = np.asarray([_map.kernel.arr for _map in self.maps])
 
-        ax1.imshow(np.dstack(arrays[:3]), cmap="viridis", interpolation="nearest", vmin=0)
+        ax1.imshow(np.dstack(arrays[:3, _from:_to, _from:_to]), cmap="viridis", interpolation="nearest", vmin=0)
         ax1.set_title("kernel matrix")
 
-        ax2.plot(arrays[:, arrays.shape[1] // 2, :].T)
+        ax2.plot(arrays[:, arrays.shape[1] // 2, _from:_to].T)
         ax2.set_title("kernel cross section")
 
         x = np.linspace(0, 1, 1000)

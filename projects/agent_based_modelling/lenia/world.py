@@ -58,4 +58,8 @@ class World:
         return World(arr=np.rot90(self.arr, axes=(-1, -2)))
 
     def zoomed(self, scale: float, order: int = 0) -> Self:
-        return World(arr=ndimage.zoom(self.arr, scale, order=order))
+        return World(
+            arr=np.array(
+                [ndimage.zoom(arr, scale, order=order) for arr in self.arr]
+            )
+        )

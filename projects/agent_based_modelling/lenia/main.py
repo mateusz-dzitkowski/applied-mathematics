@@ -11,23 +11,19 @@ from world import World
 
 
 def main():
-    def bcs(arr: Array):
-        arr[:, :5, :] = 0
-        arr[:, -5:, :] = 0
-        arr[:, :, :5] = 0
-        arr[:, :, -5:] = 0
-        arr[1, 40:60, 40:60] = 0
-
-    aquarium = World.load("aquarium")
+    aquarium = World.load("aquarium").zoomed(2)
     world = (
-        World(arr=np.zeros((3, 100, 100)))
+        World(arr=np.zeros((3, 500, 500)))
         .embed(aquarium, at=(10, 10))
-        .embed(aquarium.rotated.rotated, at=(70, 70))
+        .embed(aquarium.rotated.rotated, at=(30, 60))
+        .embed(aquarium.flipped_horizontal, at=(300, 60))
+        .embed(aquarium, at=(200, 450))
+        .embed(aquarium.rotated, at=(300, 450))
+        .embed(aquarium.rotated, at=(250, 250))
     )
-    lenia = Lenia.aquarium(initial=world)
-    lenia.bcs = bcs
-    # lenia.show()
-    lenia.animate(steps=1000)
+    lenia = Lenia.aquarium(initial=world, common_r=30)
+    lenia.show(_from=200, _to=300)
+    # lenia.animate(steps=1500)
 
 
 if __name__ == "__main__":
