@@ -42,8 +42,16 @@ class World:
         fig.show()
 
     @classmethod
-    def load(cls, name: OrganismName):
+    def load(cls, name: OrganismName) -> Self:
         return cls(np.load(f"organisms/{name}.npy"))
+
+    @classmethod
+    def empty(cls, shape: tuple[int, ...]) -> Self:
+        return cls(arr=np.zeros(shape))
+
+    @classmethod
+    def uniform(cls, shape: tuple[int, ...]) -> Self:
+        return cls(arr=np.random.uniform(size=shape))
 
     @property
     def flipped_horizontal(self) -> Self:

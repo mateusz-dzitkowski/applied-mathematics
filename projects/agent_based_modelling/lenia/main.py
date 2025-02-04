@@ -6,24 +6,21 @@ from base import Array
 from kernel import Kernel
 from lenia import Lenia
 from mapping import Map, Mapping, Growth
-from base import bell
+from base import bell, bcs_wall
 from world import World
 
 
 def main():
-    aquarium = World.load("aquarium").zoomed(2)
+    aquarium = World.load("aquarium").zoomed(9)
     world = (
-        World(arr=np.zeros((3, 500, 500)))
-        .embed(aquarium, at=(10, 10))
-        .embed(aquarium.rotated.rotated, at=(30, 60))
-        .embed(aquarium.flipped_horizontal, at=(300, 60))
-        .embed(aquarium, at=(200, 450))
-        .embed(aquarium.rotated, at=(300, 450))
-        .embed(aquarium.rotated, at=(250, 250))
+        World.empty((3, 1000, 1000))
+        .embed(aquarium, at=(400, 400))
     )
-    lenia = Lenia.aquarium(initial=world, common_r=30)
-    lenia.show(_from=200, _to=300)
-    # lenia.animate(steps=1500)
+
+    lenia = Lenia.aquarium(initial=world, common_r=100)
+    lenia.bcs = bcs_wall(20)
+    # lenia.show()
+    lenia.animate(steps=1000)
 
 
 if __name__ == "__main__":
