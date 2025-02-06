@@ -11,14 +11,19 @@ from world import World
 
 
 def main():
+    def bcs(arr: Array):
+        bcs_wall(20)(arr)
+        arr[:, 480:520, :500] = 0
+
     aquarium = World.load("aquarium").zoomed(9)
     world = (
         World.empty((3, 1000, 1000))
-        .embed(aquarium, at=(400, 400))
+        .embed(aquarium.flipped_vertical.flipped_horizontal, at=(50, 200))
+        .embed(aquarium.flipped_vertical, at=(50, 600))
     )
 
     lenia = Lenia.aquarium(initial=world, common_r=100)
-    lenia.bcs = bcs_wall(20)
+    lenia.bcs = bcs
     # lenia.show()
     lenia.animate(steps=1000)
 
