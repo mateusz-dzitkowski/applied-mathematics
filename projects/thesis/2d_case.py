@@ -137,7 +137,7 @@ def my_smoothing(beta: float) -> Func2d:
 def main():
     x_min, x_max, x_size = 0, 1, 200
     y_min, y_max, y_size = 0, 1, 223
-    alpha = 0.000003
+    alpha = 0.0000025
     beta = 0.000001
     steps = 10
 
