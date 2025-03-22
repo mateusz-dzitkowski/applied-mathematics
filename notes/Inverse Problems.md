@@ -142,3 +142,86 @@ Here the minimum is considered over all functions $f$ in
 $$
 H_0^1(0, 1) = \left\{f \in L^2(0,1): \frac{df}{dx} \in L^2(0, 1), f(0)=f(1)=0\right\}.
 $$
+We aim to derive the estimate of the norm
+$$
+||\frac{df_\alpha}{dx} - \frac{df}{dx}||_{L^2(0,1)}.
+$$
+We have
+$$
+(f_\alpha - f) - \alpha(f_\alpha'' - f'') = f^\delta - f + \alpha f''.
+$$
+We multiply the above equation by $f_\alpha - f$ and integrate on $(0, 1)$:
+$$
+\int_0^1(f_\alpha - f)^2dx - \alpha\int_0^1(f_\alpha'' - f'')(f_\alpha - f)dx = \int_0^1\left(f^\delta - f + \alpha f''\right)(f_\alpha - f)dx.
+$$
+Then the integration by parts formula, and the fact that $f_\alpha$ and $f$ are zero on the boundary, lead to
+$$
+\int_0^1(f_\alpha - f)^2dx + \alpha\int_0^1(f_\alpha' - f')^2dx = \int_0^1\left(f^\delta - f + \alpha f''\right)(f_\alpha - f)dx.
+$$
+To estimate the right hand side, we apply $ab \le \frac{a^2}{2} + \frac{b^2}{2}$:
+$$
+||f_\alpha' - f'||_{L^2(0,1)}^2 \le \frac{1}{2}\frac{\delta^2}{\alpha} + \frac{\alpha}{2}C.
+$$
+Then, an optimal $\alpha$ is given by $\alpha = \frac{\delta}{\sqrt{C}}$, where $C = ||f||^2_{C^2(0,1)}$.
+
+In the case we assume that $f \in C^1(0,1)$, we need to derive  an estimate in a bit different way
+$$
+\alpha\int f''(f_\alpha - f) = -\alpha\int f'(f_\alpha' - f') \le \frac{\alpha}{2}||f'||^2_{L^2} + \frac{\alpha}{2}||f_\alpha' - f'||^2_{L^2}.
+$$
+And we get (???)
+$$
+||f_\alpha' - f'||^2_{L^2} \le 2\frac{\delta^2}{\alpha} + C.
+$$
+# 5 Inverse problems modelled by integral equations
+#### Examples
+- The Fredholm integral equation of the first kind
+$$
+f(x) = \int_a^bk(x, y)u(y)dy.
+$$
+- The Volterra integral equation of the first kind
+$$
+	f(x) = \int_a^xk(x, y)u(y)dy.
+$$
+- The Abel integral equation
+$$
+f(x) = \int_0^x\frac{u(y)}{\sqrt{x-y}}dy.
+$$
+- The convolution equation
+$$
+f(x) = \int_a^bk(x-y)u(y)dy.
+$$
+### Tautochrone problem
+The total time required for the particle to fall from $y=y_0$ to $y=0$ is given by the integral equation
+$$
+T(y_0) = \frac{1}{\sqrt{2g}}\int_0^{y_0}\frac{1}{\sqrt{y_0-y}}\frac{ds}{dy}dy,
+$$
+where $\frac{ds}{dy}$ is the distance remaining along the curve as a function of height.
+
+### Computed tomography
+Radon transform of a function $u: \mathbb{R}^2 \rightarrow \mathbb{R}$ is given by the following formula
+$$
+Ru(t, \omega) = \int_\mathbb{R}u(t\omega^\perp + s\omega)ds.
+$$
+The basic model of CT assumes the decay $-\Delta I$ of the intensity $I$ of an X-ray beam along a small distance $\Delta s$ is proportional to the intensity $I$, the density $u$ and to $\Delta s$. Hence
+$$
+\Delta I(t\omega^\perp + s\omega) = -I(t\omega^\perp + s\omega)u(t\omega^\perp\omega)\Delta s.
+$$
+Then for $\Delta s \rightarrow 0$, we obtain the ODE:
+$$
+\frac{dI}{ds}(t\omega^\perp + s\omega) = -I(t\omega^\perp + s\omega)u(t\omega^\perp + s\omega).
+$$
+By integrating from $s=0$ (the position of the emiter) to $s=L$ (the position of the detector), we obtain
+$$
+\ln\left(I(t\omega^\perp + L\omega)\right) - \ln\left(I(t\omega^\perp)\right) = -\int_0^Lu(t\omega^\perp + s\omega)ds.
+$$
+$I$ can be measure at the emitters and the detectors for $t$ and $\omega^\perp$. Since $u$ can be extended to be zero for $s \notin (0, L)$ , the inverse problem of CT is the inversion of the Radon transform.
+
+Now consider the special case of radially symmetric density $u$ and $\Omega$ being a disc. In this case it is sufficient to use a single direction $\omega^\perp$, e.g. $\omega_0^\perp = (0, 1)$. Moreover we have
+$$
+U(r) = u(t\omega^\perp + s\omega).
+$$
+Then, using a transformation to polar coordinates we can rewrite the Radon transformation
+$$
+Ru(t, \omega_0) = 2\int_t^\varrho\frac{rU(r)}{\sqrt{r^2-t^2}}dr,
+$$
+with $\varrho$ sufficiently large.
