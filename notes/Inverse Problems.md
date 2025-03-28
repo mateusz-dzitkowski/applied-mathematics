@@ -225,3 +225,84 @@ $$
 Ru(t, \omega_0) = 2\int_t^\varrho\frac{rU(r)}{\sqrt{r^2-t^2}}dr,
 $$
 with $\varrho$ sufficiently large.
+# 6 The Fredholm integral equation of the first kind
+$$
+f(x) = \int_a^bk(x, y)u(y)dy,
+$$
+where $k: [a,b]^2 \rightarrow \mathbb{R}$ is the kernel. Let's derive the discretisation of this equation.
+Consider a discrete set of points $a = x_1 < x_2 < \dots < x_M = b$,  $a = y_1 < y_2 < \dots < y_N = b$, then
+$$
+f(x_i) = \int_a^bk(x_i, y)u(y)dy = \int_a^bg(y)dy.
+$$
+We apply the trapezoid rule:
+$$
+\int_{y_k}^{y_{k+1}}g(y)dy = \frac{1}{2}\left(g(y_k) + g(y_{k+1})\right)(y_{k+1} - y_k) = \frac{h_y}{2}\left(g(y_k) + g(y_{k+1})\right),
+$$
+so
+$$
+f(x_i) \approx \frac{h_y}{2}\left(g(y_1) + 2g(y_2) + \dots + 2g(y_{N-1}) + g(y_N)\right).
+$$
+Then, using the matrix-vector notation, we get
+$$
+Ku = f,
+$$
+where 
+$$
+f = (f(x_1), \dots, f(x_M)), \quad u = (u(y_1), \dots, u(y_N)).
+$$
+1. $M=N$: If $K$ is nonsingular, then $u=K^{-1}f$ is a unique solution.
+2. $M>N$: The system is overdetermined. If the rank of $K$ is $N$, then an approximate solution can be found using the least squares method
+$$
+\min\limits_u\Vert Ku-f\Vert_2.
+$$
+3. $M<N$: The system is underdetermined and there is no unique solution.
+$$
+\min\limits_u\left\{\frac{1}{2}\Vert Ku-f \Vert_2^2 + \frac{\alpha}{2}\Vert u \Vert_2^2\right\}.
+$$
+
+Assume that $M=N$, $M \in \mathbb{R}^{N \times M}$, $M$ is nonsingular,
+$$
+Ku = f, \text{ and } Ku_\delta = f_\delta.
+$$
+We have
+$$
+||u-u_\delta|| = ||K^{-1}(f-f_\delta)|| \le ||K^{-1}||\cdot||f-f_\delta||.
+$$
+Since $||f|| = ||Ku|| \le ||K||\cdot||u||$, we express the relative error as
+$$
+\frac{||u-u_\delta||}{||u||} \le ||K||\cdot||K^{-1}||\frac{||f-f_\delta||}{||f||}.
+$$
+### What can we do?
+###### Tikhonov regularization
+$$
+\min\limits_u\left\{\frac{1}{2}\Vert Ku -f \Vert_2^2 + \frac{\alpha}{2}\Vert u \Vert_2^2\right\}
+$$
+###### Truncated singular value decomposition (TSVD)
+The SVD of the matrix $K^{M \times N}$ is given by
+$$
+K = U \Sigma V^T.
+$$
+Here:
+- $U \in \mathbb{R}^{M \times M}$ is an orthonormal matrix whose columns are left singular vectors,
+- $V \in \mathbb{R}^{N \times N}$ is an orthonormal matrix whose columns are right singular vectors,
+- $\Sigma \in \mathbb{R}^{M \times N}$ is a diagonal matrix with singular values $\sigma_1 > \sigma_2 > \dots > 0$
+
+Truncated SVD approximates $K$ by keeping only the largest $s$ singular values
+$$
+K_s = U_s \Sigma_s V_s^T,
+$$
+where $\Sigma_s \in {\mathbb{R}^{s \times s}}$, $U_s \in \mathbb{R}^{M \times s}$, $V_s \in \mathbb{R}^{N \times s}$.
+
+# 7 Inverse heat problem
+We have a heat equation in 1d
+$$
+u_t = u_{xx}, \quad x\in(0, \pi), t>0,
+$$
+$$
+u(0, t) = u(\pi, t) = 0, \quad t > 0,
+$$
+$$
+u(x, 1) = f(x).
+$$
+We want to determine the initial temperature $g(x) = u(x, 0)$.
+To solve the equation we apply the method of separation of variables ez.

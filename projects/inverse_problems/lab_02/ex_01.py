@@ -70,8 +70,8 @@ def sub_4():
         approx = (f_delta(x)[2:] - f_delta(x)[:-2])/(2*h)
         norms[i] = np.max(np.abs(true - approx))
 
-    plt.loglog(hs, norms, label="numerical error")
-    plt.loglog(hs, estimates, label="analytical estimation")
+    plt.plot(hs, norms, label="numerical error")
+    plt.plot(hs, estimates, label="analytical estimation")
     plt.xlabel("h")
     plt.ylabel("error")
     plt.title(f"log-log plot of the numerical differentiation error, {delta=}, {k=}")

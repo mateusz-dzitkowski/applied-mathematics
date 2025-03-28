@@ -37,6 +37,7 @@ playwright = "^1.49.0"
 psycopg = "^3.2.3"
 parsel = "^1.9.1"
 scikit-image = "^0.25.2"
+seaborn = "^0.13.2"
 
 
 [build-system]
