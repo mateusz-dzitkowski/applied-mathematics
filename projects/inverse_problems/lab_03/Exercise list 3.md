@@ -76,3 +76,43 @@ $$
 $$
 k(x,y) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-y)^2}{2\sigma^2}\right).
 $$
+By applying the trapezoidal rule, we can get the approximate vectors:
+![[0201.png]]
+In general we cannot invert the matrix $K$, but even when it's a square invertible matrix, we get the following, not so appealing result:
+![[0202.png]]
+We wish to find an approximate solution to the problem using the method of least squares
+$$
+\min\frac{1}{2}||Ku - f||^2.
+$$
+Define
+$$
+S(u) = \frac{1}{2}||Ku - f||^2 = \frac{1}{2}(Ku - f)^T(Ku-f) = \frac{1}{2}(u^TK^TKu + f^Tf-2f^TKu),
+$$
+and differentiate with respect to $u$:
+$$
+S'(u) = K^TKu - f^TK = K^TKu - K^Tf.
+$$
+We wish to find the minimum, so we set the derivative to zero, and rearrange, to get $u$:
+$$
+u = (K^TK)^{-1}K^Tf.
+$$
+The result is shown on the figure below
+![[0203.png]]
+
+We can also apply the SVD method in order to pseudo-invert the matrix K, which yields the following result
+![[0204.png]]
+
+To find the minimum of the regularised problem, we proceed in the same fashion as in the least squares case. Define
+$$
+S(u) = \frac{1}{2}(u^TK^TKu + f^Tf-2f^TKu + \alpha u^Tu),
+$$
+then differentiate
+$$
+S'(u) = K^TKu - K^Tf + \alpha I u,
+$$
+set to zero, and rearrange
+$$
+u = (K^TK + \alpha I)^{-1}K^Tf.
+$$
+The result is shown below
+![[0205.png]]

@@ -69,7 +69,7 @@ def tikhonov(k: NDArray, f: NDArray, alpha: float) -> NDArray:
 
 def sub_01():
     x, y, (xx, yy) = square(100, 123)
-    transform = FredholmTransform.gaussian(0.03)
+    transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y+0.5) - heaviside(y-0.5)
     f = transform.apply(xx, yy, u)
 
@@ -81,7 +81,7 @@ def sub_01():
 def sub_02():
     # in general you can't invert the matrix K, so setting M, and N to be equal there
     x, y, (xx, yy) = square(123, 123)
-    transform = FredholmTransform.gaussian(0.03)
+    transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y + 0.5) - heaviside(y - 0.5)
     f = transform.apply(xx, yy, u)
     u_back = transform.apply_inverse(xx, yy, f)
@@ -93,8 +93,8 @@ def sub_02():
 
 
 def sub_03():
-    x, y, (xx, yy) = square(100, 123)
-    transform = FredholmTransform.gaussian(0.03)
+    x, y, (xx, yy) = square(123, 100)
+    transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y + 0.5) - heaviside(y - 0.5)
     f = transform.apply(xx, yy, u)
     f_delta = f + np.random.normal(scale=0.05, size=f.shape)
@@ -114,7 +114,7 @@ def sub_03():
 
 def sub_04():
     x, y, (xx, yy) = square(100, 123)
-    transform = FredholmTransform.gaussian(0.03)
+    transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y + 0.5) - heaviside(y - 0.5)
     f = transform.apply(xx, yy, u)
     f_delta = f + np.random.normal(scale=0.05, size=f.shape)
@@ -136,7 +136,7 @@ def sub_04():
 def sub_05():
     alpha = 0.015
     x, y, (xx, yy) = square(100, 123)
-    transform = FredholmTransform.gaussian(0.03)
+    transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y + 0.5) - heaviside(y - 0.5)
     f = transform.apply(xx, yy, u)
     f_delta = f + np.random.normal(scale=0.05, size=f.shape)
@@ -156,11 +156,10 @@ def sub_05():
 
 def sub_06():
     x, y, (xx, yy) = square(100, 123)
-    transform = FredholmTransform.gaussian(0.03)
+    transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y + 0.5) - heaviside(y - 0.5)
 
     f = transform.apply_fourier(xx, yy, u)
-    print(f.shape)
 
     with fig():
         sns.lineplot(x=y, y=u, label="u")
