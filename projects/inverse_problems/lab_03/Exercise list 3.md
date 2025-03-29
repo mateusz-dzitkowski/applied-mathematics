@@ -12,7 +12,7 @@ k(x, y) =
 \end{cases}
 $$
 and $T>0$.
-Note that
+Note that $k(0, y) = k(1, y) = 0$, so
 $$
 f(0) = f(1) = \int_0^10u(y)dy = 0.
 $$
@@ -68,7 +68,8 @@ $$
 &\ge \frac{T}{\delta^2}\left|\max\limits_{x\in[0,1]}2\cos\left(\frac{x}{\delta}\right) - \max\limits_{x\in[0,1]}\frac{1}{\delta}(x-1)\sin\left(\frac{x}{\delta}\right)\right| \ge \frac{T}{\delta^2}\left|2 + \frac{1}{\delta}\right|.
 \end{aligned}
 $$
-As we can see, even though $||f-f_\delta||$ stays small when $\delta$ is small, $||u-u_\delta||$ blows up, making the problem of determining $u$ from $f$ ill-posed.
+As we can see, even though $||f-f_\delta||$ stays small when $\delta$ is small, $||u-u_\delta||$ blows up, making the problem of determining $u$ from $f$ ill-posed. The problem is illustrated on the figure below
+![[0101.png]]
 # Problem 3
 $$
 f(x) = \int_{-1}^1k(x,y)u(y)dy,
@@ -90,7 +91,7 @@ S(u) = \frac{1}{2}||Ku - f||^2 = \frac{1}{2}(Ku - f)^T(Ku-f) = \frac{1}{2}(u^TK^
 $$
 and differentiate with respect to $u$:
 $$
-S'(u) = K^TKu - f^TK = K^TKu - K^Tf.
+S'(u) = K^TKu - K^Tf.
 $$
 We wish to find the minimum, so we set the derivative to zero, and rearrange, to get $u$:
 $$
