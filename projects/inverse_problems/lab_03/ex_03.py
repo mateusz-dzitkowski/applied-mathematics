@@ -1,11 +1,11 @@
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Callable, Self
-from contextlib import contextmanager
-import numpy as np
-from nptyping import NDArray
-from matplotlib import pyplot as plt
-import seaborn as sns
 
+import numpy as np
+import seaborn as sns
+from matplotlib import pyplot as plt
+from nptyping import NDArray
 
 sns.set_style("whitegrid")
 
@@ -70,7 +70,7 @@ def tikhonov(k: NDArray, f: NDArray, alpha: float) -> NDArray:
 def sub_01():
     x, y, (xx, yy) = square(100, 123)
     transform = FredholmTransform.gaussian(0.06)
-    u = heaviside(y+0.5) - heaviside(y-0.5)
+    u = heaviside(y + 0.5) - heaviside(y - 0.5)
     f = transform.apply(xx, yy, u)
 
     with fig():

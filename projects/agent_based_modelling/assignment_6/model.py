@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from random import sample, random, choice
+from random import choice, random, sample
 from typing import Self
 
-import numpy as np
 import networkx as nx
+import numpy as np
 
 
 @dataclass

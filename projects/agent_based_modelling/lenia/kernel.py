@@ -3,9 +3,8 @@ from functools import cached_property
 from typing import Self
 
 import numpy as np
-from scipy.signal import convolve2d
-
 from base import Array, Func
+from scipy.signal import convolve2d
 
 
 @dataclass
@@ -36,7 +35,7 @@ class Kernel:
         x, y = x / radius_xy * len(peaks), y / radius_xy * len(peaks)
         r = np.sqrt(x**2 + y**2)
         return cls(
-            arr=(r < len(peaks)) * peaks[np.minimum(r.astype(int), len(peaks)-1)] * func(r % 1),
+            arr=(r < len(peaks)) * peaks[np.minimum(r.astype(int), len(peaks) - 1)] * func(r % 1),
             from_chan=from_chan,
             to_chan=to_chan,
         )

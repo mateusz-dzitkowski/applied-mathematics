@@ -34,7 +34,7 @@ class Automaton:
 
         self._arr = self._arr.astype(int)
         self._arr = np.array([np.concatenate([np.array([0] * self.run_length), self._arr, np.array([0] * self.run_length)])]).astype(int)
-        self._arr = reduce(lambda a, _: np.vstack([self._arr[-1, :], self.rule.step_function(a)]), [0]*self.run_length, self._arr)
+        self._arr = reduce(lambda a, _: np.vstack([self._arr[-1, :], self.rule.step_function(a)]), [0] * self.run_length, self._arr)
 
     @cached_property
     def arr_history(self) -> np.ndarray:

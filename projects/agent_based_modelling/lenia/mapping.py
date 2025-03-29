@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 
-from matplotlib import pyplot as plt
 import numpy as np
-
-from base import Func, Array
+from base import Array, Func
 from kernel import Kernel
+from matplotlib import pyplot as plt
 from world import World
 
 
@@ -31,10 +30,7 @@ class Mapping:
 
     def apply(self, world: World) -> World:
         arr = np.fft.fft2(world.arr) if self.use_fft else world.arr
-        convolved = [
-            _map.kernel.apply(arr[_map.kernel.from_chan], use_fft=self.use_fft)
-            for _map in self.maps
-        ]
+        convolved = [_map.kernel.apply(arr[_map.kernel.from_chan], use_fft=self.use_fft) for _map in self.maps]
         growth = [_map.growth.apply(conv) for conv, _map in zip(convolved, self.maps)]
         h = [sum(g for g, _map in zip(growth, self.maps) if _map.kernel.to_chan == chan) for chan in range(len(arr))]
         return World(arr=np.array(h))

@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-from typing import Self, Literal
+from typing import Literal, Self
 
-from matplotlib import pyplot as plt
 import numpy as np
-from scipy import ndimage
-
 from base import Array
-
+from matplotlib import pyplot as plt
+from scipy import ndimage
 
 OrganismName = Literal[
     "aquarium",
@@ -66,8 +64,4 @@ class World:
         return World(arr=np.rot90(self.arr, axes=(-1, -2)))
 
     def zoomed(self, scale: float, order: int = 0) -> Self:
-        return World(
-            arr=np.array(
-                [ndimage.zoom(arr, scale, order=order) for arr in self.arr]
-            )
-        )
+        return World(arr=np.array([ndimage.zoom(arr, scale, order=order) for arr in self.arr]))

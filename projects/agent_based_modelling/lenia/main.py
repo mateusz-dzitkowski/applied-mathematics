@@ -1,13 +1,9 @@
 import time
 
-import numpy as np
-
-from base import Array
-from kernel import Kernel
-from lenia import Lenia
-from mapping import Map, Mapping, Growth
-from base import bell, bcs_wall
+from base import Array, bcs_wall
 from world import World
+
+from lenia import Lenia
 
 
 def main():
@@ -17,9 +13,7 @@ def main():
 
     aquarium = World.load("aquarium").zoomed(9)
     world = (
-        World.empty((3, 1000, 1000))
-        .embed(aquarium.flipped_vertical.flipped_horizontal, at=(50, 200))
-        .embed(aquarium.flipped_vertical, at=(50, 600))
+        World.empty((3, 1000, 1000)).embed(aquarium.flipped_vertical.flipped_horizontal, at=(50, 200)).embed(aquarium.flipped_vertical, at=(50, 600))
     )
 
     lenia = Lenia.aquarium(initial=world, common_r=100)

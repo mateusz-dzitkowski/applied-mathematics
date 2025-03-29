@@ -1,6 +1,6 @@
 from typing import Callable
-import numpy as np
 
+import numpy as np
 
 Array = np.ndarray
 Func = Callable[[Array], Array]
@@ -24,4 +24,5 @@ def bcs_wall(width: int) -> BCS:
         arr[:, -width:, :] = 0
         arr[:, :, :width] = 0
         arr[:, :, -width:] = 0
+
     return inner

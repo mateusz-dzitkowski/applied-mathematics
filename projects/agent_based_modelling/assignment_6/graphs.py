@@ -1,8 +1,7 @@
-from random import choice, random
 from itertools import product
+from random import choice, random
 
 import networkx as nx
-
 
 ONE_SIDE_ADJ = [
     (1, 0),

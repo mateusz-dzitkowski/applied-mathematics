@@ -1,15 +1,14 @@
 from dataclasses import dataclass
-from typing import Self, Callable
+from typing import Callable, Self
 
+import numpy as np
+from base import Array, bell, h
+from kernel import Kernel
+from mapping import Growth, Map, Mapping
 from matplotlib import animation
 from matplotlib import pyplot as plt
-import numpy as np
 from tqdm import tqdm
-
-from base import h, bell, Array
 from world import World
-from mapping import Mapping, Map, Growth
-from kernel import Kernel
 
 
 @dataclass
@@ -88,7 +87,7 @@ class Lenia:
                             radius_xy=18,
                             peaks=[0.5, 1, 0.667],
                         ),
-                        growth=Growth(func=lambda x: bell(0.26, 0.036)(x)*2 - 1),
+                        growth=Growth(func=lambda x: bell(0.26, 0.036)(x) * 2 - 1),
                     ),
                 ],
             ),
@@ -108,7 +107,7 @@ class Lenia:
                             func=bell(0.5, 0.15),
                             radius_cells=common_r_cells,
                             radius_xy=common_r,
-                            peaks=[1, 5/12, 2/3],
+                            peaks=[1, 5 / 12, 2 / 3],
                         ),
                         growth=Growth(func=lambda x: bell(0.156, 0.0118)(x) * 2 - 1),
                     ),
@@ -117,7 +116,7 @@ class Lenia:
                             func=bell(0.5, 0.15),
                             radius_cells=common_r_cells,
                             radius_xy=common_r,
-                            peaks=[1/12, 1],
+                            peaks=[1 / 12, 1],
                         ),
                         growth=Growth(func=lambda x: bell(0.193, 0.049)(x) * 2 - 1),
                     ),
@@ -140,7 +139,8 @@ class Lenia:
 
         def growth(_m, _s, _h):
             def inner(x):
-                return _h*(bell(_m, _s)(x) * 2 - 1)
+                return _h * (bell(_m, _s)(x) * 2 - 1)
+
             return inner
 
         return cls(
@@ -175,7 +175,7 @@ class Lenia:
                             func=common_bell,
                             radius_cells=common_r_cells,
                             radius_xy=common_r * 0.5,
-                            peaks=[1, 1/4],
+                            peaks=[1, 1 / 4],
                             from_chan=0,
                             to_chan=0,
                         ),
@@ -208,7 +208,7 @@ class Lenia:
                             func=common_bell,
                             radius_cells=common_r_cells,
                             radius_xy=common_r * 0.8,
-                            peaks=[5/6, 1],
+                            peaks=[5 / 6, 1],
                             from_chan=1,
                             to_chan=1,
                         ),
@@ -252,7 +252,7 @@ class Lenia:
                             func=common_bell,
                             radius_cells=common_r_cells,
                             radius_xy=common_r * 0.79,
-                            peaks=[11/12, 1],
+                            peaks=[11 / 12, 1],
                             from_chan=0,
                             to_chan=1,
                         ),
@@ -263,7 +263,7 @@ class Lenia:
                             func=common_bell,
                             radius_cells=common_r_cells,
                             radius_xy=common_r * 0.5,
-                            peaks=[3/4, 1],
+                            peaks=[3 / 4, 1],
                             from_chan=0,
                             to_chan=2,
                         ),
@@ -274,7 +274,7 @@ class Lenia:
                             func=common_bell,
                             radius_cells=common_r_cells,
                             radius_xy=common_r * 0.72,
-                            peaks=[11/12, 1],
+                            peaks=[11 / 12, 1],
                             from_chan=1,
                             to_chan=0,
                         ),
@@ -296,7 +296,7 @@ class Lenia:
                             func=common_bell,
                             radius_cells=common_r_cells,
                             radius_xy=common_r * 0.82,
-                            peaks=[1/6, 1, 0],
+                            peaks=[1 / 6, 1, 0],
                             from_chan=2,
                             to_chan=0,
                         ),

@@ -1,14 +1,13 @@
+import time
 from itertools import product
 from multiprocessing import Pool
-import time
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 
+from projects.agent_based_modelling.assignment_6.graphs import lattice_with_diagonals
 from projects.agent_based_modelling.assignment_6.model import Model, Params
 from projects.agent_based_modelling.assignment_6.runge_kutta import runge_kutta_4
-from projects.agent_based_modelling.assignment_6.graphs import lattice_with_diagonals
-
 
 GRAPH_SIZES = [(10, 10)]
 PARAMS = [
@@ -17,8 +16,7 @@ PARAMS = [
         imitation=imitation,
         initial_adoptions=initial_adoptions,
     )
-    for innovation, imitation, initial_adoptions
-    in product(
+    for innovation, imitation, initial_adoptions in product(
         [0, 0.01],
         [0.25, 0.5],
         [0, 8],
@@ -31,7 +29,7 @@ TIME_TO_STABILISE_RUNS = 100
 
 def plot_evolutions():
     setups = list(product(PARAMS, GRAPH_SIZES))
-    fig, axs = plt.subplots(len(setups), 1, figsize=(10, 6*len(setups)), layout="tight")
+    fig, axs = plt.subplots(len(setups), 1, figsize=(10, 6 * len(setups)), layout="tight")
 
     for ax, (params, (m, n)) in zip(axs, setups):
         for beta in REWIRING_PROBABILITIES:
@@ -39,7 +37,9 @@ def plot_evolutions():
                 Model(
                     params=params,
                     graph=lattice_with_diagonals(m, n, beta),
-                ).run().adoption_history,
+                )
+                .run()
+                .adoption_history,
                 label=f"{beta=}",
             )
             ax.set_title(f"{params=}, {m=}, {n=}")
@@ -54,10 +54,14 @@ def plot_evolutions():
 
 def calculate_steps(args: tuple[Params, tuple[int, int], float]) -> int:
     params, (m, n), beta = args
-    return Model(
-        params=params,
-        graph=lattice_with_diagonals(m, n, beta),
-    ).run().current_step
+    return (
+        Model(
+            params=params,
+            graph=lattice_with_diagonals(m, n, beta),
+        )
+        .run()
+        .current_step
+    )
 
 
 def plot_time_to_stabilise():
@@ -68,10 +72,7 @@ def plot_time_to_stabilise():
             print(f"{params=}, {graph_size=}")
             beta = np.linspace(0, 1, 100)
             time_to_stabilise = np.array(
-                [
-                    np.array(pool.map(calculate_steps, [(params, graph_size, b)] * TIME_TO_STABILISE_RUNS)).mean()
-                    for b in beta
-                ]
+                [np.array(pool.map(calculate_steps, [(params, graph_size, b)] * TIME_TO_STABILISE_RUNS)).mean() for b in beta]
             )
             ax.plot(beta, time_to_stabilise, label=f"{params=}, {graph_size=}")
 
@@ -98,26 +99,23 @@ def compare_graph_and_ode():
         Model(
             params=params,
             graph=lattice_with_diagonals(m, n, beta),
-        ).run().adoption_history
+        )
+        .run()
+        .adoption_history
         for _ in range(runs)
     ]
     max_run_length = max(len(run) for run in simulated_raw)
-    simulated = np.array(
-        [
-            np.append(run, np.ones(max_run_length - len(run)))
-            for run in simulated_raw
-        ]
-    ).mean(axis=0)
+    simulated = np.array([np.append(run, np.ones(max_run_length - len(run))) for run in simulated_raw]).mean(axis=0)
 
     def ode(_: float, y: float) -> float:
-        return (1 - y)*(params.innovation + params.imitation*y)
+        return (1 - y) * (params.innovation + params.imitation * y)
 
     def exact(_x: np.ndarray, p: float, q: float, a: float) -> float:
-        return (p*(a + np.exp((p+q)*_x) - 1) + a*q*np.exp((p+q)*_x))/((a*q+p)*np.exp((p+q)*_x) + q - a*q)
+        return (p * (a + np.exp((p + q) * _x) - 1) + a * q * np.exp((p + q) * _x)) / ((a * q + p) * np.exp((p + q) * _x) + q - a * q)
 
     x = np.linspace(start=0, stop=50, num=len(simulated))  # arbitrary 50 IDK
     y_rk4 = runge_kutta_4(ode, 0, x)
-    y_exact = exact(x, params.innovation, params.imitation, params.initial_adoptions / (m*n))
+    y_exact = exact(x, params.innovation, params.imitation, params.initial_adoptions / (m * n))
 
     plt.plot(y_rk4, label="runge kutta 4")
     plt.plot(y_exact, label="exact solution")
