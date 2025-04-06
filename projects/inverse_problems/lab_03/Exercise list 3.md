@@ -79,8 +79,19 @@ k(x,y) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-y)^2}{2\sigma^2}\right).
 $$
 By applying the trapezoidal rule, we can get the approximate vectors:
 ![[0201.png]]
-In general we cannot invert the matrix $K$, but even when it's a square invertible matrix, we get the following, not so appealing result:
-![[0202.png]]
+In general we cannot invert the matrix $K$, so we cannot find $u$ by resolving the system
+$$
+Ku = f.
+$$
+If, by chance, the discretisation is the same in both the $x$ and $y$ direction, the matrix $K$ can be inverted, then we get
+$$
+u = K^{-1}f.
+$$
+For discretisation with a small number of points, in this example $64$, the inverse transform behaves just as we would expect:
+![[0202a.png]]
+but for a discretisation with just a bit more points, in this example $75$, the result deviates from the original function $u$:
+![[0202b.png]]
+
 We wish to find an approximate solution to the problem using the method of least squares
 $$
 \min\frac{1}{2}||Ku - f||^2.
@@ -117,3 +128,22 @@ u = (K^TK + \alpha I)^{-1}K^Tf.
 $$
 The result is shown below
 ![[0205.png]]
+
+In order to solve the equation using the convolution theorem we note that the equation can be rewritten as follows
+$$
+f(x) = \int_\mathbb{R}k(x-y)u(y)\chi_{[-1,1]}(y)dy.
+$$
+In our concrete example with $u=\chi_{\left[-\frac{1}{2},\frac{1}{2}\right]}$, $\chi_{[-1,1]}$ is redundant, so we write
+$$
+f(x) = \int_\mathbb{R}k(x-y)u(y)dy = (k*u)(x).
+$$
+The  convolution theorem states that the Fourier transform of the convolution is a multiplication of the Fourier transforms of the functions being convolved:
+$$
+\mathcal{F}{f} = \mathcal{F}{k} \cdot \mathcal{F}{u}.
+$$
+In order to recover $u$, we divide by $\hat{k}$, and apply the inverse Fourier transform:
+$$
+u = \mathcal{F}^{-1}\left(\frac{\mathcal{F}f}{\mathcal{F}k}\right).
+$$
+We use Fast Fourier Transform (FFT) in order to recover $u$ from both "clean" and "noised" versions of $f$.
+![[0206.png]]

@@ -19,7 +19,13 @@ class FredholmTransform:
         return cls(func=lambda x: np.exp(-x**2 / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma))
 
     def matrix(self, x: NDArray, y: NDArray) -> NDArray:
-        return self.func(x-y).T * (y[1, 0] - y[0, 0])
+        m = self.func(x - y).T
+
+        w = np.ones_like(m)
+        w[0, :] = w[-1, :] = 0.5
+        w *= y[1, 0] - y[0, 0]
+
+        return m * w
 
     def inverse(self, x: NDArray, y: NDArray) -> NDArray:
         return np.linalg.inv(self.matrix(x, y))
@@ -75,7 +81,7 @@ def sub_01():
 
 def sub_02():
     # in general you can't invert the matrix K, so setting M, and N to be equal there
-    x, y, (xx, yy) = square(123, 123)
+    x, y, (xx, yy) = square(75, 75)
     transform = FredholmTransform.gaussian(0.06)
     u = heaviside(y + 0.5) - heaviside(y - 0.5)
     f = transform.apply(xx, yy, u)
@@ -186,12 +192,12 @@ def sub_06():
 
 
 def main():
-    # sub_01()
-    # sub_02()
+    sub_01()
+    sub_02()
     # sub_03()
     # sub_04()
     # sub_05()
-    sub_06()
+    # sub_06()
 
 
 if __name__ == "__main__":
