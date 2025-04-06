@@ -12,14 +12,14 @@ sns.set_style("whitegrid")
 
 @dataclass
 class FredholmTransform:
-    func: Callable[[NDArray, NDArray], NDArray]
+    func: Callable[[NDArray], NDArray]
 
     @classmethod
     def gaussian(cls, sigma: float) -> Self:
-        return cls(func=lambda x, y: np.exp(-np.square(x - y) / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma))
+        return cls(func=lambda x: np.exp(-x**2 / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma))
 
     def matrix(self, x: NDArray, y: NDArray) -> NDArray:
-        return self.func(x, y).T * (y[1, 0] - y[0, 0])
+        return self.func(x-y).T * (y[1, 0] - y[0, 0])
 
     def inverse(self, x: NDArray, y: NDArray) -> NDArray:
         return np.linalg.inv(self.matrix(x, y))
@@ -29,11 +29,6 @@ class FredholmTransform:
 
     def apply_inverse(self, x: NDArray, y: NDArray, u: NDArray) -> NDArray:
         return self.inverse(x, y) @ u
-
-    def apply_fourier(self, x: NDArray, y: NDArray, u: NDArray) -> NDArray:
-        k = self.matrix(x, y)
-        k = k / np.sum(k)
-        return np.fft.ifft(np.fft.fft2(k) @ np.fft.fft(u))
 
 
 @contextmanager
@@ -155,23 +150,47 @@ def sub_05():
 
 
 def sub_06():
-    x, y, (xx, yy) = square(100, 123)
     transform = FredholmTransform.gaussian(0.06)
-    u = heaviside(y + 0.5) - heaviside(y - 0.5)
 
-    f = transform.apply_fourier(xx, yy, u)
+    n = 2**6
+    x = np.linspace(-1, 1, n)
+    dx = x[1] - x[0]
+    t = np.linspace(-2, 2, 2*n)  # extended for zero-padding
+    u = heaviside(x + 0.5) - heaviside(x - 0.5)
 
-    with fig():
-        sns.lineplot(x=y, y=u, label="u")
-        sns.lineplot(x=x, y=f, label="f")
+    u_padded = np.zeros(2*n)
+    u_padded[:n] = u
+    k = transform.func(t)
+
+    f = np.fft.ifft(np.fft.fft(k) * np.fft.fft(u_padded)).real[n:] * dx
+    f_noise = f + np.random.normal(scale=1e-15, size=f.shape)
+
+    k_hat = np.fft.fft(k)
+
+    f_hat = np.fft.fft(f, n=2*n)
+    u_hat = f_hat / k_hat
+    u_back = np.fft.ifft(u_hat).real[n:] / dx
+
+    f_noise_hat = np.fft.fft(f_noise, n=2 * n)
+    u_noise_hat = f_noise_hat / k_hat
+    u_noise_back = np.fft.ifft(u_noise_hat).real[n:] / dx
+
+    with fig(rows=2) as (_, (ax1, ax2)):
+        sns.lineplot(x=x, y=u, label="u", ax=ax1)
+        sns.lineplot(x=x, y=f, label="f", ax=ax1)
+        sns.lineplot(x=x, y=u_back, label="u_back", ax=ax1)
+
+        sns.lineplot(x=x, y=u, label="u", ax=ax2)
+        sns.lineplot(x=x, y=f_noise, label="f_noise", ax=ax2)
+        sns.lineplot(x=x, y=u_noise_back, label="u_noise_back", ax=ax2)
 
 
 def main():
-    sub_01()
-    sub_02()
-    sub_03()
-    sub_04()
-    sub_05()
+    # sub_01()
+    # sub_02()
+    # sub_03()
+    # sub_04()
+    # sub_05()
     sub_06()
 
 

@@ -306,3 +306,116 @@ u(x, 1) = f(x).
 $$
 We want to determine the initial temperature $g(x) = u(x, 0)$.
 To solve the equation we apply the method of separation of variables ez.
+
+# 8 Ill-conditioned matrix equations
+We consider an inverse problem that can be posed as a system of linear equations
+$$
+Ku = f
+$$
+where $K \in \mathbb{R}^{m \times n}$ is a given matrix and $f \in \mathbb{R}^m$ is our input data.
+We aim to find a solution $u \in \mathbb{R}^n$ that approximately satisfies the equations. 
+We need to discuss existence, uniqueness, and stability of the solution
+1. Well posedness
+	1. If $m=n$, and $K$ has full rank, then $K$ is invertible and the solutions is given by 
+$$
+u = K^{-1}f
+$$
+	2. if $m>n$, and $rank(K)=n$, then the system of equations may be inconsistent, in which case a solution doesn't exist when $f$ is not in the range of $K$:
+$$
+R(K) = \left\{x_1k_1 + x_2k_2 + \dots + x_nk_n: x=(x_1, \dots x_n)\in\mathbb{R}^n, \text{ and $k$ denotes the $i$th column of $K$}\right\}.
+$$
+	3. if $m<n$, and $rank(K)=m$, we can always find a solution but it may be not unique because $K$ has a non-trivial null space:
+$$
+N(K) = \left\{x\in\mathbb{R}^n: Kx=0\right\}.
+$$
+	4. if $K$ doesn't have maximal rank, the system of equations may be both inconsistent and undetermined.
+2. Stability
+   Let $Ku=f$, $Ku^\delta=f^\delta$. We wish for $C$ such that
+$$
+||u-u^\delta|| \le C||f-f^\delta||.
+$$
+	We get the relative error:
+$$
+\frac{||u-u^\delta||}{||u||} \le ||K||||K^{-1}||\frac{||f-f^\delta||}{||f||}.
+$$
+## 8.1 Pseudo-inverse
+We need to discuss how we may define solutions of inconsistent or indetermined systems of equations. Let $K \in \mathbb{R}^{m \times n}$. Then the singular value decomposition (SVD) of $K$ is given by 
+$$
+K = U \Sigma V^*,
+$$
+where:
+- $U \in \mathbb{R}^{m \times m}$ is a unitary matrix $UU^* = U^*U$,
+- $V \in \mathbb{R}^{n \times n}$ is a unitary matrix $VV^* = V^*V$,
+- $\Sigma \in \mathbb{R}^{m \times n}$ is a diagonal matrix with $\sigma_i = \Sigma_{ii}$ - singular values of $K$.
+Remarks:
+- columns of $U$, $(u_1, u_2, \dots, u_m)$, form an orthonormal basis in $\mathbb{R}^m$,
+- the number of non-zero singular values is equal to the rank of $K$,
+- if $\sigma_1 \ge \sigma_2 \ge \dots \sigma_r > 0$, then
+$$
+K = \Sigma_{i=1}^r\sigma_i u_iv_i^* = U_r \Sigma_r V_r^*.
+$$
+	where $r \le \min\{m, n\}$ is the rank of $K$.
+
+Now we can define the pseudo-inverse:
+- if $m>n$, the system is inconsistent when $f \notin R(K)$. If $K$ has a full rank, i.e. $rank(K)=n$, we can write
+$$
+K = U_n \Sigma_n V_n^*.
+$$
+	we rewrite the system of equations to
+$$
+Ku = U_nU_n^*f,
+$$
+	then, using the SVD we see that
+$$
+u = K^{-1}\left(U_nU_n^*f\right) = V_n \Sigma_n^{-1} U_n^* U_n U_n^* f = V_n \Sigma_n^{-1} U_n^*.
+$$
+Define
+$$
+K^{\dagger}f = V_n \Sigma_n^{-1} U_n^* f
+$$
+to be the Moore-Penrose pseudo-inverse of $K$. We can show that this conincides witht the least-squares solution
+$$
+\min\limits_u||Ku-f||^2.
+$$
+To show this we consider the normal equation
+$$
+K^*Ku = K^*f.
+$$
+Now we have $K = U_n \Sigma_n V_n^*$, and $K^*=V_n \Sigma_n U_n^*$, so
+$$
+K^*K = V_n \Sigma_n^2 V_n^*,
+$$
+and 
+$$
+(K^*K)^{-1} = V_n^* \Sigma_n^{-2} V_n,
+$$
+hence
+$$
+u = (K^*K)^{-1}K^*f = V_n \Sigma_n^{-1} U_n f.
+$$
+- if $m<n$, and $K$ has a full rank, $rank(K)=m$, then a solution exists, but is not unique. In this case, we can look for the smallest solution that is we look for a solution that is spanned by the first $m$ right singular eigenvectors $(v_1, \dots, v_m)$, i.e
+$$
+K V_m z = f, \quad\text{ with } u = V_m z.
+$$
+	We find this solution is given by
+$$
+u = V_m \Sigma_m^{-1} U_m f = K^\dagger f.
+$$
+	We can show that this solution is equivalent to the solution of the problem
+$$
+\min\limits_u ||u||^2, \quad\text{ such that } Ku=f.
+$$
+	To show this, we consider a solution of the form
+$$
+v = u + z,
+$$
+	with $u = K^\dagger f$, and $Kz=0$. By straightforward calculations we have
+$$
+\begin{aligned}
+||v||^2 = ||u+z||^2 &= ||u||^2 + 2\langle u,z \rangle + ||z||^2 = \\
+&= ||u||^2 + 2\langle V_m \Sigma_n^{-1} U_m^* f,z \rangle + ||z||^2 = \\
+&= ||u||^2 + 2\langle \Sigma_m^{-1} U_m^* f, V_m^* z \rangle + ||z||^2 = \\
+&= ||u||^2 + ||z||^2 \ge ||u||^2.
+\end{aligned}
+$$
+
