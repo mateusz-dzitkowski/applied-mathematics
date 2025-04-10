@@ -418,4 +418,85 @@ $$
 &= ||u||^2 + ||z||^2 \ge ||u||^2.
 \end{aligned}
 $$
+### Definition (Moore-Penrose pseudo-inverse)
+The pseudo-inverse of a matrix $K \in \mathbb{R}^{m \times n}$ with the rank $r \le \{m, n\}$ if defined in terms of the SVD as
+$$
+K^\dagger = V_r \Sigma_r^{-1} U_r^*
+$$
+where $V_r = (v_1, v_2, \dots, v_r)$, $U_r = (u_1, u_2, \dots, u_r)$, and $\Sigma_r$ contains the $r$ largest (non-zero) singular values.
+We note that the pseudo-inverse allows to define a unique solution, however this solution is not necessarily stable since the condition number 
+$$
+||K|| \cdot ||K^\dagger|| = \frac{\sigma_1}{\sigma_r}
+$$
+may be large.
+We can write
+$$
+u = V_r \Sigma_r^{-1} U_r^* f = \sum_{i=1}^r \frac{1}{\sigma_i}\langle u_i, f \rangle v_i.
+$$
+To stabilise the problem we can modify the pseudo-inverse to avoid dividing by small singular values. One possibility is to simply ignore small singular values and consider
+$$
+u_\alpha = V_r R_\alpha(\Sigma_r) U_r^* f,
+$$
+where
+$$
+R_\alpha(\sigma) = \begin{cases}
+	\frac{1}{\sigma},& \sigma \ge \alpha, \\
+	0,& \text{otherwise}.
+\end{cases}
+$$
 
+Another option to avoid dividing by small singular values is to add a small positive constant to shift the singular eigenvalues away from zero. This leads to the Tikhonov regularisation:
+$$
+u_\alpha = \sum_{i=1}^r \frac{\sigma_i}{\sigma_i^2 + \alpha}\langle u_i, f \rangle v_i.
+$$
+This corresponds to setting
+$$
+R_\alpha(\sigma) = \frac{\sigma}{\sigma^2 + \alpha}.
+$$
+The Tikhonov regularisation corresponds to the variational problem
+$$
+\min\limits_u\left\{ ||Ku - f||^2 + \alpha||u||^2 \right\}.
+$$
+# 9 Parameter identification problems in differential equations
+Consider the following problem
+$$
+-\nabla\left(a(x) \nabla u\right) = f,
+$$
+with appropriate boundary conditions.
+We wish to determine $a$ based on the observations $u$.
+#### Uniqueness
+Let us consider a 1d case:
+$$
+-(au')' = f, \quad u'(0)=0, \quad u(1) = 0.
+$$
+Let's define the so-called parameter to solution map
+$$
+F: a \mapsto u_a
+$$
+Turns out in this case $F$ is a bijection lets go.
+
+The natural question is: how to guarantee that $u' \ne 0$.
+- if $\int_0^xf(s)ds > 0$ in $(0,1)$, then we get $u'(x) < 0$,
+- we can assume that $f(x) \ne 0$ for almost every $x$, then $u'(x)$ cannot vanish on an open interval $I \subset [0, 1]$, since otherwise we would get a contradiction with the original equation
+#### Stability
+We consider the continuity of the inverse operator on a special subset of its domain
+$$
+C_{\gamma, M} = \left\{ u \in C^2([0, 1]): ||u||_{C^2} \le M, u'(x) \ge \gamma \right\}.
+$$
+Let $u_j$ be the solution of the direct problem for given parameter $a_j$, $j = 1, 2, \dots$.
+Then we have
+$$
+a_1(x) - a_2(x) = \frac{-\int_0^xf(s)ds}{u_1'(x)u_2'(x)}\left(u_2'(x) - u_1'(x)\right).
+$$
+We square both sides, integrate, and use some tricks (?) to get
+$$
+||a_1 - a_2||_{L^2}^2 \le \frac{1}{\gamma^4}||f||_{L^1}^2||u_2' - u_1'||_{L^2}^2.
+$$
+Then we use integration by parts, and the Cauchy-Schwartz inequality:
+$$
+||u_2' - u_1'||_{L^2}^2 = \int_0^1(u_2 - u_1)\left(u_2'' - u_1''\right)dx \le ||u_2-u_1||_{L^2} ||u_2'' - u_1''||_{L^2}.
+$$
+Then we use the Minkowski inequality, and the assumptions, and finally
+$$
+||a_1 - a_2||_{L^2}^2 \le \frac{2}{\gamma^4}\sqrt{M}||f||_{L_1}^2||u_1 - u_2||_{L^2}.
+$$
