@@ -16,7 +16,7 @@ class FredholmTransform:
 
     @classmethod
     def gaussian(cls, sigma: float) -> Self:
-        return cls(func=lambda x: np.exp(-x**2 / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma))
+        return cls(func=lambda x: np.exp(-(x**2) / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma))
 
     def matrix(self, x: NDArray, y: NDArray) -> NDArray:
         m = self.func(x - y).T
@@ -161,10 +161,10 @@ def sub_06():
     n = 2**6
     x = np.linspace(-1, 1, n)
     dx = x[1] - x[0]
-    t = np.linspace(-2, 2, 2*n)  # extended for zero-padding
+    t = np.linspace(-2, 2, 2 * n)  # extended for zero-padding
     u = heaviside(x + 0.5) - heaviside(x - 0.5)
 
-    u_padded = np.zeros(2*n)
+    u_padded = np.zeros(2 * n)
     u_padded[:n] = u
     k = transform.func(t)
 
@@ -173,7 +173,7 @@ def sub_06():
 
     k_hat = np.fft.fft(k)
 
-    f_hat = np.fft.fft(f, n=2*n)
+    f_hat = np.fft.fft(f, n=2 * n)
     u_hat = f_hat / k_hat
     u_back = np.fft.ifft(u_hat).real[n:] / dx
 

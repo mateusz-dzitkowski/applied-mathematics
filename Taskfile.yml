@@ -1,6 +1,12 @@
 version: "3"
 
 tasks:
+  default:
+    desc: Run format and lint
+    cmds:
+      - task: format
+      - task: lint
+
   lint:
     desc: Fix the fixable linting errors
     cmd: poetry run ruff check . --fix
