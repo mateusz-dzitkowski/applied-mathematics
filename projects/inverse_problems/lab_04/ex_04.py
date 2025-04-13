@@ -47,14 +47,20 @@ def solve_for_a(x: Arr, u_prime_func: Func) -> Arr:
 
 
 def main():
-    delta = 0.1
-    x = np.linspace(0, 1, 123)
-    with fig(rows=2) as (_, (ax1, ax2)):
-        sns.lineplot(x=x, y=u()(x), ax=ax1)
-        sns.lineplot(x=x, y=u(delta)(x), ax=ax1)
+    delta = 0.7
+    x = np.linspace(0, 1, 1234)
 
-        sns.lineplot(x=x, y=solve_for_a(x, u_prime()), ax=ax2)
-        sns.lineplot(x=x, y=solve_for_a(x, u_prime(delta)), ax=ax2)
+    with fig(rows=3) as (_f, (ax1, ax2, ax3)):
+        _f.suptitle(f"{delta=}")
+
+        sns.lineplot(x=x, y=u()(x), label="u", ax=ax1)
+        sns.lineplot(x=x, y=u(delta)(x), label="u_delta", ax=ax1)
+
+        sns.lineplot(x=x, y=u_prime()(x), label="u'", ax=ax2)
+        sns.lineplot(x=x, y=u_prime(delta)(x), label="u_delta'", ax=ax2)
+
+        sns.lineplot(x=x, y=solve_for_a(x, u_prime()), label="a", ax=ax3)
+        sns.lineplot(x=x, y=solve_for_a(x, u_prime(delta)), label="a_delta", ax=ax3)
 
 
 if __name__ == "__main__":
