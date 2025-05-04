@@ -45,6 +45,22 @@ def get_n(delta: float) -> Func:
     return lambda x: np.random.uniform(-delta, delta, size=x.shape)
 
 
+def lstsq_sub_04(a: float, b: float, u0: float, u1: float, delta: float) -> Arr:
+    x_max, steps = 10, 321
+    x = np.linspace(0, x_max, steps)
+    u = get_u(a, b, u0, u1)(x)
+    n = get_n(delta)(x)
+    u_delta = u + n
+    dx = x[1] - x[0]
+
+    int_1 = dx / 2 * (u_delta[2:] - u_delta[:-2])
+    int_2 = dx ** 2 * u_delta[1:-1]
+    f_vec = -(u_delta[2:] - 2 * u_delta[1:-1] + u_delta[:-2])
+    a_mat = np.vstack([int_1, int_2]).T
+
+    return np.linalg.lstsq(a_mat, f_vec, rcond=None)[0]
+
+
 def lstsq_sub_03(a: float, b: float, u0: float, u1: float, delta: float) -> Arr:
     x_max, steps = 10, 321
     x = np.linspace(0, x_max, steps)
@@ -62,24 +78,6 @@ def lstsq_sub_03(a: float, b: float, u0: float, u1: float, delta: float) -> Arr:
 
     a_mat = np.vstack([int_1, int_2]).T
     f_vec = u0 + u1 * x - u_delta
-
-    return np.linalg.lstsq(a_mat, f_vec, rcond=None)[0]
-
-
-def lstsq_sub_03_good(a: float, b: float, u0: float, u1: float, delta: float) -> Arr:
-    x_max, steps = 10, 321
-    x = np.linspace(0, x_max, steps)
-    u = get_u(a, b, u0, u1)(x)
-    n = get_n(delta)(x)
-    u_delta = u + n
-    dx = x[1] - x[0]
-
-    int_1 = (u_delta[2:] - u_delta[:-2]) / (2 * dx)
-    int_2 = u_delta[1:-1]
-    int_3 = -(u_delta[2:] - 2 * u_delta[1:-1] + u_delta[:-2]) / dx ** 2
-
-    a_mat = np.vstack([int_1, int_2]).T
-    f_vec = int_3
 
     return np.linalg.lstsq(a_mat, f_vec, rcond=None)[0]
 
@@ -121,7 +119,7 @@ def sub_02(a: float, b: float, u0: float, u1: float):
 
 
 def sub_03(a_true: float, b_true: float, u0: float, u1: float):
-    delta = 0.01
+    delta = 0.1
     x_max, steps = 10, 321
     x = np.linspace(0, x_max, steps)
     u_true = get_u(a_true, b_true, u0, u1)(x)
@@ -137,6 +135,7 @@ def sub_03(a_true: float, b_true: float, u0: float, u1: float):
 
     a_mat = np.vstack([int_1, int_2]).T
     f_vec = u0 + u1 * x - u_delta
+
     a, b = np.linalg.lstsq(a_mat, f_vec, rcond=None)[0]
     u_back = get_u(a, b, u0, u1)(x)
     with fig() as (f, _):
@@ -148,30 +147,28 @@ def sub_03(a_true: float, b_true: float, u0: float, u1: float):
     # compute the errors
     n = 100
     deltas = np.linspace(0, 0.1, 100)
-    ab = np.array([a_true, b_true])
+    ab_true = np.array([a_true, b_true])
 
-    mean_of_errors = [np.mean([np.linalg.norm(ab - lstsq_sub_03(a, b, u0, u1, delta)) for _ in range(n)]) for delta in deltas]
+    mean_of_errors = [np.mean([np.linalg.norm(ab_true - lstsq_sub_03(a_true, b_true, u0, u1, d)) for _ in range(n)]) for d in deltas]
 
     with fig() as (f, _):
-        f.suptitle(f"{a=}, {b=}, {u0=}, {u1=}, {delta=}")
+        f.suptitle(f"{a_true=}, {b_true=}, {u0=}, {u1=}")
         sns.lineplot(x=deltas, y=mean_of_errors)
 
 
-def sub_03_good(a_true: float, b_true: float, u0: float, u1: float):
-    delta = 0.01
+def sub_04(a_true: float, b_true: float, u0: float, u1: float):
+    delta = 0.1
     x_max, steps = 10, 321
     x = np.linspace(0, x_max, steps)
     u_true = get_u(a_true, b_true, u0, u1)(x)
     u_delta = u_true + get_n(delta)(x)
     dx = x[1] - x[0]
 
-
-    int_1 = (u_delta[2:] - u_delta[:-2]) / (2 * dx)
-    int_2 = u_delta[1:-1]
-    int_3 = -(u_delta[2:] - 2 * u_delta[1:-1] + u_delta[:-2]) / dx ** 2
-
+    int_1 = dx / 2 * (u_delta[2:] - u_delta[:-2])
+    int_2 = dx ** 2 * u_delta[1:-1]
+    f_vec = -(u_delta[2:] - 2 * u_delta[1:-1] + u_delta[:-2])
     a_mat = np.vstack([int_1, int_2]).T
-    f_vec = int_3
+
     a, b = np.linalg.lstsq(a_mat, f_vec, rcond=None)[0]
     u_back = get_u(a, b, u0, u1)(x)
     with fig() as (f, _):
@@ -185,22 +182,20 @@ def sub_03_good(a_true: float, b_true: float, u0: float, u1: float):
     deltas = np.linspace(0, 0.1, 100)
     ab = np.array([a_true, b_true])
 
-    mean_of_errors = [np.mean([np.linalg.norm(ab - lstsq_sub_03_good(a, b, u0, u1, delta)) for _ in range(n)]) for delta in deltas]
+    mean_of_errors = [np.mean([np.linalg.norm(ab - lstsq_sub_04(a_true, b_true, u0, u1, d)) for _ in range(n)]) for d in deltas]
 
     with fig() as (f, _):
-        f.suptitle(f"{a=}, {b=}, {u0=}, {u1=}, {delta=}")
+        f.suptitle(f"{a_true=}, {b_true=}, {u0=}, {u1=}")
         sns.lineplot(x=deltas, y=mean_of_errors)
 
 
-def sub_04(a_true: float, b_true: float, u0: float, u1: float):
+def sub_05(a_true: float, b_true: float, u0: float, u1: float):
     grad_epsilon = 1e-5
     delta = 0.1
     x_max, steps = 10, 321
     x = np.linspace(0, x_max, steps)
     u_true = get_u(a_true, b_true, u0, u1)(x)
     u_delta = u_true + get_n(delta)(x)
-    # u0_delta = u_delta[0]
-    # u1_delta = (u_delta[1] - u_delta[0]) / (x[1] - x[0])
     u0u1 = np.array([u0, u1])
 
     def loss(_u: Arr) -> Arr:
@@ -243,10 +238,10 @@ def sub_04(a_true: float, b_true: float, u0: float, u1: float):
 
 def main():
     params = 2, 5, 1, -1
-    sub_02(*params)
-    sub_03(*params)
-    sub_03_good(*params)
-    sub_04(*params)
+    # sub_02(*params)
+    # sub_03(*params)
+    # sub_04(*params)
+    sub_05(*params)
 
 
 if __name__ == "__main__":

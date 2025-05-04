@@ -67,6 +67,7 @@ transformed into
 $$
 u'' + au' + bu = 0, \quad u(0)=u_0, \quad u'(0)=u_1
 $$
+### 1.
 Let's analyse the uniqueness of the inverse problem of determining the coefficients $a$ and $b$ from data $u$:
 Assume there are two $a$ parameters possible for the same data $u$: $a_1$ and $a_2$.
 Then
@@ -77,13 +78,44 @@ and
 $$
 u'' + a_2u' + bu = 0.
 $$
-subtracting one equation from the other we get
+Subtracting one equation from the other we get
 $$
 (a_1 - a_2)u' = 0,
 $$
 so either $u'=0$, in which case the solution is constant (trivial solution), or $a_1 = a_2$.
-Same procedure applies to $b$.
+Same procedure applies to $b$:
+Assume there are two $b$ parameters possible for the same data $u$: $b_1$, and $b_2$. Then
+$$
+u'' + au' + b_1u = 0,
+$$
+and
+$$
+u'' + au' + b_2u = 0.
+$$
+Again, subtracting the equations yields
+$$
+(b_1 - b_2)u = 0,
+$$
+so either the solution is identically zero (trivial solution), or $b_1 = b_2$.
+Now, assume there are two tuples $(a_1, b_1)$, and $(a_2, b_2)$ for the same data $u$. Furthermore, assume that the tuples differ in both coordinates, since if they didn't we'd have the case that we covered previously. We have
+$$
+u'' + a_1u' + b_1u = 0,
+$$
+and
+$$
+u'' + a_2u' + b_2u = 0.
+$$
+Again, subtracting the equations yields
+$$
+(a_1 - a_2)u' + (b_1 - b_2)u = 0.
+$$
+The general solution to this equation is
+$$
+u = A\exp\left(-\frac{b_1 - b_2}{a_1 - a_2}x\right) = A\exp(-rx),
+$$
+so, two distinct pairs of parameters will yield the same result $u$ if the solution is itself a simple exponential function. This would require setting some specific initial conditions or something similar.
 
+### 2.
 Now, let's solve the equation. Assume $u = e^{rx}$. Then we get the characteristic equation:
 $$
 r^2 + ar + b = 0,
@@ -125,6 +157,8 @@ u(x) = e^{-x}\cos(2x).
 $$
 The function $u$ with the uniform noise on the interval $[-\delta, \delta]$ added is shown below
 ![[0501.png]]
+
+### 3.
 Now, let's integrate the equation twice. First integration yields
 $$
 u'(x) - u_1 + a(u(x) - u_0) + \int_0^xu(s)ds = 0,
@@ -137,6 +171,7 @@ We can transform the last double integral into a single integral by flipping the
 $$
 u(x) - u_0 - u_1x + a\int_0^x(u(t) - u_0)dt + \int_0^xu(t)(x-t)dt = 0.
 $$
+
 We wish do discretise the equation by using the midpoint rule. Let $I_1(x)=\int_0^x(u(s)-u_0)ds$, $I_2(x)=\int_0^xu(t)(x-t)dt$, and $f(x) = u_0 + u_1x - u(x)$. Then we can write
 $$
 I_1(x)a + I_2(x)b = f(x).
@@ -154,14 +189,66 @@ $$
 \left[\vec{I_1}, \vec{I_2}\right][a, b]^T = \vec{f}.
 $$
 The solution with all $u$ $u^\delta$, and $u_{back}$ being visible on one plot is visible below
-![[0502.png]]
+![[0503a.png]]
 Below we can see the plot of the average of errors in euclidean norm with respect to $\delta$, over $100$ runs
-![[0503.png]]
+![[0503b.png]]
 
+### 4.
+Let's discretise the equation using the finite difference scheme. We have
+$$
+\frac{1}{h^2}\left(u_{i+1} - 2u_i + u_{i-1}\right) + a\frac{1}{2h}\left(u_{i+1} - u_{i-1}\right) + bu_i = 0.
+$$
+Multiply the equation by $h^2$ to get rid of small values in the denominators
+$$
+\left(u_{i+1} - 2u_i + u_{i-1}\right) + a\frac{h}{2}\left(u_{i+1} - u_{i-1}\right) + bh^2u_i = 0,
+$$
+and rearrange to obtain
+$$
+\frac{h}{2}\left(u_{i+1} - u_{i-1}\right)a + h^2u_ib = -\left(u_{i+1} - 2u_i + u_{i-1}\right).
+$$
+Define $A_i$, $B_i$, and $F_i$ as 
+$$
+\begin{aligned}
+A_i &= \frac{h}{2}\left(u_{i+1} - u_{i-1}\right), \\
+B_i &= h^2u_i, \\
+F_i &= -\left(u_{i+1} - 2u_i + u_{i-1}\right).
+\end{aligned}
+$$
+Then we obtain a simple equation
+$$
+A_ia + B_ib = F_i,
+$$
+stacking all of the equations on top of each other we obtain a linear equation for $a$ and $b$
+$$
+Aa + Bb = F,
+$$
+or
+$$
+\left[A \; B \right][a \; b]^T = F.
+$$
+We can estimate the parameters $a$ and $b$ using the least squares method.
+The results are as follows
+![[0504a.png]]
+![[0504b.png]]
+
+### 5.
 Let's consider the minimisation problem
 $$
 \min\limits_{a, b}\frac{1}{2}||u - u^\delta||^2
 $$
-subject to the original equation with $a$ and $b$.
+subject to the original equation with $a$ and $b$. We use a gradient descent method. We define the loss function as
+$$
+F(a, b) = \frac{1}{2}\left\Vert u_{ab} - u^\delta \right\Vert^2,
+$$
+where $u_{ab}$ is the solution to the original differential equation, which we solve using the Runge-Kutta method. We will compute the gradient in a very brute-force way, by computing
+$$
+F(a, b), \quad F(a+\varepsilon, b), \text{ and } F(a, b+\varepsilon),
+$$
+and then setting
+$$
+\nabla F(a, b) = \left( \frac{F(a+\varepsilon, b) - F(a, b)}{\epsilon}, \frac{F(a, b+\varepsilon) - F(a, b)}{\epsilon} \right).
+$$
+
+
 A sample solution is shown below
-![[0504.png]]
+![[0505.png]]
