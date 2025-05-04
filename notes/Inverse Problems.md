@@ -500,3 +500,75 @@ Then we use the Minkowski inequality, and the assumptions, and finally
 $$
 ||a_1 - a_2||_{L^2}^2 \le \frac{2}{\gamma^4}\sqrt{M}||f||_{L_1}^2||u_1 - u_2||_{L^2}.
 $$
+
+### Def (Gateaux derivative)
+Let $U$ be a normed vector space and let $J: U \rightarrow \mathbb{R}$ be a functional. Then the Gateaux derivative of $J$ at $u \in U$ in the direction $\varphi \in U$ is defined by
+$$
+J'(u; \varphi) = \lim\limits_{\varepsilon \rightarrow 0} \frac{J(u + \varepsilon \varphi) - J(u)}{\varepsilon}
+$$
+provided that the limit exists.
+
+If $U$ is a Hilbert space, and $J$ is Gateaux differentiable, then there exists a gradient $\nabla J(u) \in U$ such that
+$$
+J'(u; \varphi) = \langle \nabla J(u), \varphi\rangle.
+$$
+
+#### Example
+Consider the functional $J: U \rightarrow \mathbb{R}$ defined by
+$$
+J(u) = \int_0^1\left(\frac{du}{dx}\right)^2dx.
+$$
+By the definition we have
+$$
+J'(u; \varphi) = \lim\limits_{\varepsilon \rightarrow 0}\frac{1}{\varepsilon}\left(\int_0^1\left(\left(\frac{d(u+\varepsilon\varphi)}{dx}\right)^2 - \left(\frac{du}{dx}\right)^2\right)dx\right) = 2\int_0^1\frac{du}{dx}\frac{d\varphi}{dx}dx.
+$$
+To get the gradient $\nabla J(u)$ we apply the integration by parts formula and get
+$$
+J'(u; \varphi) = -\int_0^1\frac{d^2u}{dx^2}\varphi dx + \left[\frac{du}{dx}\varphi\right]_0^1 = -\int_0^1\frac{d^2u}{dx^2}\varphi dx,
+$$
+applying appropriate boundary conditions that make the last term vanish.
+
+Consider the following problem
+$$
+-(a(x)u'(x))' = f(x),
+$$
+$$
+a(0)u'(0) = a(1)u'(1) = 0.
+$$
+We consider the inverse problem of determining the parameter $a$ from the measurements $u^\delta$ of $u$. For this purpose we consider the objective functional $J: U \rightarrow \mathbb{R}$ defined by
+$$
+J(u) = \int_0^1(u-u^\delta)^2dx.
+$$
+We note that in the above definition the state variable $u \in U$ is implicitly dependent on $a \in V$ through the state equation.
+ 
+Let's denote by $u_a \in U$ the unique solution to the state equation, and, moreover, impose on $a$ to be in $U$. Then we can use the so-called reduced objective functional, which is given by
+$$
+\tilde{J} = J(u_a) + \alpha \int_0^1\left(\frac{da}{dx}\right)^2dx,
+$$
+and formulate the minimisation problem as follows
+$$
+\min_{a \in U}\tilde{J}(a), \quad \text{s.t.} \quad -(a(x)u_a'(x)) = f, \quad a(0)u_a'(0) = a(1)u_a'(1) = 0.
+$$
+We solve the above problem by the method of Lagrangian multipliers. The associated Lagrange functional $L: U \times U \times U \rightarrow \mathbb{R}$ is given by
+$$
+L(u, p, a) = J(u) + \alpha\int_0^1a'^2dx + \int_0^1 au'p'dx - \int_0^1fpdx,
+$$
+where $p$ is the Lagrange multiplier or the adjoint state variable.
+
+The Lagrangian method states that the solution to the problem has to be a stationary point of the Lagrangian, that is, it has to satisfy the system of equations
+$$
+\begin{aligned}
+\langle \nabla_u L, \varphi \rangle &= 0, \quad \text{ for all } \varphi \in U \\
+\langle \nabla_p L, \varphi \rangle &= 0, \quad \text{ for all } \varphi \in U \\
+\langle \nabla_a L, \varphi \rangle &= 0, \quad \text{ for all } \varphi \in U.
+\end{aligned}
+$$
+We note that the second equation in the above system is equivalent to the state equation.
+The first equation is the so-called adjoint state equation and is given by
+$$
+-(au')' = -\nabla J(u), \quad p(0)=p(1)=0.
+$$
+Finally the last equation is given by
+$$
+-\alpha a'' = u'p', \quad a'(0)=a'(1)=0.
+$$
