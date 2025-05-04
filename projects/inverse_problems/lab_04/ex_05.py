@@ -32,11 +32,11 @@ def get_u(a: float, b: float, u0: float, u1: float) -> Func:
 
     r_plus = (-a + d) / 2
     r_minus = (-a - d) / 2
-    big_a = (u1 - u0*r_minus) / (r_plus - r_minus)
-    big_b = (u0*r_plus - u1) / (r_plus - r_minus)
+    big_a = (u1 - u0 * r_minus) / (r_plus - r_minus)
+    big_b = (u0 * r_plus - u1) / (r_plus - r_minus)
 
     def inner(x: Arr) -> Arr:
-        return np.real(big_a*np.exp(r_plus*x) + big_b*np.exp(r_minus*x))
+        return np.real(big_a * np.exp(r_plus * x) + big_b * np.exp(r_minus * x))
 
     return inner
 
@@ -54,7 +54,7 @@ def lstsq_sub_04(a: float, b: float, u0: float, u1: float, delta: float) -> Arr:
     dx = x[1] - x[0]
 
     int_1 = dx / 2 * (u_delta[2:] - u_delta[:-2])
-    int_2 = dx ** 2 * u_delta[1:-1]
+    int_2 = dx**2 * u_delta[1:-1]
     f_vec = -(u_delta[2:] - 2 * u_delta[1:-1] + u_delta[:-2])
     a_mat = np.vstack([int_1, int_2]).T
 
@@ -165,7 +165,7 @@ def sub_04(a_true: float, b_true: float, u0: float, u1: float):
     dx = x[1] - x[0]
 
     int_1 = dx / 2 * (u_delta[2:] - u_delta[:-2])
-    int_2 = dx ** 2 * u_delta[1:-1]
+    int_2 = dx**2 * u_delta[1:-1]
     f_vec = -(u_delta[2:] - 2 * u_delta[1:-1] + u_delta[:-2])
     a_mat = np.vstack([int_1, int_2]).T
 
