@@ -572,3 +572,75 @@ Finally the last equation is given by
 $$
 -\alpha a'' = u'p', \quad a'(0)=a'(1)=0.
 $$
+# 10 Tikhonov regularisation
+Let $K = U_k \Sigma_k V_k^*$, where $rank(K) = k \le \min\{m, n\}$. The Tikhonov-regularised solution to the equation $Ku=f$ is given by
+$$
+u_\alpha = \sum_{i=1}^k\frac{\sigma_i\langle u_i, f \rangle}{\sigma_i^2 + \alpha}v_i,
+$$
+where $\left\{(u_i, \sigma_i, v_i)\right\}_{i=1}^k$ is the singular system of $K$. 
+The Tikhonov regularisation can be formulated as the following optimisation problem
+$$
+\min\limits_{u \in \mathbb{R}^n}\left\{ \Vert Ku - f\Vert_2^2 + \alpha\Vert u \Vert_2^2 \right\},
+$$
+which solution is given by $u_\alpha = (K^*K + \alpha I)^{-1}K^*f$.
+
+We note that the idea of the Tikhonov regularisation can be extended to more general setting and the regularised solution can be interpreted as a minimiser of the functional defined by
+$$
+J_\alpha(u) = \Vert Ku - f \Vert_V^2 + \alpha  \Vert u \Vert_U^2,
+$$
+where $U$ is a Hilbert space, and $V$ is a Banach space. Here $K: U \rightarrow V$, $K \in \mathcal{L}(U, V)$, $\mathcal{L}(U, V)$ is the set of all linear, bounded operators $K: U \rightarrow V$.
+
+Then we define the regularised solution
+$$
+u_\alpha = \min\limits_{u \in U}J_\alpha(u).
+$$
+### Theorem
+For $f \in V$, the Tikhonov-regularised solution is given by
+$$
+u_\alpha = (K^*K + \alpha I)^{-1}K^*f,
+$$
+and is a unique global minimiser of $J_\alpha$.
+
+### Variational regularisation
+In variational regularisation we generalise the Tikhonov regularisation by choosing different regularisation functionals $R: U \rightarrow \mathbb{R}$ and then compute the regularised solution by minimising the functional
+$$
+J_\alpha = \Vert Ku - f \Vert_V^2 + \alpha R(u).
+$$
+#### Example (Sobolev regularisation)
+$$
+J_\alpha(u) = \Vert Ku - f \Vert_{L^2{\Omega}}^2 + \alpha \Vert \nabla u \Vert_{L^2{\Omega}}^2
+$$
+$$
+K: H^1(\Omega) \rightarrow L^2(\Omega)
+$$
+#### Example ($l^1$-norm regularisation)
+$$
+J_\alpha(u) = \Vert Ku - f \Vert_{l^2}^2 + \alpha \Vert u \Vert_{l^1}.
+$$
+Here, $l^2$ and $l^1$ are spaces of sequences, and 
+$$
+\Vert u \Vert_{l^p} = \sum_{i=1}^\infty|u_i|^p.
+$$
+Tao worked on this btw.
+#### Example (Maximum-entropy regularisation)
+It is of particular interest if the solutions of the inverse problems are assumed to be probability density functions, which are functions in the set
+$$
+PDF(\Omega) = \left\{ u \in L^1(\Omega): \int_\Omega u dx = 1, u \ge 0 \right\}.
+$$
+Then the entropy is defined as
+$$
+E(u) = \int_\Omega u\log(u)dx.
+$$
+Usually, since $PDF(\Omega)$ may not be a vector space, we define
+$$
+R(u) = 
+\begin{cases}
+	E(u), &\quad u \in PDF(\Omega),\\
+	\infty, &\quad \text{otherwise}.
+\end{cases}
+$$
+Then
+$$
+J_\alpha(u) = \Vert Ku - f \Vert_{L^2}^2 + \alpha R(u).
+$$
+

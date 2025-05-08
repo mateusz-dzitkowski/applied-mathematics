@@ -10,7 +10,7 @@ from scipy.optimize import minimize
 sns.set_style("whitegrid")
 
 Arr = np.ndarray
-Func = Callable[[Arr], Arr]
+Func = Callable[[Arr | float], Arr]
 
 
 @contextmanager
@@ -35,8 +35,23 @@ def get_u(a: float, b: float, u0: float, u1: float) -> Func:
     big_a = (u1 - u0 * r_minus) / (r_plus - r_minus)
     big_b = (u0 * r_plus - u1) / (r_plus - r_minus)
 
-    def inner(x: Arr) -> Arr:
+    def inner(x: Arr | float) -> Arr:
         return np.real(big_a * np.exp(r_plus * x) + big_b * np.exp(r_minus * x))
+
+    return inner
+
+
+def get_u_prime(a: float, b: float, u0: float, u1: float) -> Func:
+    d = cmath.sqrt(a ** 2 - 4 * b)
+    assert d != 0, "Bad choice of a and b"
+
+    r_plus = (-a + d) / 2
+    r_minus = (-a - d) / 2
+    big_a = (u1 - u0 * r_minus) / (r_plus - r_minus)
+    big_b = (u0 * r_plus - u1) / (r_plus - r_minus)
+
+    def inner(x: Arr | float) -> Arr:
+        return np.real(big_a * r_plus * np.exp(r_plus * x) + big_b * r_minus * np.exp(r_minus * x))
 
     return inner
 
@@ -100,7 +115,36 @@ def get_f(a: float, b: float) -> Callable[[float, Arr], Arr]:
     def inner(_: float, uv: Arr) -> Arr:
         u, v = uv
         return np.array(
-            [v, -a * v - b * u],
+            [
+                v,
+                -a * v - b * u,
+            ],
+        )
+
+    return inner
+
+
+def get_ga(a: float, b: float, u_prime: Func) -> Callable[[float, Arr], Arr]:
+    def inner(x: float, vw: Arr) -> Arr:
+        v, w = vw
+        return np.array(
+            [
+                w,
+                -u_prime(x) - a * w - b * v,
+            ],
+        )
+
+    return inner
+
+
+def get_gb(a: float, b: float, u: Func) -> Callable[[float, Arr], Arr]:
+    def inner(x: float, vw: Arr) -> Arr:
+        v, w = vw
+        return np.array(
+            [
+                w,
+                -u(x) - a * w - b * v,
+            ],
         )
 
     return inner
@@ -236,12 +280,59 @@ def sub_05(a_true: float, b_true: float, u0: float, u1: float):
         sns.lineplot(x=x, y=u_back, label="u back")
 
 
+def sub_05_fixed(a_true: float, b_true: float, u0: float, u1: float):
+    delta = 0.1
+    x_max, steps = 10, 321
+    x = np.linspace(0, x_max, steps)
+    dx = x[1] - x[0]
+    u_true = get_u(a_true, b_true, u0, u1)(x)
+    u_delta = u_true + get_n(delta)(x)
+    u0u1 = np.array([u0, u1])
+
+    def loss(_u: Arr) -> Arr:
+        return 1 / 2 * np.sum((_u - u_delta) ** 2)
+
+    def objective(ab: tuple[float, float]) -> Arr:
+        a, b = ab
+        u = runge_kutta(x, get_f(a, b), u0u1)[:, 0]
+        return loss(u)
+
+    def gradient(ab: tuple[float, float]) -> tuple[Arr, Arr]:
+        a, b = ab
+
+        u = runge_kutta(x, get_f(a, b), u0u1)[:, 0]
+
+        duda = runge_kutta(x, get_ga(a, b, get_u_prime(a, b, u0, u1)), np.array([0, 0]))[:, 0]
+        dudb = runge_kutta(x, get_gb(a, b, get_u(a, b, u0, u1)), np.array([0, 0]))[:, 0]
+
+        grad_a = np.sum((u - u_delta)*duda) * dx
+        grad_b = np.sum((u - u_delta)*dudb) * dx
+
+        return grad_a, grad_b
+
+    res = minimize(
+        fun=objective,
+        x0=np.array([1, 2]),
+        method="BFGS",  # not a standard Gradient Descent, but I don't wanna do it
+        jac=gradient,
+    )
+    a, b = res.x
+    u_back = runge_kutta(x, get_f(a, b), u0u1)[:, 0]
+
+    with fig() as (f, _):
+        f.suptitle(f"{a_true=}, {b_true=}, {u0=}, {u1=}, {delta=}\n{a=}, {b=}")
+        sns.lineplot(x=x, y=u_delta, label="u delta")
+        sns.lineplot(x=x, y=u_true, label="u true")
+        sns.lineplot(x=x, y=u_back, label="u back")
+
+
 def main():
     params = 2, 5, 1, -1
     # sub_02(*params)
     # sub_03(*params)
     # sub_04(*params)
-    sub_05(*params)
+    # sub_05(*params)
+    sub_05_fixed(*params)
 
 
 if __name__ == "__main__":

@@ -113,7 +113,11 @@ The general solution to this equation is
 $$
 u = A\exp\left(-\frac{b_1 - b_2}{a_1 - a_2}x\right) = A\exp(-rx),
 $$
-so, two distinct pairs of parameters will yield the same result $u$ if the solution is itself a simple exponential function. This would require setting some specific initial conditions or something similar.
+so, two distinct pairs of parameters will yield the same result $u$ if the solution is itself a simple exponential function. In such case we cannot guarantee uniqueness. Such case happens, as we will see later, whenever
+$$
+a^2 > 4b,
+$$
+in this case the oscillatory behaviour disappears, as there is no $i$ component in the exponential in the solution.
 
 ### 2.
 Now, let's solve the equation. Assume $u = e^{rx}$. Then we get the characteristic equation:
