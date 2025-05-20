@@ -42,7 +42,7 @@ def get_u(a: float, b: float, u0: float, u1: float) -> Func:
 
 
 def get_u_prime(a: float, b: float, u0: float, u1: float) -> Func:
-    d = cmath.sqrt(a ** 2 - 4 * b)
+    d = cmath.sqrt(a**2 - 4 * b)
     assert d != 0, "Bad choice of a and b"
 
     r_plus = (-a + d) / 2
@@ -305,8 +305,8 @@ def sub_05_fixed(a_true: float, b_true: float, u0: float, u1: float):
         duda = runge_kutta(x, get_ga(a, b, get_u_prime(a, b, u0, u1)), np.array([0, 0]))[:, 0]
         dudb = runge_kutta(x, get_gb(a, b, get_u(a, b, u0, u1)), np.array([0, 0]))[:, 0]
 
-        grad_a = np.sum((u - u_delta)*duda) * dx
-        grad_b = np.sum((u - u_delta)*dudb) * dx
+        grad_a = np.sum((u - u_delta) * duda) * dx
+        grad_b = np.sum((u - u_delta) * dudb) * dx
 
         return grad_a, grad_b
 
