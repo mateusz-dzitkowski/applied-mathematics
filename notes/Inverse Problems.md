@@ -644,3 +644,68 @@ $$
 J_\alpha(u) = \Vert Ku - f \Vert_{L^2}^2 + \alpha R(u).
 $$
 
+# 11 Introduction to the compressed sensing theory
+Compressed sensing theory can be seen as refinement of the classical Nyquist-Shannon sampling theorem
+### Theorem
+Signal can be exactly reconstructed if its largest frequency is less than half of the sampling rate.
+
+### Definition
+We say that the signal $x = (x_1, x_2, \dots x_n) \in \mathbb{R}^n$ is $s$-sparse if 
+$$
+\Vert x \Vert_0 := \#\left\{i: x_i \ne 0\right\} \le s.
+$$
+The set of all $s$-sparse signals in $\mathbb{R}^n$ is denoted by $\Sigma_s$.
+
+### Definition
+We say that the signal $x \in \mathbb{R}^n$ is approximately sparse if magnitudes of its sorted samples obey a power law decay, i.e. there exist constants $C, d > 0$ such that
+$$
+|x_{\pi(i)}| \le Ci^{-d},
+$$
+where $\pi$ is a permutation of the set $\{1, 2, \dots, n\}$ such that $|x_{\pi(1)}| \ge |x_{\pi(2))}| \ge \dots \ge |x_{\pi(n)}|$ 
+
+Because $|x_{\pi(i)}|$ decay so rapidly, approximately sparse signals can be represented accurately by $s << N$ samples. One can show that
+$$
+\sigma_s(x)_2 \le C(2d - 1)^{-\frac{1}{2}}s^{-d + \frac{1}{2}},
+$$
+where for $p \ge 2$
+$$
+\sigma_s(x)_p := \min\limits_{z \in \Sigma_s}\Vert x - z \Vert_p
+$$
+
+### The formulation of the basic CS (compressed sensing) problem
+Assume that we have incomplete measurements $y \in \mathbb{R}^m$ of the original signal $x \in \mathbb{R}^n$ and the measurements matrix $K \in \mathbb{R}^{m \times n}$, where $m << n$. Then we can consider two models:
+1. $Kx = y$ if the measurements are exact.
+2. $\Vert Kx - y \Vert \le \varepsilon$ if the measurements are contaminated with a small amount of noise.
+
+To overcome the ill-posedness of the above two models we incorporate into it an information that the original signal $x$ is sparse and then consider
+$$
+\min\limits_x \Vert x \Vert_0, \text{ s.t. } Kx=y \text{ (or } \Vert Kx - y \Vert \le \varepsilon \text{)}.
+$$
+To be able to solve the above problem we replace $\Vert \cdot \Vert_0$ by its convex approximation $\Vert \cdot \Vert_1$ and consider minimising that:
+$$
+\min\limits_x\left\{\Vert x \Vert_1 + \alpha \Vert Kx - y \Vert_2^2\right\}.
+$$
+
+#### The proximal gradient method
+To apply the proximal gradient method we define the objective function as the sum of two functions $f, g: \mathbb{R}^n \rightarrow \mathbb{R}$, defined by 
+$$
+f(x) = \Vert x \Vert_1, \quad g(x) = \Vert Kx - y \Vert_2^2.
+$$
+Then the proximal gradient method iteratively updates the solution $x$ to the problem
+$$
+\min\limits_x \left\{f(x) + g(x)\right\}
+$$
+by performing two main steps:
+1. $x^{k + \frac{1}{2}} = x^k - \lambda \nabla g(x^k)$, where $\lambda > 0$ is a parameter.
+2. $x^{k+1} = prox_{\lambda f}\left(x^{k+\frac{1}{2}}\right)$.
+Here we define $prox_{\lambda f}$ as 
+$$
+(prox_{\lambda f}(x))_i =
+\begin{cases}
+x_i - \lambda,& \quad x_i > \lambda, \\
+0,& \quad |x_i| < \lambda, \\
+x_i + \lambda,& \quad x_i < -\lambda.
+\end{cases}
+= \text{sign}(x_i)\max(|x_i|-\lambda, 0).
+$$
+The above algorithm is convergent if $0 < \lambda \le \frac{1}{L}$, where $L$ is the Lipschitz constant of $\nabla g$.
