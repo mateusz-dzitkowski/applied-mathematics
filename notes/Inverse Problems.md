@@ -709,3 +709,113 @@ x_i + \lambda,& \quad x_i < -\lambda.
 = \text{sign}(x_i)\max(|x_i|-\lambda, 0).
 $$
 The above algorithm is convergent if $0 < \lambda \le \frac{1}{L}$, where $L$ is the Lipschitz constant of $\nabla g$.
+
+%% TODO: last lecture (?) %%
+# 12 The Laudueber regularisation method
+Consider the problem of  minimising the following function
+$$
+\min\limits_x \Vert Kx - y \Vert^2.
+$$
+The equation that we get is
+$$
+x = x - \tau K^*(Kx - y),
+$$
+and we want to use the following iterative method
+$$
+x_{j+1} = x_j - \tau K^*(Kx_j - y).
+$$
+Here we will consider the case with the noisy data $y^\delta$ in place of $y$
+$$
+\min\limits_{x^\delta} \Vert Kx^\delta - y^\delta \Vert^2.
+$$
+Then we have
+$$
+x_{j+1}^\delta = (I - \tau K^*K) x_j^\delta - K^*y^\delta.
+$$
+Recall that we have interpreted $\alpha = \frac{1}{j}$ as the regularisation parameter. In the case of noisy data we need $\alpha > 0$. Then the natural question is: when should we stop the iteration process? We can expect that $j^*$, the index at which we should stop, should depend on the noise and the noise level. In general we can write $j^*(\delta, y^\delta)$. Furthermore, we will denote the $x_{j^*}^\delta$ a solution for $j^*$.
+
+We use the singular value decomposition (SVD) of $K = U \Sigma V^*$. Recall that (by the recursive formula) we have 
+$$
+\langle x_j^\delta, v_i \rangle = \left(1 - (1-\tau\sigma_i^2)^{j-1}\right)\frac{1}{\sigma_i}\langle y_\delta, u_i \rangle.
+$$
+and
+$$
+x^T = \sum_{i=1}^k\frac{1}{\sigma_i}\langle y^\delta, u_i \rangle v_i,
+$$
+where $k = \min\{M, N\}$, and $K \in \mathbb{C}^{M \times N}$. Then we get
+$$
+\langle x, v_i \rangle = \frac{1}{\sigma_i} \langle y, u_i \rangle,
+$$
+and
+$$
+x = K^{-1}y.
+$$
+Then we can write the error as
+$$
+\begin{aligned}
+	\langle x^\delta_j - x, v_i\rangle &= (1 - (1-\sigma_i^2)^{j-1})\frac{1}{\sigma_i}\langle y^\delta, u_i \rangle - \frac{1}{\sigma_i}\langle y, u_i \rangle =\\
+	&= (1 - (1-\sigma_i^2)^{j-1})\frac{1}{\sigma_i}\langle y^\sigma - y, u_i \rangle + (1 - \tau\sigma_i^2)^{j-1}\frac{1}{\sigma_i}\langle y, u_i \rangle
+\end{aligned}
+$$
+Now we want to estimate the terms on the right hand side of the above formula. First we note that
+$$
+(1 - \tau\sigma_i^2)^{j-1}\frac{1}{\sigma_i}\langle y, u_i \rangle = (1 - \tau\sigma_i^2)^{j-1}\langle x, u_i \rangle \rightarrow 0 \text{ as } j \rightarrow \infty \text{ for } \tau < \frac{2}{\sigma_1^2}.
+$$
+Next we have
+$$
+(1 - (1 - \tau\sigma_i^2)^{j-1})\frac{1}{\sigma_i}\left|\langle y^\delta - y, u_i \rangle\right| = \tau\sigma_i\sum_{s=0}^{j-1}(1-\tau\sigma_i^2)^s \left|\langle y^\delta - y, u_i \rangle\right|
+\le \tau\sigma_i j\Vert y^\delta  - y\Vert \Vert u_i \Vert = \tau \sigma j \delta.
+$$
+
+Then we have
+$$
+\left|\left\langle x_j^\delta - x, v_i \right\rangle\right| \le \tau \sigma_i j \delta + (1 - \tau\sigma_i^2)^{j-1} \Vert x \Vert.
+$$
+If, as $\delta \rightarrow 0$, we choose the stopping index $j^*$ such that
+$$
+j^*\rightarrow\infty, \text{ and } j^*\delta\rightarrow0
+$$
+then all components converge to $0$ and hence $x_{j^*}^j \rightarrow x$.
+
+Now we need an a posteriori stopping rule - the discrepancy principle for the Laudueber iteration.
+$$
+j^*(\delta, y^*) = \inf\left\{ j \in \mathbb{R}: \Vert Kx_j^\delta - y^\delta < \eta\delta \Vert, \eta \ge \frac{2}{2 - \tau\Vert K \Vert^2} \right\}.
+$$
+This means that we stop the iteration the first time the error reaches the same size as the noise level.
+
+To understand how this principle works we again look at the error during the iteration.
+$$
+\begin{aligned}
+	\Vert x_{j+1}^\delta - x\Vert^2 - \Vert x_j^\delta - x \Vert^2 &= \tau^2\Vert K^*(Kx_j^\delta - y^\delta) \Vert^2 - 2\tau\left\langle x_j^\delta - x, K^*(Kx_j^\delta - y^\delta) \right\rangle = \\
+	&= \tau^2\Vert K^*(Kx_j^\delta - y^\delta) \Vert^2 - 2\tau\left\langle K(x_j^\delta - x), Kx_j^\delta - y^\delta \right\rangle
+\end{aligned}
+$$
+We have 
+$$
+\begin{aligned}
+	\left\langle K(x_j^\delta - x), Kx_j^\delta - y^\delta \right\rangle &= \left\langle K(x_j^\delta - x) + Kx_j^\delta - y^\delta - Kx_j^\delta + y^\delta, Kx_j^\delta - y^\delta \right\rangle \\
+	&= \Vert Kx_j^\delta - y^\delta \Vert^2 + \left\langle y^\delta - y, Kx_j^\delta - y^\delta \right\rangle
+\end{aligned}
+$$
+so that 
+$$
+\begin{aligned}
+\Vert x_{j+1} - x \Vert^2 - \Vert x_j^\delta - x \Vert^2 &\le \tau^2\Vert K \Vert^2\Vert Kx_j^\delta - y^\delta \Vert^2 - 2 \tau \Vert Kx_j^\sigma - y^\delta \Vert^2 - 2\tau \langle y^\delta - y, Kx_j^\delta - y^\delta \rangle \\
+&\le -\tau \Vert Kx_j^\delta - y^\delta \Vert \left[ \left( 2-\tau\Vert K \Vert^2 \right) \Vert Kx_j^\delta - y^\delta \Vert - 2\sigma \right].
+\end{aligned}
+$$
+Now we have $\eta > \frac{2}{2 - \tau \Vert K \Vert^2}$, which implies that 
+$$
+-(2 - \tau \Vert K \Vert^2) \le -\frac{2}{\eta},
+$$
+which we can use to write
+$$
+\Vert x_{j+1} - x \Vert^2 - \Vert x_j^\delta - x \Vert^2 \le -\frac{2\tau}{\eta}\Vert Kx_j^\delta - y^\delta \Vert \left[ \Vert Kx_j^\delta - y^\delta \Vert - \eta\delta \right] \le 0
+$$
+for $j \le j^*$.
+
+We note that as long as $j < j^*$ we can guarantee that the right hand side is negative and hence we have 
+$$
+\Vert x_{j+1} - x \Vert \le \Vert x_j^\delta - x \Vert,
+$$
+which means that the error decreased at least until the index $j^*$ is reached.

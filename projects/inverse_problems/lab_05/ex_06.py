@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from itertools import product
 from typing import Callable
 
 import numpy as np
@@ -33,7 +34,7 @@ def generate_x(n: int, *, s: int, func: Func = np.ones_like) -> Arr:
 
 
 def generate_k(m: int, n: int, *, delta: float) -> Arr:
-    assert m < n
+    assert m <= n
 
     k = np.random.normal(scale=delta, size=(m, n))
     return k / np.linalg.norm(k, axis=0)
@@ -67,30 +68,29 @@ def proximal_gradient(y: Arr, k: Arr, *, lam: float, steps: int = 100) -> Arr:
     return x
 
 
-def solve_norm_2(y: Arr, k: Arr, *, lam: float) -> Arr:
-    return lam * np.linalg.inv(np.eye(k.shape[1]) + lam * k.T @ k) @ k.T @ y
+def solve_norm_2(y: Arr, k: Arr, *, alpha: float) -> Arr:
+    return alpha * np.linalg.inv(np.eye(k.shape[1]) + alpha * k.T @ k) @ k.T @ y
 
 
 def sub_03():
-    s = 50
     delta = 0.1
-    n = 3210
-    ms = [1234, 1987, 2345, 2789, 3209]
-    lams = np.linspace(0.001, 0.5, 100)
+    n = 100
+    ss = [2, 5, 10, 90]
+    ms = [10, 30, 60, 90, 100]
 
-    with fig() as (_, ax):
-        ax.set_yscale("log")
-        for m in ms:
-            x = generate_x(n, s=s)
+    for s, m in product(ss, ms):
+        with fig() as (_, ax):
+            x = generate_x(n, s=s, func=lambda _x: _x)
             k = generate_k(m, n, delta=delta)
             y = k @ x
 
-            norms = [np.linalg.norm(x - proximal_gradient(y, k, lam=lam)) for lam in lams]
-            plt.plot(lams, norms, label=f"m={m}")
+            x_back = proximal_gradient(y, k, lam=0.2)
+            plt.plot(x, label="x")
+            plt.plot(x_back, label="x back")
+            plt.suptitle(f"{s=}, {m=}, {n=}")
+            plt.ylim(bottom=0)
 
-        plt.xlabel("lambda")
-        plt.ylabel("error")
-        plt.legend()
+            plt.legend()
 
 
 def sub_04():
@@ -98,12 +98,12 @@ def sub_04():
     delta = 0.1
     n = 100
     m = 70
-    lam = 0.2
+    lam = 0.1
 
     x = generate_x(n, s=s, func=lambda _x: _x)
     k = generate_k(m, n, delta=delta)
     y = k @ x
-    y_noise = y + np.random.normal(scale=3, size=y.shape)
+    y_noise = y + np.random.normal(scale=10, size=y.shape)
 
     x_back = proximal_gradient(y, k, lam=lam)
     x_back_noise = proximal_gradient(y_noise, k, lam=lam)
@@ -125,13 +125,14 @@ def sub_05():
     n = 100
     m = 70
     lam = 0.2
+    alpha = 100
 
     x = generate_x(n, s=s, func=lambda _x: _x)
     k = generate_k(m, n, delta=delta)
     y = k @ x
 
     x_back = proximal_gradient(y, k, lam=lam)
-    x_back_2 = solve_norm_2(y, k, lam=lam)
+    x_back_2 = solve_norm_2(y, k, alpha=alpha)
 
     with fig():
         plt.plot(x, label="x")
