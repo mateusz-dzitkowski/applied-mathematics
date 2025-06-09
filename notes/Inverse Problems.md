@@ -711,7 +711,7 @@ $$
 The above algorithm is convergent if $0 < \lambda \le \frac{1}{L}$, where $L$ is the Lipschitz constant of $\nabla g$.
 
 %% TODO: last lecture (?) %%
-# 12 The Laudueber regularisation method
+# 12 The Landweber regularisation method
 Consider the problem of  minimising the following function
 $$
 \min\limits_x \Vert Kx - y \Vert^2.
@@ -779,7 +779,7 @@ then all components converge to $0$ and hence $x_{j^*}^j \rightarrow x$.
 
 Now we need an a posteriori stopping rule - the discrepancy principle for the Laudueber iteration.
 $$
-j^*(\delta, y^*) = \inf\left\{ j \in \mathbb{R}: \Vert Kx_j^\delta - y^\delta < \eta\delta \Vert, \eta \ge \frac{2}{2 - \tau\Vert K \Vert^2} \right\}.
+j^*(\delta, y^\delta) = \inf\left\{ j \in \mathbb{R}: \Vert Kx_j^\delta - y^\delta \Vert < \eta\delta, \eta \ge \frac{2}{2 - \tau\Vert K \Vert^2} \right\}.
 $$
 This means that we stop the iteration the first time the error reaches the same size as the noise level.
 
@@ -819,3 +819,50 @@ $$
 \Vert x_{j+1} - x \Vert \le \Vert x_j^\delta - x \Vert,
 $$
 which means that the error decreased at least until the index $j^*$ is reached.
+
+# 13 Gradient descent method
+In general the problem of minimisation of the functional
+$$
+F(u) = \Vert Ku - f \Vert_U^2 + R(u)
+$$
+is.
+### Definition (Fréchet derivative)
+Let $U$ be a Banach space. Let $J: U \rightarrow \mathbb{R}$ be a functional. If there exists an operator $A \in \mathcal{L}(U, \mathbb{R})$ such that
+$$
+\lim\limits_{h \rightarrow \vec{0}} \frac{\left|J(u+h) - J(u) - Ah\right|}{||h||_u} = 0,
+$$
+then $J$ is called Fréchet differentiable in $U$ and $\nabla J(u) = A$ is the Fréchet derivative of $J$ at $u$.
+#### Example
+Let $U, V$ be Hilbert spaces, $K \in \mathcal{L}(U, V)$, $f \in V$, $V \subset U$, and $J: U \rightarrow \mathbb{R}$ be defined as
+$$
+J(u) = \frac{1}{2}\Vert Ku -f \Vert_U^2.
+$$
+Then the Fréchet derivative of $J$ at $u$ is 
+$$
+\nabla J(u) = K^*(Ku - f).
+$$
+### Definition (The gradient descent)
+Consider the functional
+$$
+J(u) = \frac{1}{2}\Vert Ku - f \Vert_U^2 + R(u),
+$$
+where $R$ is Fréchet differentiable.
+We consider the iteration
+$$
+u_{j+1} = u_j - \tau \nabla J(u_j).
+$$
+### Lemma
+Let $J: U \rightarrow \mathbb{R}$ be Fréchet differentiable and $\nabla J$ be Lipschitz continuous with the constant $L \in \mathbb{R}$. Then for all $u, v \in U$ we have
+$$
+J(u) \le J(v) + \langle \nabla J(v), u-v \rangle + \frac{L}{2}\Vert u-v \Vert_U^2.
+$$
+### Theorem (Convergence of the gradient descent)
+Let $J: U \rightarrow \mathbb{R}$ be Fréchet differentiable and $\nabla J$ be Lipschitz continuous with constant $L \in \mathbb{R}$. Let the step size of the gradient descend method be such that $0 < \tau < \frac{2}{L}$. Then the gradient descent monotonically decreases decreases the value of the functional, i.e.
+$$
+J(u_{j+1}) \le J(u_j).
+$$
+Moreover, if $J$ is bounded from below, then the gradients converge to zero, i.e.
+$$
+\Vert \nabla J(u_j) \Vert_U \rightarrow 0
+$$
+with the rate $\min\limits_{j=1, \dots n}\Vert \nabla J(u_j) \Vert_U < \frac{C}{\sqrt{n}}$ for some constant $C>0$.
